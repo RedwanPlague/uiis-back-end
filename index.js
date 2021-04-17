@@ -1,16 +1,22 @@
 const express = require('express')
-const mongoose = require('mongoose');
+require('./db/mongoose')  // connect with the db
+
+//import admin side routers
+const userRouter = require('./admin/routers/user')
+
+//import teacher side routers
+
+
 const app = express()
 const port = 3000
 
-mongoose.connect('mongodb+srv://taskapp:!Asswordp20@cluster0.b0dxn.mongodb.net/task-manager-api?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
-const Cat = mongoose.model('Cat', { name: String });
+app.use(express.json())
+// admin side router registration
+app.use(userRouter)
 
+// teacher side router registration
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`UIIS backend app listening at http://localhost:${port}`)
 })

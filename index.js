@@ -2,7 +2,7 @@ const express = require('express')
 require('./db/mongoose')  // connect with the db
 
 //import admin side routers
-const userRouter = require('./admin/routers/user')
+const userRouter = require('./src/admin/routers/user')
 
 //import teacher side routers
 

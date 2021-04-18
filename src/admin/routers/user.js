@@ -13,7 +13,7 @@ router.post('/create-account', async (req, res) => {
         res.status (201).send({token})
     } catch (error) {
         res.status(400).send({
-            error: e.message
+            error: error.message
         })
     }
 })

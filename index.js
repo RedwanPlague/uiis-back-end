@@ -3,6 +3,7 @@ require('./db/mongoose')  // connect with the db
 
 //import admin side routers
 const userRouter = require('./src/admin/routers/user')
+const courseRouter = require('./src/admin/routers/course')
 
 //import teacher side routers
 
@@ -13,6 +14,7 @@ const port = 3000
 app.use(express.json())
 // admin side router registration
 app.use(userRouter)
+app.use(courseRouter)
 
 // teacher side router registration
 

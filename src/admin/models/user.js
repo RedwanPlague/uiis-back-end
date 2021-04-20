@@ -11,8 +11,6 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
-        unique: true,
         trim: true,
         validate(value) {
             if(!validator.isEmail(value)){
@@ -26,11 +24,16 @@ const userSchema = new mongoose.Schema({
         trim: true,
         enum: ['student', 'teacher', 'admin'],
     },
-    studentID: {
+    userID: {
         type: String,
-        required: function () {
-            return this.userType === 'student';
-        }
+        required: true,
+        trim: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true,
+        minlength: 8
     },
     tokens: [{
         token: {
@@ -48,11 +51,25 @@ userSchema.methods.generateAuthToken = async function(){
         _id: this._id.toString()
     }, process.env.JSON_WEB_TOKEN)
 
-    this.tokens = this.tokens.concat({ token })
-    await this.save()
 
     return token
 }
+
+userSchema.statics.findByCredentials = async  (userID, password) => {
+    const user = await User.findOne({userID});
+
+    if (!user){
+        throw new Error('Unable to logIn!')
+    }
+    const isMatch = await bcrypt.compare(
+        password, user.password
+    )
+    if (!isMatch){
+        throw new Error('Unable to login')
+    }
+    return user
+}
+
 
 //hash the plain text password before saving
 userSchema.pre('save', async function (next) {

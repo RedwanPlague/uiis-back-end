@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
-const constants = require('../constants')
+const constants = require('../../utils/constants')
 
 const courseSchema = new mongoose.Schema({
     title: {
@@ -57,6 +57,7 @@ const courseSchema = new mongoose.Schema({
 
 }, {
     // timestamps: true
+    strict: false
 })
 
 

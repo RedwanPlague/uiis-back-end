@@ -3,6 +3,9 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+const constants = require('../../utils/constants')
+
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -22,7 +25,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        enum: ['student', 'teacher', 'admin'],
+        enum: constants.USER_TYPE_LIST,
     },
     userID: {
         type: String,
@@ -33,8 +36,14 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 8
+        minlength: 3
     },
+    privileges: [{
+        type: String,
+        required: true,
+        trim: true,
+        enum: constants.PRIVILEGE_TYPE_LIST
+    }],
     tokens: [{
         token: {
             type: String,
@@ -42,7 +51,7 @@ const userSchema = new mongoose.Schema({
         }
     }]
 }, {
-    timestamps: true,
+    // timestamps: true,
     strict: false
 })
 

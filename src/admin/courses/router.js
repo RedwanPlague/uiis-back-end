@@ -1,5 +1,5 @@
 const express = require('express')
-const Course = require('../models/course')
+const Course = require('./model')
 
 const router = new express.Router()
 
@@ -44,7 +44,9 @@ router.patch('/courses/:code', async (req, res) => {
         }
         
         updates.forEach((update) => course.set(update, req.body[update]))
+
         await course.save()
+
         res.send(course)
 
     } catch (error) {

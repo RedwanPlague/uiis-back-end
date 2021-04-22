@@ -1,10 +1,15 @@
 const express = require('express')
+
 const Course = require('./model')
+const {courseCreationAuth} = require('./middlewares')
 
 const router = new express.Router()
 
-router.post('/courses', async (req, res) => {
+
+router.post('/courses', courseCreationAuth, async (req, res) => {
     const course = new Course(req.body)
+
+    console.log(req.user)
 
     try {
         await course.save()

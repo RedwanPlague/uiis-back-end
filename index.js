@@ -1,5 +1,6 @@
 const express = require('express')
 require('./db/mongoose')  // connect with the db
+const cors = require('cors')
 
 //import admin side routers
 const userRouter = require('./src/admin/accounts/router')
@@ -12,6 +13,7 @@ const app = express()
 const port = 3000
 
 app.use(express.json())
+app.use(cors())
 // admin side router registration
 app.use(userRouter)
 app.use(courseRouter)

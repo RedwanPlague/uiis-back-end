@@ -18,6 +18,8 @@ const getUserFromToken = async (req, res) => {
     req.token = token
 }
 
+
+
 module.exports = {
     getUserFromToken
 }

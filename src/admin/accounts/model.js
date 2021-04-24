@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        enum: constants.PRIVILEGE_TYPE_LIST
+        enum: Object.values(constants.PRIVILEGES)
     }],
     tokens: [{
         token: {
@@ -79,6 +79,17 @@ userSchema.statics.findByCredentials = async  (userID, password) => {
     return user
 }
 
+
+userSchema.methods.toJSON = function() {
+    const user = this.toObject()
+
+    delete user._id
+    delete user.__v
+    delete user.password
+    delete user.tokens
+
+    return user
+}
 
 //hash the plain text password before saving
 userSchema.pre('save', async function (next) {

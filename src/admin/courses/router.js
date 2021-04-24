@@ -22,10 +22,6 @@ router.post('/courses', courseCreationAuth, async (req, res) => {
 })
 
 router.get('/courses', async (req, res) => {
-    
-    // console.log(Course.schema.eachPath((path) => {
-    //     console.log(path, Course.schema.paths[path].instance)
-    // }))
 
     try {
         const courses = await Course.find({})

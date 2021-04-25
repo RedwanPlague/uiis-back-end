@@ -1,4 +1,5 @@
 const {getUserFromToken} = require('../../utils/helpers')
+const constants = require('../../utils/constants')
 
 const courseCreationAuth = async (req, res, next) => {
     try {
@@ -6,7 +7,7 @@ const courseCreationAuth = async (req, res, next) => {
 
         console.log(req.user)
 
-        if (!req.user.privileges.includes('course-creation')) {
+        if (!req.user.privileges.includes(constants.PRIVILEGES.ACCOUNT_CREATION)) {
             throw new Error()
         }
         next()

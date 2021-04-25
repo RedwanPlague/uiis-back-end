@@ -5,7 +5,7 @@ const cors = require('cors')
 //import admin side routers
 const userRouter = require('./src/admin/accounts/router')
 const courseRouter = require('./src/admin/courses/router')
-
+const departmentRouter = require('./src/admin/departments/router')
 //import teacher side routers
 
 
@@ -17,6 +17,7 @@ app.use(cors())
 // admin side router registration
 app.use(userRouter)
 app.use(courseRouter)
+app.use(departmentRouter)
 
 // teacher side router registration
 

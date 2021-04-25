@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        enum: constants.USER_TYPE_LIST,
+        enum: Object.values(constants.USER_TYPES),
     },
     userID: {
         type: String,
@@ -37,6 +37,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 3
+    },
+    department: {
+        type: String,
+        ref: 'Department',
+        required: function (){
+            return this.userType === constants.USER_TYPES.STUDENT ||
+                 this.userType === constants.USER_TYPES.TEACHER
+        }
     },
     privileges: [{
         type: String,
@@ -98,6 +106,12 @@ userSchema.pre('save', async function (next) {
     }
     next()
 })
+
+// userSchema.virtual('department-head', {
+//     ref: 'Department',
+//     localField: 'userID',
+//     foreignField: 'head'
+// })
 
 const User = mongoose.model('User', userSchema)
 

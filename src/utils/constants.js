@@ -7,11 +7,17 @@ const PRIVILEGES = Object.freeze({
     COURSE_DELETION: "course-deletion",
 })
 
+const USER_TYPES = Object.freeze({
+    ADMIN: "admin",
+    STUDENT: "student",
+    TEACHER: "teacher"
+})
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,
     MIN_LEVEL: 1,
     MAX_LEVEL: 2,
-    PRIVILEGES,
-    USER_TYPE_LIST: ['student', 'teacher', 'admin'],
+    USER_TYPES,
+    PRIVILEGES
 })

@@ -5,9 +5,7 @@ const courseCreationAuth = async (req, res, next) => {
     try {
         await getUserFromToken(req, res)
 
-        console.log(req.user)
-
-        if (!req.user.privileges.includes(constants.PRIVILEGES.ACCOUNT_CREATION)) {
+        if (!req.user.privileges.includes(constants.PRIVILEGES.COURSE_CREATION)) {
             throw new Error()
         }
         next()

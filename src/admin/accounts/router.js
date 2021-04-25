@@ -2,12 +2,26 @@ const express = require('express')
 
 const User = require('./model')
 const {PRIVILEGES} = require('../../utils/constants')
-const {logInRequired} = require('../../utils/middlewares')
+const {logInRequired, adminRequired} = require('../../utils/middlewares')
+const constants = require('../../utils/constants')
 
 const router = new express.Router()
 
 
-router.get('/privileges', logInRequired, (req, res)=> {
+router.get('/teachers', adminRequired, async (req, res) => {
+    try {
+        const teachers = await User.find({
+            department: req.query.dept,
+            userType: constants.USER_TYPES.TEACHER
+        })
+
+        res.send(teachers)
+    } catch (error) {
+        res.status(400).send()
+    }
+})
+
+router.get('/privileges', logInRequired, async (req, res)=> {
     try {
         res.send(Object.values(PRIVILEGES))
     } catch (error) {

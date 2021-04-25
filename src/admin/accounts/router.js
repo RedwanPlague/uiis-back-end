@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
         user.tokens = user.tokens.concat({ token })
         await user.save()
 
-        res.send({token})
+        res.send({user,token})
     } catch (error) {
         res.status(400).send({error: error.message})
     }

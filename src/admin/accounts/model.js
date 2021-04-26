@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const constants = require('../../utils/constants')
+const {studentSchema, teacherSchema, adminSchema} = require('./schemas')
+
 
 
 const userSchema = new mongoose.Schema({
@@ -99,5 +101,13 @@ userSchema.pre('save', async function (next) {
 // })
 
 const User = mongoose.model('User', userSchema)
+const Student = User.discriminator(constants.USER_TYPES.STUDENT, studentSchema)
+const Teacher = User.discriminator(constants.USER_TYPES.TEACHER, teacherSchema)
+const Admin = User.discriminator(constants.USER_TYPES.ADMIN, adminSchema)
 
-module.exports = User
+module.exports = {
+    User,
+    Student,
+    Teacher,
+    Admin
+}

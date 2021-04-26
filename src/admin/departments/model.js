@@ -13,6 +13,12 @@ const departmentSchema = new mongoose.Schema({
     }
 })
 
+departmentSchema.virtual('teachers', {
+    ref: 'User',
+    localField: 'name',
+    foreignField: 'department'
+})
+
 const Department = mongoose.model('Department', departmentSchema)
 
 module.exports = Department

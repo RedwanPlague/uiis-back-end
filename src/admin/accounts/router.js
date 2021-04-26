@@ -1,18 +1,18 @@
 const express = require('express')
 
-const User = require('./model')
+const {User, Student, Teacher, Admin} = require('./model')
 const {PRIVILEGES} = require('../../utils/constants')
 const {logInRequired, adminRequired} = require('../../utils/middlewares')
 const constants = require('../../utils/constants')
+const Department = require('../departments/model')
 
 const router = new express.Router()
 
 
 router.get('/teachers', adminRequired, async (req, res) => {
     try {
-        const teachers = await User.find({
-            department: req.query.dept,
-            userType: constants.USER_TYPES.TEACHER
+        const teachers = await Teacher.find({
+            department: req.query.dept
         })
 
         res.send(teachers)
@@ -30,8 +30,18 @@ router.get('/privileges', logInRequired, async (req, res)=> {
 })
 
 router.post('/create-account', async (req, res) => {
-    const user = new User(req.body)
     try {
+        let user = undefined
+
+        if (req.body.userType === constants.USER_TYPES.STUDENT) {
+            user = new Student(req.body)
+        } else if(req.body.userType === constants.USER_TYPES.TEACHER) {
+            user = new Teacher(req.body)
+        } else if(req.body.userType === constants.USER_TYPES.ADMIN) {
+            user = new Admin(req.body)
+        } else {
+            throw new Error('Invalid user type')
+        }
         await user.save()
         res.status(201).send()
     } catch (error) {

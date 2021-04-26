@@ -1,19 +1,13 @@
 const mongoose = require('mongoose')
-const validator = require('validator')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-
-const constants = require('../../utils/constants')
-
 
 const studentSchema = new mongoose.Schema({
     department: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Department',
         required: true
     },
     hall: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Hall',
         required: true
     },
@@ -23,3 +17,26 @@ const studentSchema = new mongoose.Schema({
         required: true
     }
 })
+
+const teacherSchema = new mongoose.Schema({
+    department: {
+        type: String,
+        ref: 'Department',
+        required: true
+    }
+})
+
+const adminSchema = new mongoose.Schema({
+    designation: {
+        type: String,
+        trim: true
+    }
+})
+
+
+
+module.exports = {
+    studentSchema,
+    teacherSchema,
+    adminSchema
+}

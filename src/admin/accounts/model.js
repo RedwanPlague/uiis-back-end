@@ -21,12 +21,6 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    userType: {
-        type: String,
-        required: true,
-        trim: true,
-        enum: Object.values(constants.USER_TYPES),
-    },
     userID: {
         type: String,
         required: true,
@@ -37,14 +31,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 3
-    },
-    department: {
-        type: String,
-        ref: 'Department',
-        required: function (){
-            return this.userType === constants.USER_TYPES.STUDENT ||
-                 this.userType === constants.USER_TYPES.TEACHER
-        }
     },
     privileges: [{
         type: String,
@@ -60,7 +46,7 @@ const userSchema = new mongoose.Schema({
     }]
 }, {
     // timestamps: true,
-    strict: false
+    discriminatorKey: 'userType',
 })
 
 userSchema.methods.generateAuthToken = async function(){
@@ -86,7 +72,6 @@ userSchema.statics.findByCredentials = async  (userID, password) => {
     }
     return user
 }
-
 
 userSchema.methods.toJSON = function() {
     const user = this.toObject()

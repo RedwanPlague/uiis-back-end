@@ -8,16 +8,17 @@ const departmentSchema = new mongoose.Schema({
         trim: true
     },
     head: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
 })
 
-departmentSchema.virtual('teachers', {
+departmentSchema.virtual('users', {
     ref: 'User',
-    localField: 'name',
+    localField: '_id',
     foreignField: 'department'
 })
+
 
 const Department = mongoose.model('Department', departmentSchema)
 

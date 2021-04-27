@@ -8,7 +8,8 @@ const hallSchema = new mongoose.Schema({
         trim: true
     },
     provost: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 })
 

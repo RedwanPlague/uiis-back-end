@@ -47,7 +47,9 @@ const userSchema = new mongoose.Schema({
 }, {
     // timestamps: true,
     discriminatorKey: 'userType',
-    virtuals: true
+    toJSON: {
+        virtuals: true
+    }
 })
 
 userSchema.methods.generateAuthToken = async function(){
@@ -60,9 +62,9 @@ userSchema.methods.generateAuthToken = async function(){
 }
 
 userSchema.statics.findByCredentials = async  (userID, password) => {
-    console.log("userID ", userID)
 
     const user = await User.findById(userID);
+    console.log(user)
 
     if (!user){
         throw new Error('Invalid User ID')
@@ -79,7 +81,6 @@ userSchema.statics.findByCredentials = async  (userID, password) => {
 userSchema.methods.toJSON = function() {
     const user = this.toObject()
 
-    delete user._id
     delete user.__v
     delete user.password
     delete user.tokens

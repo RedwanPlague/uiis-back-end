@@ -15,6 +15,7 @@ const port = 3000
 
 app.use(express.json())
 app.use(cors())
+
 // admin side router registration
 app.use(userRouter)
 app.use(courseRouter)

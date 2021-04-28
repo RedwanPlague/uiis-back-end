@@ -2,17 +2,17 @@ const mongoose = require('mongoose')
 
 const studentSchema = new mongoose.Schema({
     department: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Department',
         required: true
     },
     hall: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Hall',
         required: true
     },
     advisor: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'User',
         required: true
     }
@@ -20,7 +20,7 @@ const studentSchema = new mongoose.Schema({
 
 const teacherSchema = new mongoose.Schema({
     department: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Department',
         required: true
     }

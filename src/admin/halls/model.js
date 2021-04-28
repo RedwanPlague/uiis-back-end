@@ -1,14 +1,15 @@
 const mongoose = require('mongoose')
 
 const hallSchema = new mongoose.Schema({
-    name: {
+    _id: {
         type: String,
-        required: true,
-        unique: true,
-        trim: true
+        alias: 'code'
+    },
+    name: {
+        type: String
     },
     provost: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'User'
     }
 })

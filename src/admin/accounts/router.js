@@ -12,16 +12,11 @@ const router = new express.Router()
 router.get('/teachers', adminRequired, async (req, res) => {
 
     try {
-        const department = await Department.findOne({
-            name: req.query.dept
-        }).populate({
-            path: 'users',
-            match: {
-                userType: constants.USER_TYPES.TEACHER
-            }
-        })
+        const department = await Department.findById(
+            req.query.dept
+        ).populate('teachers')
 
-        res.send(department.users)
+        res.send(department.teachers)
 
     } catch (error) {
         res.status(400).send()

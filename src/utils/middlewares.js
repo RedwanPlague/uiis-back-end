@@ -14,7 +14,7 @@ const logInRequired = async (req, res, next) => {
 const adminRequired = async (req, res, next) => {
     try{
         await getUserFromToken(req, res)
-        console.log(req.user)
+        // console.log(req.user)
         if (req.user.userType !== constants.USER_TYPES.ADMIN) {
             throw new Error('User must be admin')
         }

@@ -9,6 +9,10 @@ const {studentSchema, teacherSchema, adminSchema} = require('./schemas')
 
 
 const userSchema = new mongoose.Schema({
+    _id: {
+        type: String,
+        alias: 'userID'
+    },
     name: {
         type: String,
         required: true,
@@ -22,12 +26,6 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Email is invalid!')
             }
         }
-    },
-    userID: {
-        type: String,
-        required: true,
-        trim: true,
-        unique: true
     },
     password: {
         type: String,
@@ -49,6 +47,7 @@ const userSchema = new mongoose.Schema({
 }, {
     // timestamps: true,
     discriminatorKey: 'userType',
+    virtuals: true
 })
 
 userSchema.methods.generateAuthToken = async function(){
@@ -61,7 +60,9 @@ userSchema.methods.generateAuthToken = async function(){
 }
 
 userSchema.statics.findByCredentials = async  (userID, password) => {
-    const user = await User.findOne({userID});
+    console.log("userID ", userID)
+
+    const user = await User.findById(userID);
 
     if (!user){
         throw new Error('Invalid User ID')

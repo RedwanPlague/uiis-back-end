@@ -12,7 +12,9 @@ router.post('/departments', adminRequired, async (req, res)=> {
         await department.save()
         res.status(201).send(department)
     } catch (error) {
-        res.status(400).send()
+        res.status(400).send({
+            error: error.message
+        })
     }
 })
 

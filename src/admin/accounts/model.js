@@ -63,8 +63,10 @@ userSchema.methods.generateAuthToken = async function(){
 
 userSchema.statics.findByCredentials = async  (userID, password) => {
 
-    const user = await User.findById(userID);
-    console.log(user)
+    const user = await User.findOne(User.translateAliases({
+        userID
+    }))
+ 
 
     if (!user){
         throw new Error('Invalid User ID')
@@ -96,6 +98,8 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
+
+ 
 // userSchema.virtual('department-head', {
 //     ref: 'Department',
 //     localField: 'userID',

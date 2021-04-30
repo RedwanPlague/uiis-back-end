@@ -8,30 +8,7 @@ const Department = require('../departments/model')
 
 const router = new express.Router()
 
-
-router.get('/teachers', adminRequired, async (req, res) => {
-
-    try {
-        const department = await Department.findById(
-            req.query.dept
-        ).populate('teachers')
-
-        res.send(department.teachers)
-
-    } catch (error) {
-        res.status(400).send()
-    }
-})
-
-router.get('/privileges', logInRequired, async (req, res)=> {
-    try {
-        res.send(Object.values(PRIVILEGES))
-    } catch (error) {
-        res.status(500).send()
-    }
-})
-
-router.post('/create-account', async (req, res) => {
+router.post('/create', async (req, res) => {
     try {
         let user = undefined
 
@@ -53,11 +30,34 @@ router.post('/create-account', async (req, res) => {
     }
 })
 
+router.get('/teacher/list', adminRequired, async (req, res) => {
+
+    try {
+        const department = await Department.findById(
+            req.query.dept
+        ).populate('teachers')
+
+        res.send(department.teachers)
+
+    } catch (error) {
+        res.status(400).send()
+    }
+})
+
+router.get('/privileges', logInRequired, async (req, res)=> {
+    try {
+        res.send(Object.values(PRIVILEGES))
+    } catch (error) {
+        res.status(500).send()
+    }
+})
+
+
 
 router.post('/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(
-            req.body.userID,
+            req.body.id,
             req.body.password
         )
         const token = await user.generateAuthToken()
@@ -77,7 +77,6 @@ router.post('/auto-login', logInRequired, async (req, res) => {
         res.status(500).send()
     }
 })
-
 
 router.post('/logout', logInRequired, async (req, res)=> {
     try {

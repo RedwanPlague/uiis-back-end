@@ -4,7 +4,7 @@ const constants = require('../../utils/constants')
 const departmentSchema = new mongoose.Schema({
     _id: {
         type: String,
-        alias: "code",
+        alias: "id",
     },
     name: {
         type: String,
@@ -14,6 +14,17 @@ const departmentSchema = new mongoose.Schema({
         ref: 'User'
     }
 })
+
+departmentSchema.methods.toJSON = function() {
+    const department = this.toObject()
+
+    department.id = department._id
+
+    delete department.__v
+    delete department._id
+
+    return department
+}
 
 departmentSchema.virtual('users', {
     ref: 'User',

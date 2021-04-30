@@ -6,7 +6,7 @@ const {logInRequired, adminRequired} = require('../../utils/middlewares')
 const router = new express.Router()
 
 // checking proper privilege
-router.post('/halls', adminRequired, async (req, res)=> {
+router.post('/', adminRequired, async (req, res)=> {
     const hall = new Hall(req.body)
     try {
         await hall.save()
@@ -17,7 +17,7 @@ router.post('/halls', adminRequired, async (req, res)=> {
 })
 
 // check proper privilege and if teacher with provost id exists?
-router.patch('/halls/:id', adminRequired, async (req, res)=> {
+router.patch('/:id', adminRequired, async (req, res)=> {
     const allowedUpdates = ['name', 'provost']
     const updates = Object.keys(req.body)
 
@@ -32,18 +32,23 @@ router.patch('/halls/:id', adminRequired, async (req, res)=> {
     }
     try {
         const hall = await Hall.findById(req.params.id)
+        if (!hall) {
+            throw new Error("No hall found!")
+        }
         updates.forEach(u => hall[u] = req.body[u])
         await hall.save()
 
         res.send(hall)
 
     } catch (error){
-        res.status(400).send()
+        res.status(400).send({
+            error: error.message
+        })
     }
 })
 
 // proper authentication
-router.get('/halls', adminRequired, async (req, res)=> {
+router.get('/', adminRequired, async (req, res)=> {
     try{
         const halls = await Hall.find({})
         res.send(halls)

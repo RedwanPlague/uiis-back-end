@@ -6,7 +6,7 @@ const {courseCreationAuth} = require('./middlewares')
 const router = new express.Router()
 
 
-router.post('/courses', courseCreationAuth, async (req, res) => {
+router.post('', courseCreationAuth, async (req, res) => {
     const course = new Course(req.body)
     
     try {
@@ -19,7 +19,7 @@ router.post('/courses', courseCreationAuth, async (req, res) => {
     }
 })
 
-router.get('/courses', async (req, res) => {
+router.get('', async (req, res) => {
 
     try {
         const courses = await Course.find({})
@@ -30,12 +30,12 @@ router.get('/courses', async (req, res) => {
     }
 })
 
-router.patch('/courses/:code', async (req, res) => {
+router.patch('/:id', async (req, res) => {
     const updates = Object.keys(req.body)
     
     try {
         const course = await Course.findOne({
-            code: req.params.code
+            _id: req.params.id
         })
 
         if (!course) {
@@ -53,6 +53,5 @@ router.patch('/courses/:code', async (req, res) => {
     }
 
 })
-
 
 module.exports = router

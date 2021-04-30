@@ -6,7 +6,7 @@ const {logInRequired, adminRequired} = require('../../utils/middlewares')
 const router = new express.Router()
 
 // checking proper privilege
-router.post('/departments', adminRequired, async (req, res)=> {
+router.post('/', adminRequired, async (req, res)=> {
     const department = new Department(req.body)
     try {
         await department.save()
@@ -19,7 +19,7 @@ router.post('/departments', adminRequired, async (req, res)=> {
 })
 
 // check proper privilege and if teacher with head id exists?
-router.patch('/departments/:id', adminRequired, async (req, res)=> {
+router.patch('/:id', adminRequired, async (req, res)=> {
     const allowedUpdates = ['name', 'head']
     const updates = Object.keys(req.body)
 
@@ -34,18 +34,23 @@ router.patch('/departments/:id', adminRequired, async (req, res)=> {
     }
     try {
         const department = await Department.findById(req.params.id)
+        if (!department) {
+            throw new Error("No department found!")
+        }
         updates.forEach(u => department[u] = req.body[u])
         await department.save()
 
         res.send(department)
 
     } catch (error){
-        res.status(400).send()
+        res.status(400).send({
+            error: error.message
+        })
     }
 })
 
 // proper authentication
-router.get('/departments', adminRequired, async (req, res)=> {
+router.get('/', adminRequired, async (req, res)=> {
     try{
         const departments = await Department.find({})
         res.send(departments)
@@ -54,6 +59,5 @@ router.get('/departments', adminRequired, async (req, res)=> {
         res.status(400).send()
     }
 })
-
 
 module.exports = router

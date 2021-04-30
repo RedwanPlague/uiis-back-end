@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const hallSchema = new mongoose.Schema({
     _id: {
         type: String,
-        alias: 'code'
+        alias: 'id'
     },
     name: {
         type: String
@@ -14,6 +14,16 @@ const hallSchema = new mongoose.Schema({
     }
 })
 
+hallSchema.methods.toJSON = function() {
+    const hall = this.toObject()
+
+    hall.id = hall._id
+
+    delete hall.__v
+    delete hall._id
+
+    return hall
+}
 const Hall = mongoose.model('Hall', hallSchema)
 
 module.exports = Hall

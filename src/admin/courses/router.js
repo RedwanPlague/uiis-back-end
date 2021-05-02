@@ -34,8 +34,9 @@ router.patch('/:id', async (req, res) => {
     const updates = Object.keys(req.body)
     
     try {
+
         const course = await Course.findOne({
-            _id: req.params.id
+            _id : req.params.id
         })
 
         if (!course) {

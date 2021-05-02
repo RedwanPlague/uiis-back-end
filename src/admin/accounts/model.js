@@ -63,7 +63,7 @@ userSchema.methods.generateAuthToken = async function(){
 
 userSchema.statics.findByCredentials = async  (id, password) => {
 
-    const user = await User.findById(id);
+    const user = await User.findById(id)
 
     if (!user){
         throw new Error('Invalid User ID')

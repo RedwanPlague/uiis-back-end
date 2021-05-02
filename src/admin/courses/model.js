@@ -1,11 +1,15 @@
 const mongoose = require('mongoose')
-const validator = require('validator')
+// const validator = require('validator')
 const constants = require('../../utils/constants')
 
 const courseSchema = new mongoose.Schema({
     _id: {
-      type: String,
-      alias: 'id'
+        type: mongoose.Schema.Types.ObjectId,
+        alias: 'id'
+    },
+    courseID: {
+        type: String,
+        required: true
     },
     title: {
         type: String,
@@ -49,6 +53,10 @@ const courseSchema = new mongoose.Schema({
             ref: 'Course'
         }
     ],
+    syllabusID: {
+        type: String,
+        required: true
+    },
     description: {
         type: String
     }

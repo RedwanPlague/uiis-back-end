@@ -26,6 +26,7 @@ departmentSchema.methods.toJSON = function() {
     return department
 }
 
+
 departmentSchema.virtual('users', {
     ref: 'User',
     localField: '_id',

@@ -13,6 +13,8 @@ const USER_TYPES = Object.freeze({
     TEACHER: "teacher"
 })
 
+
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,

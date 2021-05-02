@@ -16,7 +16,12 @@ const courseSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    department: {
+    offeredByDepartment: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    offeredToDepartment: {
         type: String,
         required: true,
         trim: true
@@ -47,7 +52,8 @@ const courseSchema = new mongoose.Schema({
         //         throw new Error('Term must be Integer')          
         // }
     },
-    prerequisites: [{
+    prerequisites: [
+        {
             type: String,
             required: true,
             ref: 'Course'

@@ -4,7 +4,7 @@ const constants = require('../../utils/constants')
 const departmentSchema = new mongoose.Schema({
     _id: {
         type: String,
-        alias: "id",
+        alias: 'id',
     },
     name: {
         type: String,

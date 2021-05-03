@@ -15,3 +15,5 @@ yarn-error.log*
 *.sln
 .vscode
 .vim
+
+package-lock.json

@@ -19,12 +19,14 @@ const courseSchema = new mongoose.Schema({
     offeredByDepartment: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        ref: 'Department'
     },
     offeredToDepartment: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        ref: 'Department'
     },
     credit: {
         type: Number,
@@ -54,7 +56,7 @@ const courseSchema = new mongoose.Schema({
     },
     prerequisites: [
         {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'Course'
         }

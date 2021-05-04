@@ -50,7 +50,7 @@ router.patch('/:id', adminRequired, async (req, res)=> {
 })
 
 // proper authentication
-router.get('/', adminRequired, async (req, res)=> {
+router.get('/list', adminRequired, async (req, res)=> {
     try{
         const departments = await Department.find({})
         res.send(departments)

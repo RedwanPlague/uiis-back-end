@@ -48,7 +48,7 @@ router.patch('/:id', adminRequired, async (req, res)=> {
 })
 
 // proper authentication
-router.get('/', adminRequired, async (req, res)=> {
+router.get('/list', adminRequired, async (req, res)=> {
     try{
         const halls = await Hall.find({})
         res.send(halls)

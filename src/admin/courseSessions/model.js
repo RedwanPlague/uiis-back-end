@@ -88,6 +88,12 @@ const courseSessionSchema = new mongoose.Schema({
             },
             hasApprovedResult: Boolean
         }
+    ],
+    registrationList: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'CourseRegistration'
+        }
     ]
 })
 
@@ -107,6 +113,9 @@ const slotSchema = new mongoose.Schema({
         required: true
     }
 })
+
+
+
 
 
 const CourseSession = mongoose.model('CourseSession', courseSessionSchema)

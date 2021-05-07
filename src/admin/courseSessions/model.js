@@ -39,12 +39,27 @@ const courseSessionSchema = new mongoose.Schema({
                 type: String,
                 required: true,
                 ref: 'User',
-
             },
             evalCount: {
                 type: Number,
                 required: true
             },
+            classCount: {
+                type: Number,
+                default: 0
+            },
+            evalDescriptions: [
+                {
+                    evalID: {
+                        type: Number,
+                        required: true
+                    },
+                    totalMarks: {
+                        type: Number,
+                        required: true
+                    }
+                }
+            ] 
         }
     ],
     schedule: [
@@ -70,7 +85,7 @@ const courseSessionSchema = new mongoose.Schema({
     examiners: [
         {
             part: String, // [ Section A / B ] Multiple entries of a single part is allowed [ We might, but we wont ]
-            marks: Number,
+            totalMarks: Number,
             teacher: {
                 type: String,
                 required: true,

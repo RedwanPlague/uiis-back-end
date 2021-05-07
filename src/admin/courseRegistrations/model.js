@@ -26,7 +26,7 @@ const courseRegistrationSchema = new mongoose.Schema({
             }
         }
     ],
-    ctMarks: [
+    evalMarks: [
         {
             teacher: {
                 type: String,
@@ -37,7 +37,7 @@ const courseRegistrationSchema = new mongoose.Schema({
                 type: Number,
                 required: true
             },
-            ctID: {
+            evalID: {
                 type: Number,
                 required: true
             }
@@ -70,6 +70,10 @@ const courseRegistrationSchema = new mongoose.Schema({
         percentage: {
             type: Number
         }
+    },
+    status: {
+        type: String,
+        enum: ['applied', 'pending', 'accepted']
     }
 })
 

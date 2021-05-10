@@ -19,7 +19,7 @@ router.post('', courseCreationAuth, async (req, res) => {
     }
 })
 
-router.get('', async (req, res) => {
+router.get('/list', async (req, res) => {
 
     try {
         const courses = await Course.find({})

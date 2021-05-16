@@ -6,7 +6,7 @@ const {courseCreationAuth} = require('./middlewares')
 const router = new express.Router()
 
 
-router.post('', courseCreationAuth, async (req, res) => {
+router.post('/create', courseCreationAuth, async (req, res) => {
     const course = new Course(req.body)
     
     try {
@@ -20,9 +20,17 @@ router.post('', courseCreationAuth, async (req, res) => {
 })
 
 router.get('/list', async (req, res) => {
+    match = {}
 
-    try {
-        const courses = await Course.find({})
+    if (req.query.department) {
+        match.offeredToDepartment = req.query.department 
+    }
+ 
+   try {
+        const courses = await Course.find({
+            ...match
+        })
+         
         res.send(courses)
         
     } catch (error) {

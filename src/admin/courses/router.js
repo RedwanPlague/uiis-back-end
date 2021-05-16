@@ -20,17 +20,20 @@ router.post('/create', courseCreationAuth, async (req, res) => {
 })
 
 router.get('/list', async (req, res) => {
-    match = {}
+    let match = {}
 
     if (req.query.department) {
         match.offeredToDepartment = req.query.department 
     }
+    if (req.query.courseID) {
+        match.courseID = req.query.courseID
+    }
+    if (req.query.syllabusID) {
+       match.syllabusID = req.query.syllabusID
+    }
  
    try {
-        const courses = await Course.find({
-            ...match
-        })
-         
+        const courses = await Course.find(match)
         res.send(courses)
         
     } catch (error) {

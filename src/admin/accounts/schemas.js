@@ -39,6 +39,7 @@ const studentSchema = new mongoose.Schema({
         //         throw new Error('Term must be Integer')
         // }
     },
+
     registrationList: [
         {
             type: mongoose.Schema.Types.ObjectId,

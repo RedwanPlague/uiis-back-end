@@ -1,7 +1,7 @@
 const express = require('express')
 require('./db/mongoose')  // connect with the db
 const cors = require('cors')
-const {logInRequired} = require('../../utils/middlewares')
+const {logInRequired} = require('./src/utils/middlewares')
 
 const adminRouter = require('./src/admin/baseRouter')
 const teacherRouter = require('./src/teacher/baseRouter')

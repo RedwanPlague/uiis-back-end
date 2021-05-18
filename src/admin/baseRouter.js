@@ -10,7 +10,7 @@ const router = new express.Router()
 
 
 router.use('/account', userRouter)
-router.use('/course', courseRouter)
+router.use('/courses', courseRouter)
 router.use('/department', departmentRouter)
 router.use('/hall', hallRouter)
 

@@ -2,9 +2,9 @@ const PRIVILEGES = Object.freeze({
     ACCOUNT_CREATION: "account-creation",
     ACCOUNT_DELETION: "account-deletion",
     ACCOUNT_UPDATE: "account-update",
-    COURSE_CREATION: "course-creation",
-    COURSE_UPDATE: "course-update",
-    COURSE_DELETION: "course-deletion",
+    COURSE_CREATION: "courses-creation",
+    COURSE_UPDATE: "courses-update",
+    COURSE_DELETION: "courses-deletion",
 })
 
 const USER_TYPES = Object.freeze({

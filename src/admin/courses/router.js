@@ -10,20 +10,22 @@ router.post('/create', courseCreationAuth, async (req, res) => {
 
     try {
         if (req.body.prerequisites){
-            // let dummy = []
-            // req.body.prerequisites = await Promise.all(req.body.prerequisites.map(async (value) => {
-            //     const id = await Course.find(value).select("_id")
-            //     if (!id){
-            //         throw new Error(value + " does not exist")
-            //     }
-            //     return id["_id"]
-            // }))
+            let prerequisites = []
+            await Promise.all(req.body.prerequisites.map(async (value) => {
+                const course = await Course.findOne(value)
+                if (!course){
+                    throw new Error(value + " does not exist")
+                }
+                prerequisites.push(course._id)
+            }))
+
+            req.body.prerequisites = prerequisites
         }
-        // console.log(" hello!   " + req.body.prerequisites)
 
+        
         const course = new Course(req.body)
-
         await course.save()
+        
         res.status(201).send()
     } catch (error) {
         res.status(400).send({

@@ -4,34 +4,29 @@ const constants = require('../../utils/constants')
 
 // consideredEvalCount needs validation
 const courseSessionSchema = new mongoose.Schema({
-
-    courseID: {
+    course: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course'
+        ref: 'Course',
+        required: true
     },
     session: {
         type: Date, // starting date
         required: true
     },
     perEvalWeight: {
-        type: Number,   // percentage
-        required: true
+        type: Number   // percentage
     },
     totalEvalCount: {
-        type: Number,
-        required: true
+        type: Number
     },
     consideredEvalCount: {
-        type: Number,
-        required: true,
+        type: Number
     },
     attendanceWeight: {
-        type: Number,   // percentage
-        required: true
+        type: Number   // percentage
     },
     totalMarks: {
-        type: Number,
-        required: true
+        type: Number
     },
     teachers: [
         {
@@ -130,7 +125,7 @@ const slotSchema = new mongoose.Schema({
 })
 
 
-
+courseSessionSchema.index({ 'course': 1, 'session': 1}, { 'unique': true })
 
 
 const CourseSession = mongoose.model('CourseSession', courseSessionSchema)

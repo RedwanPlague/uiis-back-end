@@ -76,6 +76,8 @@ courseSchema.methods.toJSON = function() {
     return course
 }
 
+courseSchema.index({ "courseID": 1, "syllabusID": 1}, { "unique": true })
+
 const Course = mongoose.model('Course', courseSchema)
 
 module.exports = Course

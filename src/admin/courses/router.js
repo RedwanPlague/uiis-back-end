@@ -7,9 +7,22 @@ const router = new express.Router()
 
 
 router.post('/create', courseCreationAuth, async (req, res) => {
-    const course = new Course(req.body)
-    
+
     try {
+        if (req.body.prerequisites){
+            // let dummy = []
+            // req.body.prerequisites = await Promise.all(req.body.prerequisites.map(async (value) => {
+            //     const id = await Course.find(value).select("_id")
+            //     if (!id){
+            //         throw new Error(value + " does not exist")
+            //     }
+            //     return id["_id"]
+            // }))
+        }
+        // console.log(" hello!   " + req.body.prerequisites)
+
+        const course = new Course(req.body)
+
         await course.save()
         res.status(201).send()
     } catch (error) {

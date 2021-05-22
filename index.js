@@ -15,7 +15,7 @@ app.use(cors())
 // admin side router registration
 app.use(adminRouter)
 // teacher side router registration
-app.use('/teacher',logInRequired, teacherRouter)
+app.use('/teacher', teacherRouter)
 
 app.listen(port, () => {
     console.log(`UIIS backend app listening at http://localhost:${port}`)

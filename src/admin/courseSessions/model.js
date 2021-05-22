@@ -129,10 +129,6 @@ const slotSchema = new mongoose.Schema({
     }
 })
 
-
-
-
-
 const CourseSession = mongoose.model('CourseSession', courseSessionSchema)
 const Slot = mongoose.model('Slot', slotSchema)
 

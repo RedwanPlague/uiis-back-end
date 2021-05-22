@@ -39,7 +39,10 @@ const studentSchema = new mongoose.Schema({
         //         throw new Error('Term must be Integer')
         // }
     },
-
+    status: {
+        type: String,
+        enum: ['unregistered', 'applied', 'waiting', 'registered']
+    },
     registrationList: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -62,8 +65,6 @@ const adminSchema = new mongoose.Schema({
         trim: true
     }
 })
-
-
 
 module.exports = {
     studentSchema,

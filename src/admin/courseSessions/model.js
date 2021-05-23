@@ -116,7 +116,6 @@ const courseSessionSchema = new mongoose.Schema({
 
 // starting time needs validation
 
-
 courseSessionSchema.index({ 'course': 1, 'session': 1}, { 'unique': true })
 
 

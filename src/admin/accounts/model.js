@@ -6,8 +6,6 @@ const jwt = require('jsonwebtoken')
 const constants = require('../../utils/constants')
 const {studentSchema, teacherSchema, adminSchema} = require('./schemas')
 
-
-
 const userSchema = new mongoose.Schema({
     _id: {
         type: String,
@@ -31,6 +29,20 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 3
+    },
+    contactNumber: {
+        type: String,
+        trim: true,
+        validate(value) {
+            if(!validator.isContactNumber(value)){
+                throw new Error('Contact Number is invalid!')
+            }
+        }
+    },
+    residentialAddress: {
+        type: String,
+        required: true,
+        trim: true
     },
     privileges: [{
         type: String,
@@ -56,7 +68,6 @@ userSchema.methods.generateAuthToken = async function(){
     const token = jwt.sign({
         _id: this._id.toString()
     }, process.env.JSON_WEB_TOKEN)
-
 
     return token
 }

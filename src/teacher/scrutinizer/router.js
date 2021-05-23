@@ -59,4 +59,32 @@ router.get("/:courseID/:session", async (req, res) => {
   res.send({students});
 });
 
+router.put("/:courseID/:session/approve", async (req, res) => {
+
+    const user = req.user;
+    const courseID = req.params.courseID;
+    const session = new Date(req.params.session);
+  
+    const courseSession = await CourseSession.findOne({
+      session,
+    }).populate({
+      path: "course",
+      match: {
+        "courseID": { "$eq": courseID}
+      }
+    });
+  
+    const section = courseSession.scrutinizers.find(
+      scrutinizer => scrutinizer.teacher === user._id
+    );
+  
+    if(section) {
+      section.hasApprovedResult = true;
+    }
+  
+    courseSession.save();
+  
+    res.send({"message": "hemlo"});
+});
+
 module.exports = router;

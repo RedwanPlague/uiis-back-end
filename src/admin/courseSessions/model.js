@@ -30,6 +30,7 @@ const courseSessionSchema = new mongoose.Schema({
     },
     teachers: [
         {
+            _id: false,
             teacher: {
                 type: String,
                 required: true,
@@ -45,6 +46,7 @@ const courseSessionSchema = new mongoose.Schema({
             },
             evalDescriptions: [
                 {
+                    _id: false,
                     evalID: {
                         type: Number,
                         required: true
@@ -59,6 +61,7 @@ const courseSessionSchema = new mongoose.Schema({
     ],
     schedule: [
         {
+            _id: false,
             day: String, // mon, sun, fri
             room: Number,
             slot: {
@@ -70,6 +73,7 @@ const courseSessionSchema = new mongoose.Schema({
     ],
     resultAccessHolders: [
         {
+            _id: false,
             teacher: {
                 type: String,
                 required: true,
@@ -79,6 +83,7 @@ const courseSessionSchema = new mongoose.Schema({
     ],
     examiners: [
         {
+            _id: false,
             part: String, // [ Section A / B ] Multiple entries of a single part is allowed [ We might, but we wont ]
             totalMarks: Number,
             teacher: {
@@ -91,6 +96,7 @@ const courseSessionSchema = new mongoose.Schema({
     ],
     scrutinizers: [
         {
+            _id: false,
             teacher: {
                 type: String,
                 required: true,
@@ -108,30 +114,13 @@ const courseSessionSchema = new mongoose.Schema({
 })
 
 // starting time needs validation
-const slotSchema = new mongoose.Schema({
-
-    _id: {
-        type: Number,
-        alias: 'id'
-    },
-    startingTime: {
-        type: Number, // seconds from midnight
-        required: true
-    },
-    duration: {
-        type: Number, // in minutes
-        required: true
-    }
-})
 
 
 courseSessionSchema.index({ 'course': 1, 'session': 1}, { 'unique': true })
 
 
 const CourseSession = mongoose.model('CourseSession', courseSessionSchema)
-const Slot = mongoose.model('Slot', slotSchema)
 
 module.exports = {
-    CourseSession,
-    Slot
+    CourseSession
 }

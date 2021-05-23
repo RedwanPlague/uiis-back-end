@@ -4,6 +4,7 @@ const constants = require('../../utils/constants')
 
 // consideredEvalCount needs validation
 const courseSessionSchema = new mongoose.Schema({
+
     course: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course',

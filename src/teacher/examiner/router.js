@@ -3,6 +3,7 @@ const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
 const Courses = require("../../admin/courses/model");
 const CourseRegistrations = require("../../admin/courseRegistrations/model");
+const {saveMarks} = require("./middlewares");
 
 router.get("/", (req, res) => {
   const user = req.user;
@@ -75,11 +76,36 @@ router.get("/:courseID/:session", async (req, res) => {
   res.send({totalMarks, editAccess, students});
 });
 
-router.put("/:courseID/:session/save", (req, res) => {
+router.put("/:courseID/:session/save", saveMarks, async (req, res) => {
   res.send({"message": "hemlo"});
 });
 
-router.put("/:courseID/:session/forward", (req, res) => {
+router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
+
+  const user = req.user;
+  const courseID = req.params.courseID;
+  const session = new Date(req.params.session);
+  const part = req.body.part, students = req.body.students;
+
+  const courseSession = await CourseSession.findOne({
+    session,
+  }).populate({
+    path: "course",
+    match: {
+      "courseID": { "$eq": courseID}
+    }
+  });
+
+  const section = courseSession.examiners.find(
+    examiner => examiner.part === part && examiner.teacher === user._id
+  );
+
+  if(section) {
+    section.resultEditAccess = false;
+  }
+
+  courseSession.save();
+
   res.send({"message": "hemlo"});
 });
 

@@ -94,7 +94,7 @@ const courseRegistrationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['unavailable', 'available', 'registered', 'completed']
+        enum: ['offered', 'applied', 'registered', 'passed', 'failed']
     }
 })
 

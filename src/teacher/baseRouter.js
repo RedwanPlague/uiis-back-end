@@ -6,7 +6,6 @@ const examinerRouter = require('./examiner/router');
 const scrutinizerRouter = require('./scrutinizer/router');
 const router = express.Router();
 
-
 router.use('/advisor', advisorRouter);
 router.use('/courses', courseRouter);
 router.use('/examiner', examinerRouter);

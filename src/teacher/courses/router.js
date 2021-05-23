@@ -54,7 +54,6 @@ router.get('/:courseID/:session', async (req, res) => {
 			.find(  {'_id': { $in: _ids[0].registrationList}} )
 			.select('student attendanceMarks evalMarks -_id');
 
-
 		res.status(200).json(ret);
 
 	} catch (error) {

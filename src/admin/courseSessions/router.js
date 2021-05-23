@@ -38,7 +38,7 @@ router.get('/list', async (req, res) => {
         const courseSessions = await CourseSession.find(match)
         res.send(courseSessions)
     } catch (error) {
-        res.status(400).send({
+        res.status(500).send({
             error: error.message
         })
     }
@@ -69,7 +69,7 @@ router.patch('/update/:courseID/:syllabusID/:session', async (req, res) => {
 
         await courseSession.save()
 
-        res.send(courseSession)
+        res.send()
 
     } catch (error) {
         res.status(400).send({error: error.message})

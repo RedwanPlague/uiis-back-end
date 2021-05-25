@@ -1,7 +1,7 @@
 const express = require('express')
 const CourseRegistration = require('./model')
 const {CourseSession} = require('../courseSessions/model')
-const {User} = require('../accounts/model')
+const {User,Student} = require('../accounts/model')
 
 const router = new express.Router()
 
@@ -12,13 +12,18 @@ router.post('/dummy', async (req, res)=> {
 
         for (const courseSession of courseSessions){
             for (const student of students){
-                const courseRegistraion = new CourseRegistration(
+                const courseRegistraion = await CourseRegistration.findOne(
                     {
                         student: student._id,
                         courseSession: courseSession._id
                     }
                 )
-                await courseRegistraion.save()
+
+                courseSession.registrationList.push(courseRegistraion)
+                student.registrationList.push(courseRegistraion);
+
+                await courseSession.save()
+                await student.save()
             }
         }
         res.send()

@@ -45,6 +45,10 @@ const courseSessionSchema = new mongoose.Schema({
                 type: Number,
                 default: 0
             },
+            editAccess: {
+                type: Boolean,
+                default: true
+            },
             evalDescriptions: [
                 {
                     _id: false,

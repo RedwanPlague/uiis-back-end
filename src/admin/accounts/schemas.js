@@ -45,11 +45,11 @@ const studentSchema = new mongoose.Schema({
     },
     cgpa: {
         type: Number,
-        required: true,
+        default: 0.0
     },
     totalCreditHoursCompleted: {
         type: Number,
-        required: true,
+        default: 0.0
     },
     registrationList: [
         {

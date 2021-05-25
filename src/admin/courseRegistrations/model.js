@@ -14,7 +14,7 @@ const courseRegistrationSchema = new mongoose.Schema({
     },
     level: {
         type: Number,
-        required: true,
+        // required: true,
         min: constants.MIN_LEVEL,
         max: constants.MAX_LEVEL,
         // validate (value) {
@@ -26,7 +26,7 @@ const courseRegistrationSchema = new mongoose.Schema({
     },
     term: {
         type: Number,
-        required: true,
+        // required: true,
         min: constants.MIN_TERM,
         max: constants.MAX_TERM,
         // validate (value) {

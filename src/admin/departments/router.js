@@ -6,7 +6,7 @@ const {logInRequired, adminRequired} = require('../../utils/middlewares')
 const router = new express.Router()
 
 // checking proper privilege
-router.post('/', adminRequired, async (req, res)=> {
+router.post('/create', adminRequired, async (req, res)=> {
     const department = new Department(req.body)
     try {
         await department.save()
@@ -19,7 +19,7 @@ router.post('/', adminRequired, async (req, res)=> {
 })
 
 // check proper privilege and if teacher with head id exists?
-router.patch('/:id', adminRequired, async (req, res)=> {
+router.patch('/update/:id', adminRequired, async (req, res)=> {
     const allowedUpdates = ['name', 'head']
     const updates = Object.keys(req.body)
 

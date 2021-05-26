@@ -1,20 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
-const Courses = require("../../admin/courses/model");
 const CourseRegistrations = require("../../admin/courseRegistrations/model");
 const {saveMarks} = require("./middlewares");
 
-router.get("/", (req, res) => {
-  const user = req.user;
-
-  res.send(user);
-});
-
 router.get("/:session", async (req, res) => {
   const user = req.user;
-
-  const session = new Date(req.params.session);
+  const session = new Date(req.params.session); // might need to be changed
 
   courseSessions = await CourseSession.find({
     "session": session,
@@ -77,7 +69,13 @@ router.get("/:courseID/:session", async (req, res) => {
 });
 
 router.put("/:courseID/:session/save", saveMarks, async (req, res) => {
-  res.send({"message": "hemlo"});
+  try {
+    res.send({"message": "hemlo"});
+  }
+  catch(error) {
+    res.sendStatus(404);
+  }
+  
 });
 
 router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {

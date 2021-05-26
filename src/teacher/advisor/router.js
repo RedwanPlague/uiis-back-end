@@ -14,7 +14,7 @@ router.get('/advisees', async (req, res) => {
             })
             .select('_id');
 
-        res.status(200).send(advisees.toArray());
+        res.status(200).send(advisees);
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -28,7 +28,7 @@ router.get('/advisees/:id', async (req, res) => {
             .findById({
                 _id: req.params.id
             })
-            .select('_id name email contactNumber residentialAddress department hall level term');
+            .select('_id name email contactNumber residentialAddress department hall level term cgpa totalCreditHoursCompleted');
 
         res.status(200).send(advisee);
     } catch(error) {
@@ -46,7 +46,7 @@ router.get('/advisees/:id/grades', async (req, res) => {
                 'level': req.body.level,
                 'term': req.body.term
             })
-            .select('level term result status cgpa totalCreditHoursCompleted')
+            .select('level term result.gradePoint result.gradeLetter status')
             .populate({
                 path: 'courseSession',
                 populate: {
@@ -55,7 +55,7 @@ router.get('/advisees/:id/grades', async (req, res) => {
                 }
             });
 
-        res.status(200).send(grades.toArray());
+        res.status(200).send(grades);
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -69,9 +69,9 @@ router.get('/registrations', async (req, res) => {
             .find({
                 'advisor': req.user._id
             })
-            .select('_id status');
+            .select('_id name department level term status');
 
-        res.status(200).send(advisees.toArray());
+        res.status(200).send(advisees);
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -96,7 +96,7 @@ router.get('/registrations/:id', async (req, res) => {
                 }
             });
 
-        res.status(200).send(courses.toArray());
+        res.status(200).send(courses);
     } catch(error) {
         res.status(400).send({
             error: error.message

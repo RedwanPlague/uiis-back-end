@@ -14,7 +14,7 @@ router.get('/advisees', async (req, res) => {
             })
             .select('_id');
 
-        res.status(200).json(advisees);
+        res.status(200).send(advisees.toArray());
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -30,7 +30,7 @@ router.get('/advisees/:id', async (req, res) => {
             })
             .select('_id name email contactNumber residentialAddress department hall level term');
 
-        res.status(200).json(advisee);
+        res.status(200).send(advisee);
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -55,7 +55,7 @@ router.get('/advisees/:id/grades', async (req, res) => {
                 }
             });
 
-        res.status(200).json(grades);
+        res.status(200).send(grades.toArray());
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -71,7 +71,7 @@ router.get('/registrations', async (req, res) => {
             })
             .select('_id status');
 
-        res.status(200).json(advisees);
+        res.status(200).send(advisees.toArray());
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -96,7 +96,7 @@ router.get('/registrations/:id', async (req, res) => {
                 }
             });
 
-        res.status(200).json(courses);
+        res.status(200).send(courses.toArray());
     } catch(error) {
         res.status(400).send({
             error: error.message

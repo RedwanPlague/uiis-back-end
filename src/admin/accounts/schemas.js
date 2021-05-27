@@ -19,7 +19,7 @@ const studentSchema = new mongoose.Schema({
     },
     level: {
         type: Number,
-        required: true,
+        default: 1,
         min: constants.MIN_LEVEL,
         max: constants.MAX_LEVEL,
         // validate (value) {
@@ -31,7 +31,7 @@ const studentSchema = new mongoose.Schema({
     },
     term: {
         type: Number,
-        required: true,
+        default: 1,
         min: constants.MIN_TERM,
         max: constants.MAX_TERM,
         // validate (value) {

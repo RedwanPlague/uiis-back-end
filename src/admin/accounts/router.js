@@ -30,18 +30,68 @@ router.post('/create', async (req, res) => {
     }
 })
 
-router.get('/teacher/list', adminRequired, async (req, res) => {
+router.get('/student/list', async (req, res) => {
+    let match = {}
 
-    try {
-        const department = await Department.findById(
-            req.query.dept
-        ).populate('teachers')
+    const queryList = ['name','email','contactNumber','department',
+        'hall','advisor','level','term'
+    ]
 
-        res.send(department.teachers)
-
-    } catch (error) {
-        res.status(400).send()
+    for (const queryParams of Object.keys(req.query)) {
+        if(queryList.includes(queryParams)) {
+            match[queryParams] = req.query[queryParams]
+        }
     }
+
+   try {
+        const students = await Student.find(match)
+        res.send(students)
+        
+    } catch (error) {
+        req.status(500).send()
+    }
+})
+
+router.get('/teacher/list', adminRequired, async (req, res) => {
+    let match = {}
+
+    const queryList = ['name','email','contactNumber','department']
+
+    for (const queryParams of Object.keys(req.query)) {
+        if(queryList.includes(queryParams)) {
+            match[queryParams] = req.query[queryParams]
+        }
+    }
+
+   try {
+        const teachers = await Teacher.find(match)
+        res.send(teachers)
+        
+    } catch (error) {
+        req.status(500).send()
+    }
+     
+})
+
+router.get('/admin/list', adminRequired, async (req, res) => {
+    let match = {}
+
+    const queryList = ['name','email','contactNumber','designation']
+
+    for (const queryParams of Object.keys(req.query)) {
+        if(queryList.includes(queryParams)) {
+            match[queryParams] = req.query[queryParams]
+        }
+    }
+
+   try {
+        const admins = await Admin.find(match)
+        res.send(admins)
+        
+    } catch (error) {
+        req.status(500).send()
+    }
+     
 })
 
 router.get('/privileges', logInRequired, async (req, res)=> {

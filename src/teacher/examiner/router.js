@@ -58,9 +58,11 @@ router.get("/:courseID/:session", async (req, res) => {
     const studentID = regi.student._id;
     const studentName = regi.student.name;
 
-    const { mark } = regi.termFinalMarks.find(
+    const section = regi.termFinalMarks.find(
       section => section.examiner === user._id && section.part === part
     );
+
+    const mark = section? section.mark: -1;
 
     students.push({studentID, studentName, mark});
   }

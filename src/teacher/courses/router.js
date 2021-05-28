@@ -17,6 +17,7 @@ router.get('/', async (req, res)=> {
 				select: 'courseID title -_id',
 			});
 
+
 		ret.forEach(courseSession => {
 			courseSession.courseID = courseSession.course.courseID;
 			courseSession.title = courseSession.course.title;
@@ -107,12 +108,13 @@ router.get('/:courseID/:session', async (req, res) => {
 });
 
 router.patch('/:courseID/:session', async (req, res) => {
-	const student_data = req.body.student_data;
+
 	const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 	if(!courseSession) {
 		res.status(400).json("");
 		return;
 	}
+	const student_data = req.body.student_data;
 	try {
 		for(const student_entry of student_data) {
 			const courseReg = await CourseRegistration

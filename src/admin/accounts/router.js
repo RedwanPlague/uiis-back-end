@@ -59,7 +59,8 @@ router.get('/student/list', async (req, res) => {
 })
 
 
-router.patch('update/student/:id', async (req, res) => {
+router.patch('/update/student/:id', async (req, res) => {
+    console.log('hi')
     const updates = Object.keys(req.body)
     
     try {
@@ -109,7 +110,7 @@ router.get('/teacher/list', adminRequired, async (req, res) => {
      
 })
 
-router.patch('update/teacher/:id', async (req, res) => {
+router.patch('/update/teacher/:id', async (req, res) => {
     const updates = Object.keys(req.body)
     
     try {
@@ -158,7 +159,7 @@ router.get('/admin/list', adminRequired, async (req, res) => {
      
 })
 
-router.patch('update/admin/:id', async (req, res) => {
+router.patch('/update/admin/:id', async (req, res) => {
     const updates = Object.keys(req.body)
     
     try {

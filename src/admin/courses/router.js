@@ -57,7 +57,7 @@ router.get('/list', async (req, res) => {
     }
 })
 
-router.patch('/:id', async (req, res) => {
+router.patch('/update/:id', async (req, res) => {
     const updates = Object.keys(req.body)
     
     try {

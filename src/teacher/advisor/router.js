@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 
 const { Student } = require('../../admin/accounts/model');
 const CourseRegistration = require('../../admin/courseRegistrations/model');
@@ -43,12 +42,13 @@ router.get('/advisees/:id/grades', async (req, res) => {
         const grades = await CourseRegistration
             .find({
                 'student': req.params.id,
-                'level': req.body.level,
-                'term': req.body.term
+                'level': req.query.level,
+                'term': req.query.term
             })
             .select('level term result.gradePoint result.gradeLetter status')
             .populate({
                 path: 'courseSession',
+                select: 'course',
                 populate: {
                     path: 'course',
                     select: 'courseID title credit'
@@ -84,12 +84,13 @@ router.get('/registrations/:id', async (req, res) => {
         const courses = await CourseRegistration
             .find({
                 'student': req.params.id,
-                'level': req.body.level,
-                'term': req.body.term
+                'level': req.query.level,
+                'term': req.query.term
             })
             .select('status')
             .populate({
                 path: 'courseSession',
+                select: 'course',
                 populate: {
                     path: 'course',
                     select: 'courseID syllabusID title credit'
@@ -139,6 +140,28 @@ router.patch('/registrations/:id/reject', async (req, res) => {
                 });
 
         res.status(200).send(updatedAdvisee);
+    } catch(error) {
+        res.status(404).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/update', async (req, res) => {
+    try {
+        /* updates courseRegistration documents with level/term based on courseSession */
+        const updatedCourseRegistrations = await CourseRegistration
+            .updateMany({
+                    courseSession: '60ace00a85d812012621f796'
+                },
+                {
+                    $set: {
+                        level: 2,
+                        term: 1
+                    }
+                });
+
+        res.status(200).send(updatedCourseRegistrations);
     } catch(error) {
         res.status(404).send({
             error: error.message

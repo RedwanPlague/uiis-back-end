@@ -176,7 +176,7 @@ router.patch('/update/admin/:id', async (req, res) => {
 
         await admin.save()
 
-        res.send()
+        res.send(admin)
 
     } catch (error) {
         res.status(400).send({error: error.message})

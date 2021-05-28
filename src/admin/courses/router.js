@@ -57,13 +57,14 @@ router.get('/list', async (req, res) => {
     }
 })
 
-router.patch('/update/:id', async (req, res) => {
+router.patch('/update/:courseID/:syllabusID', async (req, res) => {
     const updates = Object.keys(req.body)
     
     try {
 
         const course = await Course.findOne({
-            _id : req.params.id
+            courseID : req.params.courseID,
+            syllabusID: req.params.syllabusID
         })
 
         if (!course) {

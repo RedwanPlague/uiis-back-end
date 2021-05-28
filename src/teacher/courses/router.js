@@ -3,21 +3,30 @@ const router =  express.Router();
 const {CourseSession} = require('../../admin/courseSessions/model');
 const CourseRegistration = require('../../admin/courseRegistrations/model');
 const Course = require('../../admin/courses/model');
-
-const mongoose = require('mongoose');
+const util = require('util');
 
 router.get('/', async (req, res)=> {
 
 	try {
 		const ret = await CourseSession
 			.find({'teachers.teacher': req.user._id})
-			.select('courseID session -_id')
+			.lean()
+			.select('course session -_id')
 			.populate({
-				path: 'courseID',
+				path: 'course',
 				select: 'courseID title -_id',
 			});
-		const currentCourseSessions = ret.filter(courseSession => courseSession.session.getFullYear() === 2021);
-		const previousCourseSessions = ret.filter(courseSession => courseSession.session.getFullYear() !== 2021);
+
+		ret.forEach(courseSession => {
+			courseSession.courseID = courseSession.course.courseID;
+			courseSession.title = courseSession.course.title;
+			courseSession.session = courseSession.session.getFullYear();
+			delete courseSession.course;
+		});
+
+		const currentCourseSessions = ret.filter(courseSession => courseSession.session === 2021);
+		const previousCourseSessions = ret.filter(courseSession => courseSession.session !== 2021);
+
 
 		res.status(200).json({currentCourseSessions, previousCourseSessions});
 	} catch (error) {
@@ -27,34 +36,68 @@ router.get('/', async (req, res)=> {
 	}
 });
 
+
+async function getCourseSession(courseID, session) {
+	let _ids = await CourseSession
+		.find({
+			session: new Date(session)
+		})
+		.lean()
+		.populate({
+			path: 'course',
+			select: 'courseID title',
+			match: {
+				courseID: courseID
+			}
+		})
+		.select('session registrationList teachers');
+
+	_ids = _ids.filter(_id => _id.course );
+	if(_ids) _ids = _ids[0];
+	return _ids;
+}
+
 router.get('/:courseID/:session', async (req, res) => {
 
 	try {
-		let _ids = await CourseSession
-			.find({
-				session: { $gte: new Date(req.params.session), $lt:  new Date(req.params.session +1) }
-			})
+		const courseSession = await getCourseSession(req.params.courseID, req.params.session)
+
+		if(!courseSession) {
+			res.status(200).json("");
+			return;
+		}
+
+		let teacher_details = courseSession.teachers.find(entry => entry.teacher === req.user._id );
+
+		if(!teacher_details) {
+			res.status(200).json("");
+			return;
+		}
+
+		const student_details = await CourseRegistration
+			.find(  {'_id': { $in: courseSession.registrationList}} )
+			.lean()
 			.populate({
-				path: 'courseID',
-				select: 'courseID',
-				match: {
-					courseID: req.params.courseID
-				}
+				path: 'student',
+				select: 'name'
 			})
-			.select('session registrationList');
-
-	 	_ids = _ids.filter(_id => _id.courseID );
-
-		 if(_ids.length === 0) {
-			 res.status(200).json(_ids);
-			 return;
-		 }
-
-		let ret = await CourseRegistration
-			.find(  {'_id': { $in: _ids[0].registrationList}} )
 			.select('student attendanceMarks evalMarks -_id');
 
-		res.status(200).json(ret);
+		student_details.forEach( entry => {
+			if(entry.evalMarks) entry.evalMarks = entry.evalMarks.filter(teachers => teachers.teacher === req.user._id);
+			if(entry.attendanceMarks) entry.attendanceMarks = entry.attendanceMarks.filter(teachers => teachers.teacher === req.user._id);
+			entry.student_name = entry.student.name;
+			entry.student_id = entry.student._id;
+			delete entry.student;
+		});
+		teacher_details.session = req.params.session;
+		teacher_details.courseID = req.params.courseID;
+		teacher_details.courseName = courseSession.course.title;
+
+		res.status(200).json({
+			teacher_details,
+			student_details
+		});
 
 	} catch (error) {
 		res.status(400).send({
@@ -63,131 +106,61 @@ router.get('/:courseID/:session', async (req, res) => {
 	}
 });
 
-
-router.post('/addCourseRegistration', async (req, res) => {
-
-	try {
-		const courseRegistration = new CourseRegistration({
-			courseSession: '60a63ba3376413350d428b9d',
-			student: 's4',
-			attendanceMarks: [
-				{
-					teacher: 't3',
-					mark: 30
-				},
-				{
-					teacher: 't2',
-					mark: 21
-				}
-			],
-			evalMarks: [
-				{
-					teacher: 't3',
-					mark: 19,
-					evalID: 1
-				},
-				{
-					teacher: 't3',
-					mark: 10,
-					evalID: 2
-				},
-				{
-					teacher: 't2',
-					mark: 15,
-					evalID: 1
-				},
-				{
-					teacher: 't2',
-					mark: 8,
-					evalID: 2
-				}
-			],
-		});
-
-		await courseRegistration.save();
-		res.status(201).json(courseRegistration);
-	} catch (error) {
-		res.status(400).send({
-			error: error.message
-		});
+router.patch('/:courseID/:session', async (req, res) => {
+	const student_data = req.body.student_data;
+	const courseSession = await getCourseSession(req.params.courseID, req.params.session);
+	if(!courseSession) {
+		res.status(400).json("");
+		return;
 	}
-
-
-});
-
-
-router.post('/add', async(req, res) => {
-
-	let _id;
-
 	try {
-		_id = await Course.findOne({'courseID': 'CSE201'}, '_id');
+		for(const student_entry of student_data) {
+			const courseReg = await CourseRegistration
+				.findOne({courseSession: courseSession._id , student: student_entry.student_id });
 
-	} catch(error) {
-		res.status(400).send({
-			error: error.message
-		});
-	}
-
-	const courseSession = new CourseSession({
-		courseID: _id,
-		session: new Date(),
-		perEvalWeight: 20,
-		totalEvalCount: 4,
-		consideredEvalCount: 3,
-		attendanceWeight: 10,
-		totalMarks: 300,
-		teachers: [
-			{
-				teacher: 't2',
-				evalCount: 2,
-				evalDescriptions: [
-					{
-						evalID: 1,
-						totalMarks: 20,
-					},
-					{
-						evalID: 2,
-						totalMarks: 20,
+			if(student_entry.attendance_mark) {
+				let added = false;
+				courseReg.attendanceMarks.forEach(attendance_entry => {
+					if( attendance_entry.teacher === req.user._id) {
+						attendance_entry.mark = student_entry.attendance_mark
+						added = true;
 					}
-				]
-			},
-			{
-				teacher: 't3',
-				evalCount: 2,
-				evalDescriptions: [
-					{
-						evalID: 1,
-						totalMarks: 20,
-					},
-					{
-						evalID: 2,
-						totalMarks: 20,
-					}
-				]
+				});
+				if(!added) courseReg.attendanceMarks.push({
+					teacher: req.user._id,
+					mark: student_entry.attendance_mark
+				})
 			}
-		]
-	});
 
-	try {
-		await courseSession.save();
+			student_entry.evalMarks.forEach(eval_entry=> {
 
-		const ret = await CourseSession
-			.findOne({_id: courseSession._id})
-			.populate({
-				path: 'teachers',
-				populate: 'teacher'
-			})
-			.populate('courseID');
+				let added = false;
+				courseReg.evalMarks.forEach(course_reg_entry => {
+					if( course_reg_entry.teacher === req.user._id && eval_entry.evalID === course_reg_entry.evalID) {
+						course_reg_entry.mark = eval_entry.mark;
+						added = true;
+					}
+				});
+				if(!added) courseReg.evalMarks.push({
+					teacher: req.user._id,
+					mark: eval_entry.mark,
+					evalID: eval_entry.evalID
 
-		res.status(201).json(ret);
+				})
+			});
+			await courseReg.save();
+
+		}
+		res.status(200).json({
+			message: "updated"
+		});
+
 	} catch (error) {
 		res.status(400).send({
 			error: error.message
 		});
 	}
 });
-
 
 
 module.exports = router;

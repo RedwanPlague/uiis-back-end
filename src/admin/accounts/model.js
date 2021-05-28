@@ -34,14 +34,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true,
         validate(value) {
-            if(!validator.isContactNumber(value)){
-                throw new Error('Contact Number is invalid!')
-            }
+            // if(!validator.isContactNumber(value)){
+            //     throw new Error('Contact Number is invalid!')
+            // }
         }
     },
     residentialAddress: {
         type: String,
-        required: true,
         trim: true
     },
     privileges: [{

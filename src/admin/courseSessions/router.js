@@ -15,6 +15,7 @@ router.post('/create', async (req,res) => {
             throw new Error('This course does not exist')
         } 
         req.body.course = course._id
+    
         const courseSession = new CourseSession(req.body)
         await courseSession.save()
 

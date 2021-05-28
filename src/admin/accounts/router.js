@@ -43,6 +43,12 @@ router.get('/student/list', async (req, res) => {
         }
     }
 
+    if(req.query.id) {
+        match['_id'] = req.query.id
+    }
+
+    console.log(match)
+
    try {
         const students = await Student.find(match)
         res.send(students)
@@ -50,6 +56,33 @@ router.get('/student/list', async (req, res) => {
     } catch (error) {
         req.status(500).send()
     }
+})
+
+
+router.patch('/update/student/:id', async (req, res) => {
+    console.log('hi')
+    const updates = Object.keys(req.body)
+    
+    try {
+
+        const student = await Student.findOne({
+            _id : req.params.id
+        })
+
+        if (!student) {
+            throw new Error('Student not found')
+        }
+        
+        updates.forEach((update) => student.set(update, req.body[update]))
+
+        await student.save()
+
+        res.send()
+
+    } catch (error) {
+        res.status(400).send({error: error.message})
+    }
+
 })
 
 router.get('/teacher/list', adminRequired, async (req, res) => {
@@ -62,6 +95,10 @@ router.get('/teacher/list', adminRequired, async (req, res) => {
             match[queryParams] = req.query[queryParams]
         }
     }
+    
+    if(req.query.id) {
+        match['_id'] = req.query.id
+    }
 
    try {
         const teachers = await Teacher.find(match)
@@ -73,6 +110,60 @@ router.get('/teacher/list', adminRequired, async (req, res) => {
      
 })
 
+router.patch('/update/teacher/:id', async (req, res) => {
+    const updates = Object.keys(req.body)
+    
+    try {
+        const teacher = await Teacher.findOne({
+            _id : req.params.id
+        })
+
+        if (!teacher) {
+            throw new Error('Teacher not found')
+        }
+        
+        updates.forEach((update) => teacher.set(update, req.body[update]))
+
+        await teacher.save()
+
+        res.send()
+
+    } catch (error) {
+        res.status(400).send({error: error.message})
+    }
+
+})
+
+router.patch('/update/admin/:id', async (req, res) => {
+    const updates = Object.keys(req.body)
+
+    try {
+
+        const admin = await Admin.findOne({
+            _id : req.params.id
+        })
+
+        if (!admin) {
+            throw new Error('Admin not found')
+        }
+
+        updates.forEach((update) => admin.set(update, req.body[update]))
+
+        await admin.save()
+
+        res.send(admin)
+
+    } catch (error) {
+        res.status(400).send({error: error.message})
+    }
+
+})
+
+/**
+ * Here is the getters
+ */
+
+
 router.get('/admin/list', adminRequired, async (req, res) => {
     let match = {}
 
@@ -83,6 +174,20 @@ router.get('/admin/list', adminRequired, async (req, res) => {
             match[queryParams] = req.query[queryParams]
         }
     }
+    if (req.query.name) {
+        match.name = {
+            $regex : new RegExp(req.query.name, 'i')
+        }
+    }
+
+    if (req.query.designation) {
+        match.designation = {
+            $regex : new RegExp(req.query.designation, 'i')
+        }
+    }
+    if(req.query.id) {
+        match['_id'] = req.query.id
+    }
 
    try {
         const admins = await Admin.find(match)
@@ -92,6 +197,43 @@ router.get('/admin/list', adminRequired, async (req, res) => {
         req.status(500).send()
     }
      
+})
+
+router.get('/student/list', adminRequired, async (req, res) => {
+    let match = {}
+
+    const queryList = ['name','email','contactNumber','department',
+        'hall', 'advisor', 'level', 'term','cgpa']
+
+    for (const queryParams of Object.keys(req.query)) {
+        if(queryList.includes(queryParams)) {
+            match[queryParams] = req.query[queryParams]
+        }
+    }
+
+    if (req.query.name) {
+        match.name = {
+            $regex : new RegExp(req.query.name, 'i')
+        }
+    }
+
+    if (req.query.designation) {
+        match.designation = {
+            $regex : new RegExp(req.query.designation, 'i')
+        }
+    }
+    if(req.query.id) {
+        match['_id'] = req.query.id
+    }
+
+    try {
+        const admins = await Admin.find(match)
+        res.send(admins)
+
+    } catch (error) {
+        req.status(500).send()
+    }
+
 })
 
 router.get('/privileges', logInRequired, async (req, res)=> {

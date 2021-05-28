@@ -6,31 +6,35 @@ const { saveMarks } = require("./middlewares");
 const { getCS } = require("./helpers");
 
 router.get("/:session", async (req, res) => {
-  const user = req.user;
-  const session = new Date(req.params.session); // might need to be changed
+  try {
+    const user = req.user;
+    const session = new Date(req.params.session); // might need to be changed
 
-  courseSessions = await CourseSession.find({
-    session: session,
-    "examiners.teacher": req.user.id,
-  }).populate("course");
+    courseSessions = await CourseSession.find({
+      session: session,
+      "examiners.teacher": req.user.id,
+    }).populate("course");
 
-  const toRet = [];
+    const toRet = [];
 
-  for (const courseSession of courseSessions) {
-    const sections = courseSession.examiners.filter(
-      (examiner) => examiner.teacher === req.user.id
-    );
+    for (const courseSession of courseSessions) {
+      const sections = courseSession.examiners.filter(
+        (examiner) => examiner.teacher === req.user.id
+      );
 
-    for (const section of sections) {
-      toRet.push({
-        courseID: courseSession.course.courseID,
-        courseTitle: courseSession.course.title,
-        part: section.part,
-      });
+      for (const section of sections) {
+        toRet.push({
+          courseID: courseSession.course.courseID,
+          courseTitle: courseSession.course.title,
+          part: section.part,
+        });
+      }
     }
-  }
 
-  res.send({ toRet });
+    res.send({ toRet });
+  } catch (error) {
+    res.sendStatus(404);
+  }
 });
 
 router.get("/:courseID/:session", async (req, res) => {
@@ -85,25 +89,29 @@ router.put("/:courseID/:session/save", saveMarks, async (req, res) => {
 });
 
 router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
-  const user = req.user;
-  const courseID = req.params.courseID;
-  const session = new Date(req.params.session);
-  const part = req.body.part,
-    students = req.body.students;
+  try {
+    const user = req.user;
+    const courseID = req.params.courseID;
+    const session = new Date(req.params.session);
+    const part = req.body.part,
+      students = req.body.students;
 
-  const courseSession = await getCS(courseID, session);
+    const courseSession = await getCS(courseID, session);
 
-  const section = courseSession.examiners.find(
-    (examiner) => examiner.part === part && examiner.teacher === user._id
-  );
+    const section = courseSession.examiners.find(
+      (examiner) => examiner.part === part && examiner.teacher === user._id
+    );
 
-  if (section) {
-    section.resultEditAccess = false;
+    if (section) {
+      section.resultEditAccess = false;
+    }
+
+    courseSession.save();
+
+    res.send({ message: "hemlo" });
+  } catch (error) {
+    res.sendStatus(404);
   }
-
-  courseSession.save();
-
-  res.send({ message: "hemlo" });
 });
 
 module.exports = router;

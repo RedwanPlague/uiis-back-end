@@ -34,14 +34,22 @@ router.get('/student/list', async (req, res) => {
     let match = {}
 
     const queryList = ['name','email','contactNumber','department',
-        'hall','advisor','level','term','id'
+        'hall','advisor','level','term'
     ]
+
+    
 
     for (const queryParams of Object.keys(req.query)) {
         if(queryList.includes(queryParams)) {
             match[queryParams] = req.query[queryParams]
         }
     }
+
+    if(req.query.id) {
+        match['_id'] = req.query.id
+    }
+
+    console.log(match)
 
    try {
         const students = await Student.find(match)
@@ -55,12 +63,16 @@ router.get('/student/list', async (req, res) => {
 router.get('/teacher/list', adminRequired, async (req, res) => {
     let match = {}
 
-    const queryList = ['name','email','contactNumber','department','id']
+    const queryList = ['name','email','contactNumber','department']
 
     for (const queryParams of Object.keys(req.query)) {
         if(queryList.includes(queryParams)) {
             match[queryParams] = req.query[queryParams]
         }
+    }
+    
+    if(req.query.id) {
+        match['_id'] = req.query.id
     }
 
    try {
@@ -76,12 +88,16 @@ router.get('/teacher/list', adminRequired, async (req, res) => {
 router.get('/admin/list', adminRequired, async (req, res) => {
     let match = {}
 
-    const queryList = ['name','email','contactNumber','designation','id']
+    const queryList = ['name','email','contactNumber','designation']
 
     for (const queryParams of Object.keys(req.query)) {
         if(queryList.includes(queryParams)) {
             match[queryParams] = req.query[queryParams]
         }
+    }
+
+    if(req.query.id) {
+        match['_id'] = req.query.id
     }
 
    try {

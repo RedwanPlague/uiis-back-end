@@ -34,7 +34,7 @@ router.get('/student/list', async (req, res) => {
     let match = {}
 
     const queryList = ['name','email','contactNumber','department',
-        'hall','advisor','level','term'
+        'hall','advisor','level','term','id'
     ]
 
     for (const queryParams of Object.keys(req.query)) {
@@ -55,7 +55,7 @@ router.get('/student/list', async (req, res) => {
 router.get('/teacher/list', adminRequired, async (req, res) => {
     let match = {}
 
-    const queryList = ['name','email','contactNumber','department']
+    const queryList = ['name','email','contactNumber','department','id']
 
     for (const queryParams of Object.keys(req.query)) {
         if(queryList.includes(queryParams)) {
@@ -76,7 +76,7 @@ router.get('/teacher/list', adminRequired, async (req, res) => {
 router.get('/admin/list', adminRequired, async (req, res) => {
     let match = {}
 
-    const queryList = ['name','email','contactNumber','designation']
+    const queryList = ['name','email','contactNumber','designation','id']
 
     for (const queryParams of Object.keys(req.query)) {
         if(queryList.includes(queryParams)) {

@@ -86,6 +86,8 @@ router.post('/newSessionBatch', async (req, res)=> {
         //     console.log(value.course)
         // })
 
+        let newRegistrationList = []
+
         for (const student of students){
             for (const courseSession of courseSessions){
                 if (courseSession.course.level !== student.level || courseSession.course.term !== student.term)
@@ -94,7 +96,13 @@ router.post('/newSessionBatch', async (req, res)=> {
                 let canTake = true
                 for (const pre of courseSession.course.prerequisites){
                     let passed = false
+
                     for (const regEl of student.registrationList) {
+                        
+                        // if(!regEl.courseSession.course){
+                        //     console.log(student._id,courseSession.course._id)
+                        //     continue
+                        // }
 
                         if (regEl.courseSession.course.equals(pre._id)){
                             passed |= (regEl.status === 'passed')
@@ -113,14 +121,28 @@ router.post('/newSessionBatch', async (req, res)=> {
                     courseRegistration.status = 'offered'
                     await courseRegistration.save()
 
-                    courseSession.registrationList.push(courseRegistration)
-                    student.registrationList.push(courseRegistration)
+                    // courseSession.registrationList.push(courseRegistration)
+                    // student.registrationList.push(courseRegistration)
 
-                    await courseSession.save()
-                    await student.save()
+                    newRegistrationList.push(courseRegistration)
+
                 }
             }
         }
+
+        for (const newRegistration of newRegistrationList){
+            
+            const student = await Student.findById(newRegistration.student)
+            const courseSession = await CourseSession.findById(newRegistration.courseSession)
+
+            student.registrationList.push(newRegistration)
+            courseSession.registrationList.push(newRegistration)
+
+            await student.save()
+            await courseSession.save()
+        }
+
+        
 
         res.send()
     } catch (error){

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
 const CourseRegistrations = require("../../admin/courseRegistrations/model");
+const { getCS } = require("./helpers");
 
 const saveMarks = async (req, res, next) => {
   try {
@@ -11,14 +12,7 @@ const saveMarks = async (req, res, next) => {
     const part = req.body.part,
       students = req.body.students;
 
-    const courseSession = await CourseSession.findOne({
-      session,
-    }).populate({
-      path: "course",
-      match: {
-        courseID: { $eq: courseID },
-      },
-    });
+    const courseSession = await getCS(courseID, session);
 
     const regiList = courseSession.registrationList;
     const fullRegiList = [];
@@ -26,8 +20,6 @@ const saveMarks = async (req, res, next) => {
       fullRegi = await CourseRegistrations.findById(regID);
       fullRegiList.push(fullRegi);
     }
-
-    //console.log(fullRegiList);
 
     students.forEach((student) => {
       const stuID = student.studentID,

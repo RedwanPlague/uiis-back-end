@@ -17,7 +17,7 @@ router.post('/create', adminRequired, async (req, res)=> {
 })
 
 // check proper privilege and if teacher with provost id exists?
-router.patch('update/:id', adminRequired, async (req, res)=> {
+router.patch('/update/:id', adminRequired, async (req, res)=> {
     const allowedUpdates = ['name', 'provost']
     const updates = Object.keys(req.body)
 

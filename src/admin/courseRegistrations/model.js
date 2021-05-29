@@ -43,7 +43,7 @@ const courseRegistrationSchema = new mongoose.Schema({
             },
             mark: {
                 type: Number,
-                required: true
+                // required: true
             }
         }
     ],
@@ -56,7 +56,7 @@ const courseRegistrationSchema = new mongoose.Schema({
             },
             mark: {
                 type: Number,
-                required: true
+                // required: true
             },
             evalID: {
                 type: Number,

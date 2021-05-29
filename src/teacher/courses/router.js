@@ -1,9 +1,7 @@
 const express = require('express');
 const router =  express.Router();
 const {CourseSession} = require('../../admin/courseSessions/model');
-const CourseRegistration = require('../../admin/courseRegistrations/model');
-const Course = require('../../admin/courses/model');
-const util = require('util');
+const {CourseRegistration} = require('../../admin/courseRegistrations/model');
 
 router.get('/', async (req, res)=> {
 
@@ -39,29 +37,36 @@ router.get('/', async (req, res)=> {
 
 
 async function getCourseSession(courseID, session) {
-	let _ids = await CourseSession
-		.find({
-			session: new Date(session)
-		})
-		.lean()
-		.populate({
-			path: 'course',
-			select: 'courseID title',
-			match: {
-				courseID: courseID
-			}
-		})
-		.select('session registrationList teachers');
 
-	_ids = _ids.filter(_id => _id.course );
-	if(_ids) _ids = _ids[0];
-	return _ids;
+	try {
+		let _ids = await CourseSession
+			.find({
+				session: new Date(session)
+			})
+			.populate({
+				path: 'course',
+				select: 'courseID title',
+				match: {
+					courseID: courseID
+				}
+			})
+			.select('session registrationList teachers');
+
+		_ids = _ids.filter(_id => _id.course);
+		if (_ids) _ids = _ids[0];
+
+		return _ids;
+	} catch (error) {
+		throw new Error(error);
+	}
+
+
 }
 
 router.get('/:courseID/:session', async (req, res) => {
 
 	try {
-		const courseSession = await getCourseSession(req.params.courseID, req.params.session)
+		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 
 		if(!courseSession) {
 			res.status(200).json("");
@@ -74,6 +79,8 @@ router.get('/:courseID/:session', async (req, res) => {
 			res.status(200).json("");
 			return;
 		}
+
+		teacher_details = teacher_details.toObject();
 
 		const student_details = await CourseRegistration
 			.find(  {'_id': { $in: courseSession.registrationList}} )
@@ -95,6 +102,7 @@ router.get('/:courseID/:session', async (req, res) => {
 		teacher_details.courseID = req.params.courseID;
 		teacher_details.courseName = courseSession.course.title;
 
+
 		res.status(200).json({
 			teacher_details,
 			student_details
@@ -109,30 +117,37 @@ router.get('/:courseID/:session', async (req, res) => {
 
 router.patch('/:courseID/:session', async (req, res) => {
 
-	const courseSession = await getCourseSession(req.params.courseID, req.params.session);
-	if(!courseSession) {
-		res.status(400).json("");
-		return;
-	}
-	const student_data = req.body.student_data;
 	try {
+		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
+		if(!courseSession) {
+			res.status(400).json("");
+			return;
+		}
+		const student_data = req.body.student_data;
+		const course_data = req.body.course_data;
+
+		courseSession.teachers.forEach(entry=> {
+			if(entry.teacher === req.user._id) {
+				entry.classCount = course_data.classCount;
+			}
+		});
+		await courseSession.save();
+
 		for(const student_entry of student_data) {
 			const courseReg = await CourseRegistration
 				.findOne({courseSession: courseSession._id , student: student_entry.student_id });
 
-			if(student_entry.attendance_mark) {
-				let added = false;
-				courseReg.attendanceMarks.forEach(attendance_entry => {
-					if( attendance_entry.teacher === req.user._id) {
-						attendance_entry.mark = student_entry.attendance_mark
-						added = true;
-					}
-				});
-				if(!added) courseReg.attendanceMarks.push({
-					teacher: req.user._id,
-					mark: student_entry.attendance_mark
-				})
-			}
+			let added = false;
+			courseReg.attendanceMarks.forEach(attendance_entry => {
+				if( attendance_entry.teacher === req.user._id) {
+					attendance_entry.mark = student_entry.attendance_mark
+					added = true;
+				}
+			});
+			if(!added) courseReg.attendanceMarks.push({
+				teacher: req.user._id,
+				mark: student_entry.attendance_mark
+			});
 
 			student_entry.evalMarks.forEach(eval_entry=> {
 
@@ -158,6 +173,7 @@ router.patch('/:courseID/:session', async (req, res) => {
 		});
 
 	} catch (error) {
+		console.log(error.message);
 		res.status(400).send({
 			error: error.message
 		});

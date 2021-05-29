@@ -12,7 +12,7 @@ const getCorSes = async (courseID, session) => {
     })
     .populate({
       path: "registrationList",
-      select: "termFinalMarks student",
+      select: "attendanceMarks evalMarks termFinalMarks student",
       match: { status: { $eq: "offered" } }, // NEED TO CHANGE 'OFFERED' TO 'REGISTERED'
       populate: {
         path: "student",

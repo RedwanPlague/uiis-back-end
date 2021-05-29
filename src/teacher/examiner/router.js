@@ -36,7 +36,8 @@ router.get("/:session", async (req, res) => {
 
     res.send({ toRet });
   } catch (error) {
-    res.status(404).send({ error });
+    console.log(error);
+    res.status(404).send(error);
   }
 });
 
@@ -81,6 +82,7 @@ router.put("/:courseID/:session/save", saveMarks, async (req, res) => {
   try {
     res.send(req.body);
   } catch (error) {
+    console.log(error);
     res.status(404).send(error);
   }
 });
@@ -106,7 +108,8 @@ router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
 
     res.send(req.body);
   } catch (error) {
-    res.sendStatus(404);
+    console.log(error);
+    res.status(404).send(error);
   }
 });
 

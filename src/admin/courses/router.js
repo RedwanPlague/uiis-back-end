@@ -52,6 +52,12 @@ router.get('/list', async (req, res) => {
         creditMax = Math.min(creditMax, parseFloat(req.query.creditMax))
     }
 
+    if (req.query.title) {
+        match.title = {
+            "$regex" : new RegExp(req.query.title, 'i')
+        }
+    }
+
     match['credit'] = {
         "$gte": creditMin,
         "$lte": creditMax

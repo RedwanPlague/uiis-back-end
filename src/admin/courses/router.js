@@ -13,7 +13,7 @@ router.post('/create', courseCreationAuth, async (req, res) => {
             await Promise.all(req.body.prerequisites.map(async (value) => {
                 const course = await Course.findOne(value)
                 if (!course){
-                    throw new Error(value + " does not exist")
+                    throw new Error(`(courseID: ${value.courseID},syllabusID: ${value.syllabusID}) does not exist`)
                 }
                 prerequisites.push(course._id)
             }))
@@ -74,9 +74,8 @@ router.get('/list', async (req, res) => {
 
 router.patch('/update/:courseID/:syllabusID', async (req, res) => {
     const updates = Object.keys(req.body)
-    
-    try {
 
+    try {
         const course = await Course.findOne({
             courseID : req.params.courseID,
             syllabusID: req.params.syllabusID
@@ -86,8 +85,23 @@ router.patch('/update/:courseID/:syllabusID', async (req, res) => {
             throw new Error('Course not found')
         }
         
-        updates.forEach((update) => course.set(update, req.body[update]))
+        updates.forEach((update) => {
+            if (update !== 'prerequisites') {
+                course.set(update, req.body[update])
+            }
+        })
 
+        if (req.body.prerequisites){
+            let prerequisites = []
+            await Promise.all(req.body.prerequisites.map(async (value) => {
+                const course = await Course.findOne(value)
+                if (!course){
+                    throw new Error(`(courseID: ${value.courseID},syllabusID: ${value.syllabusID}) does not exist`)
+                }
+                prerequisites.push(course._id)
+            }))
+            course.prerequisites = prerequisites
+        }
         await course.save()
 
         res.send(course)

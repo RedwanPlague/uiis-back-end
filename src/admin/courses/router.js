@@ -5,7 +5,6 @@ const {courseCreationAuth} = require('./middlewares')
 
 const router = new express.Router()
 
-
 router.post('/create', courseCreationAuth, async (req, res) => {
 
     try {
@@ -21,8 +20,6 @@ router.post('/create', courseCreationAuth, async (req, res) => {
 
             req.body.prerequisites = prerequisites
         }
-
-        
         const course = new Course(req.body)
         await course.save()
         
@@ -38,8 +35,8 @@ router.get('/list', async (req, res) => {
     let match = {}
 
     const queryList = ['offeredToDepartment', 'offeredByDepartment',
-        'courseID','syllabusID','level','term','courseID','syllabusID',
-        'title','credit'
+        'level','term','courseID','syllabusID',
+        'title'
     ]
 
     for (const queryParams of Object.keys(req.query)) {
@@ -47,13 +44,25 @@ router.get('/list', async (req, res) => {
             match[queryParams] = req.query[queryParams]
         }
     }
+    let creditMin = 0, creditMax = 10 // assuming credit max = 10, credit min = 0
+    if (req.query.creditMin) {
+        creditMin = Math.max(creditMin, parseFloat(req.query.creditMin))
+    }
+    if (req.query.creditMax) {
+        creditMax = Math.min(creditMax, parseFloat(req.query.creditMax))
+    }
+
+    match['credit'] = {
+        "$gte": creditMin,
+        "$lte": creditMax
+    }
 
    try {
         const courses = await Course.find(match)
         res.send(courses)
         
     } catch (error) {
-        req.status(500).send()
+        res.status(500).send()
     }
 })
 

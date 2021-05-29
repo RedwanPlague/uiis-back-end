@@ -12,11 +12,12 @@ router.get("/:session", async (req, res) => {
     courseSessions = await CourseSession.find({
       session: session,
       "scrutinizers.teacher": user.id,
-    }).select("course")
-    .populate({
-      path: "course",
-      select: "courseID title"
-    });
+    })
+      .select("course")
+      .populate({
+        path: "course",
+        select: "courseID title",
+      });
 
     const toRet = courseSessions.map((cs) => ({
       courseID: cs.course.courseID,
@@ -37,7 +38,38 @@ router.get("/:courseID/:session", async (req, res) => {
 
     const courseSession = await getCorSes(courseID, session);
 
-    res.send({ students: courseSession.registrationList, });
+    let allApproved = true;
+    // courseSession.teachers.forEach(teacher => {
+    //   allApproved = (allApproved && !teacher.editAccess);
+    // });
+    // courseSession.examiners.forEach(examiner => {
+    //   allApproved = (allApproved && !examiner.resultEditAccess);
+    // });
+
+    if (allApproved) {
+      // let attendanceCount = 0;
+      // let evalTotalMarks = [];
+      // let tfTotalMarks = courseSession.examiners;
+
+      // courseSession.teachers.forEach(teacher => {
+      //   attendanceCount += teacher.classCount;
+      //   evalTotalMarks.push(...teacher.evalDescriptions);
+      // });
+
+      // const totalMarks = {
+      //   attendanceCount,
+      //   evalTotalMarks,
+      //   tfTotalMarks,
+      // };
+
+      res.send({
+        teachers: courseSession.teachers,
+        examiners: courseSession.examiners,
+        students: courseSession.registrationList,
+      });
+    } else {
+      res.status(401).send({ message: "Not everyone submitted" });
+    }
   } catch (error) {
     console.log(error);
     res.status(404).send(error);

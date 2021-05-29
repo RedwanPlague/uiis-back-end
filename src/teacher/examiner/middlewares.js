@@ -1,8 +1,5 @@
-const express = require("express");
-const router = express.Router();
-const { CourseSession } = require("../../admin/courseSessions/model");
-const CourseRegistrations = require("../../admin/courseRegistrations/model");
-const { getCS } = require("./helpers");
+const { CourseRegistration } = require("../../admin/courseRegistrations/model");
+const { getCorSes } = require("./helpers");
 
 const saveMarks = async (req, res, next) => {
   try {
@@ -12,26 +9,22 @@ const saveMarks = async (req, res, next) => {
     const part = req.body.part,
       students = req.body.students;
 
-    const courseSession = await getCS(courseID, session);
+    const courseSession = await getCorSes(courseID, session);
 
     const regiList = courseSession.registrationList;
-    const fullRegiList = [];
-    for (const regID of regiList) {
-      fullRegi = await CourseRegistrations.findById(regID);
-      fullRegiList.push(fullRegi);
-    }
 
     students.forEach((student) => {
       const stuID = student.studentID,
         mark = student.mark;
 
-      const stuRegi = fullRegiList.find((reg) => reg.student === stuID);
-      // console.log(stuRegi);
+      const stuRegi = regiList.find((reg) => reg.student.id === stuID);
 
       if (stuRegi) {
         let section = stuRegi.termFinalMarks.find(
-          (section) => section.examiner === user._id && section.part === part
+          (section) => section.examiner === user.id && section.part === part
         );
+
+        console.log(stuID);
 
         if (!section) {
           section = {
@@ -42,11 +35,7 @@ const saveMarks = async (req, res, next) => {
           stuRegi.termFinalMarks.push(section);
         }
 
-        else {
-          section.examiner = user.id;
-          section.mark = Number(mark);
-          section.part = part;
-        }
+        else section.mark = Number(mark);
 
         stuRegi.save();
       }
@@ -55,7 +44,7 @@ const saveMarks = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    res.sendStatus(404)
+    res.status(404).send(error);
   }
 };
 

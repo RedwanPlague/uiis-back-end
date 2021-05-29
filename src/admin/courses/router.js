@@ -64,7 +64,10 @@ router.get('/list', async (req, res) => {
     }
 
    try {
-        const courses = await Course.find(match)
+        const courses = await Course.find(match).populate({
+            path: 'prerequisites',
+            select: 'courseID syllabusID -_id'
+        })
         res.send(courses)
         
     } catch (error) {

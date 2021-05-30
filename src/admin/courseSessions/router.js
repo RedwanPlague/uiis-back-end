@@ -17,7 +17,7 @@ router.post('/create', async (req,res) => {
         req.body.course = course._id
     
         const courseSession = new CourseSession(req.body)
-        await courseSession.save()
+        await courseSession.save(courseSession)
 
         res.status(201).send()
         

@@ -63,8 +63,7 @@ router.get('/advisees/:id/grades', async (req, res) => {
             grades = await CourseRegistration
                 .find({
                     'student': req.params.id,
-                    'level': req.query.level,
-                    'term': req.query.term
+                    'result.gradeLetter': req.query.grade
                 })
                 .select('level term result.gradePoint result.gradeLetter status')
                 .populate({

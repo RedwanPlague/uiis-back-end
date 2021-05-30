@@ -137,6 +137,14 @@ router.get('/admin/list', adminRequired, async (req, res) => {
         match['_id'] = req.query.id
     }
 
+    if(req.query.privileges) {
+        match.privileges = {
+             $all: req.query.privileges 
+        }
+    }
+
+    console.log(match)
+
    try {
         const admins = await Admin.find(match)
         res.send(admins)

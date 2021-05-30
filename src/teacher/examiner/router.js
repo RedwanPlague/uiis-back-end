@@ -2,21 +2,28 @@ const express = require("express");
 const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
 const { saveMarks } = require("./middlewares");
-const { getCorSes } = require("./helpers");
+const { getCorSes, getCorSes2 } = require("./helpers");
 
 router.get("/:session", async (req, res) => {
   try {
     const user = req.user;
     const session = new Date(req.params.session); // might need to be changed
 
+    //console.log(session);
+
     courseSessions = await CourseSession.find({
-      session: session,
+      session,
       "examiners.teacher": user.id,
-    }).select("course examiners")
+    }).select("course examiners session")
     .populate({
       path: "course",
       select: "courseID title"
     });
+
+    //console.log(courseSessions);
+    for (const cr of courseSessions) {
+      console.log(cr.session);
+    }
 
     const toRet = [];
 
@@ -33,6 +40,8 @@ router.get("/:session", async (req, res) => {
 
       toRet.push(...notun);
     }
+
+    //console.log(toRet);
 
     res.send({ toRet });
   } catch (error) {
@@ -56,7 +65,7 @@ router.get("/:courseID/:session", async (req, res) => {
     const totalMarks = section.totalMarks;
     const editAccess = section.resultEditAccess;
 
-    console.log(courseSession);
+    //console.log(courseSession);
 
     const students = courseSession.registrationList.map(regi => {
       const studentID = regi.student.id;
@@ -94,11 +103,13 @@ router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
     const session = new Date(req.params.session);
     const part = req.body.part;
 
-    const courseSession = await getCorSes(courseID, session);
+    const courseSession = await getCorSes2(courseID, session);
 
     const section = courseSession.examiners.find(
       (examiner) => examiner.part === part && examiner.teacher === user.id
     );
+
+    console.log(section);
 
     if (section) {
       section.resultEditAccess = false;

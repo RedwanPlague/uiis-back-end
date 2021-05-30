@@ -17,6 +17,9 @@ const saveMarks = async (req, res, next) => {
       const stuID = student.studentID,
         mark = student.mark;
 
+        //console.log(stuID);
+        //console.log(mark);
+
       const stuRegi = regiList.find((reg) => reg.student.id === stuID);
 
       if (stuRegi) {
@@ -24,7 +27,7 @@ const saveMarks = async (req, res, next) => {
           (section) => section.examiner === user.id && section.part === part
         );
 
-        console.log(stuID);
+        //console.log(stuID);
 
         if (!section) {
           section = {
@@ -36,6 +39,10 @@ const saveMarks = async (req, res, next) => {
         }
 
         else section.mark = Number(mark);
+
+        //console.log(section);
+
+        //console.log(stuRegi);
 
         stuRegi.save();
       }

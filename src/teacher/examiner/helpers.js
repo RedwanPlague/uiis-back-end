@@ -53,6 +53,30 @@ const getCorSes = async (courseID, session) => {
   return cs;
 };
 
+const getCorSes2 = async (courseID, session) => {
+  const courseSessions = await CourseSession.find({
+    session,
+  })
+    .populate({
+      path: "course",
+      match: {
+        courseID: { $eq: courseID },
+      },
+    })
+    .populate({
+      path: "registrationList",
+      select: "attendanceMarks evalMarks termFinalMarks student",
+      match: { status: { $eq: "offered" } }, // NEED TO CHANGE 'OFFERED' TO 'REGISTERED'
+      populate: {
+        path: "student",
+        select: "name",
+      },
+    });
+
+  const cs = courseSessions.find((cs) => cs.course);
+  return cs;
+};
+
 module.exports = {
-  getCorSes,
+  getCorSes, getCorSes2
 };

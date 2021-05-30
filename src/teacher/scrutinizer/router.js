@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
 const { CourseRegistration } = require("../../admin/courseRegistrations/model");
-const { getCorSes } = require("../examiner/helpers");
+const { getCorSes, getCorSes2 } = require("../examiner/helpers");
 
 router.get("/:session", async (req, res) => {
   try {
@@ -89,7 +89,7 @@ router.put("/:courseID/:session/approve", async (req, res) => {
     const courseID = req.params.courseID;
     const session = new Date(req.params.session);
 
-    const courseSession = await getCorSes(courseID, session);
+    const courseSession = await getCorSes2(courseID, session);
 
     const section = courseSession.scrutinizers.find(
       (scrutinizer) => scrutinizer.teacher === user.id

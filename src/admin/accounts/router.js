@@ -143,7 +143,7 @@ router.get('/admin/list', adminRequired, async (req, res) => {
         }
     }
 
-    console.log(match)
+    // console.log(match)
 
    try {
         const admins = await Admin.find(match)

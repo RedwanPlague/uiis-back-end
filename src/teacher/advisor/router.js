@@ -40,22 +40,42 @@ router.get('/advisees/:id', async (req, res) => {
 
 router.get('/advisees/:id/grades', async (req, res) => {
     try {
-        const grades = await CourseRegistration
-            .find({
-                'student': req.params.id,
-                'level': req.query.level,
-                'term': req.query.term
-            })
-            .select('level term result.gradePoint result.gradeLetter status')
-            .populate({
-                path: 'courseSession',
-                select: 'course',
-                populate: {
-                    path: 'course',
-                    select: 'courseID title credit'
-                }
-            });
+        let grades = [];
 
+        if(req.query.filter === 'semester') {
+            grades = await CourseRegistration
+                .find({
+                    'student': req.params.id,
+                    'level': req.query.level,
+                    'term': req.query.term
+                })
+                .select('level term result.gradePoint result.gradeLetter status')
+                .populate({
+                    path: 'courseSession',
+                    select: 'course',
+                    populate: {
+                        path: 'course',
+                        select: 'courseID title credit'
+                    }
+                });
+        } else if(req.query.filter === 'grade') {
+            /* under construction */
+            grades = await CourseRegistration
+                .find({
+                    'student': req.params.id,
+                    'level': req.query.level,
+                    'term': req.query.term
+                })
+                .select('level term result.gradePoint result.gradeLetter status')
+                .populate({
+                    path: 'courseSession',
+                    select: 'course',
+                    populate: {
+                        path: 'course',
+                        select: 'courseID title credit'
+                    }
+                });
+        }
         res.status(200).send(grades);
     } catch(error) {
         res.status(400).send({

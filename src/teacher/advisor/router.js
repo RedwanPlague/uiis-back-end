@@ -5,6 +5,7 @@ const { CourseRegistration } = require('../../admin/courseRegistrations/model');
 
 const router =  express.Router();
 
+/* backend api calls: main */
 router.get('/advisees', async (req, res) => {
     try {
         const advisees = await Student
@@ -147,6 +148,7 @@ router.patch('/registrations/:id/reject', async (req, res) => {
     }
 });
 
+/* backend api calls: auxiliary */
 router.patch('/update', async (req, res) => {
     try {
         /* updates courseRegistration documents with level/term based on courseSession */
@@ -162,6 +164,27 @@ router.patch('/update', async (req, res) => {
                 });
 
         res.status(200).send(updatedCourseRegistrations);
+    } catch(error) {
+        res.status(404).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/registrations/:id/applied', async (req, res) => {
+    try {
+        /* advisee.status: unregistered/applied/waiting/registered -> applied */
+        const updatedAdvisee = await Student
+            .updateOne({
+                    _id: req.params.id
+                },
+                {
+                    $set: {
+                        status: 'applied'
+                    }
+                });
+
+        res.status(200).send(updatedAdvisee);
     } catch(error) {
         res.status(404).send({
             error: error.message

@@ -1,10 +1,11 @@
 const express = require('express');
 
 const { Student } = require('../../admin/accounts/model');
-const CourseRegistration = require('../../admin/courseRegistrations/model');
+const { CourseRegistration } = require('../../admin/courseRegistrations/model');
 
 const router =  express.Router();
 
+/* backend api calls: main */
 router.get('/advisees', async (req, res) => {
     try {
         const advisees = await Student
@@ -39,22 +40,42 @@ router.get('/advisees/:id', async (req, res) => {
 
 router.get('/advisees/:id/grades', async (req, res) => {
     try {
-        const grades = await CourseRegistration
-            .find({
-                'student': req.params.id,
-                'level': req.query.level,
-                'term': req.query.term
-            })
-            .select('level term result.gradePoint result.gradeLetter status')
-            .populate({
-                path: 'courseSession',
-                select: 'course',
-                populate: {
-                    path: 'course',
-                    select: 'courseID title credit'
-                }
-            });
+        let grades = [];
 
+        if(req.query.filter === 'semester') {
+            grades = await CourseRegistration
+                .find({
+                    'student': req.params.id,
+                    'level': req.query.level,
+                    'term': req.query.term
+                })
+                .select('level term result.gradePoint result.gradeLetter status')
+                .populate({
+                    path: 'courseSession',
+                    select: 'course',
+                    populate: {
+                        path: 'course',
+                        select: 'courseID title credit'
+                    }
+                });
+        } else if(req.query.filter === 'grade') {
+            /* under construction */
+            grades = await CourseRegistration
+                .find({
+                    'student': req.params.id,
+                    'level': req.query.level,
+                    'term': req.query.term
+                })
+                .select('level term result.gradePoint result.gradeLetter status')
+                .populate({
+                    path: 'courseSession',
+                    select: 'course',
+                    populate: {
+                        path: 'course',
+                        select: 'courseID title credit'
+                    }
+                });
+        }
         res.status(200).send(grades);
     } catch(error) {
         res.status(400).send({
@@ -147,6 +168,7 @@ router.patch('/registrations/:id/reject', async (req, res) => {
     }
 });
 
+/* backend api calls: auxiliary */
 router.patch('/update', async (req, res) => {
     try {
         /* updates courseRegistration documents with level/term based on courseSession */
@@ -162,6 +184,27 @@ router.patch('/update', async (req, res) => {
                 });
 
         res.status(200).send(updatedCourseRegistrations);
+    } catch(error) {
+        res.status(404).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/registrations/:id/applied', async (req, res) => {
+    try {
+        /* advisee.status: unregistered/applied/waiting/registered -> applied */
+        const updatedAdvisee = await Student
+            .updateOne({
+                    _id: req.params.id
+                },
+                {
+                    $set: {
+                        status: 'applied'
+                    }
+                });
+
+        res.status(200).send(updatedAdvisee);
     } catch(error) {
         res.status(404).send({
             error: error.message

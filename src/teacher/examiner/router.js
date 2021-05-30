@@ -66,7 +66,7 @@ router.get("/:courseID/:session", async (req, res) => {
         (section) => section.examiner === user.id && section.part === part
       );
 
-      const mark = section ? section.mark : -1;
+      const mark = section ? section.mark : "";
 
       return ({ studentID, studentName, mark });
     });

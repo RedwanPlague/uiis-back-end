@@ -35,6 +35,7 @@ router.get("/:courseID/:session", async (req, res) => {
   try {
     const courseID = req.params.courseID;
     const session = new Date(req.params.session);
+    const user = req.user;
 
     const courseSession = await getCorSes(courseID, session);
 
@@ -62,7 +63,13 @@ router.get("/:courseID/:session", async (req, res) => {
       //   tfTotalMarks,
       // };
 
+      const section = courseSession.scrutinizers.find(
+        (scrutinizer) => scrutinizer.teacher === user.id
+      );
+
       res.send({
+        hasApprovedResult: section.hasApprovedResult,
+        names: courseSession.names,
         teachers: courseSession.teachers,
         examiners: courseSession.examiners,
         students: courseSession.registrationList,

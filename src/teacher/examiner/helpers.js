@@ -11,6 +11,18 @@ const getCorSes = async (courseID, session) => {
       },
     })
     .populate({
+      path: "teachers.teacher",
+      select: "name",
+    })
+    .populate({
+      path: "examiners.teacher",
+      select: "name",
+    })
+    .populate({
+      path: "scrutinizers.teacher",
+      select: "name",
+    })
+    .populate({
       path: "registrationList",
       select: "attendanceMarks evalMarks termFinalMarks student",
       match: { status: { $eq: "offered" } }, // NEED TO CHANGE 'OFFERED' TO 'REGISTERED'
@@ -20,7 +32,25 @@ const getCorSes = async (courseID, session) => {
       },
     });
 
-  return courseSessions.find((cs) => cs.course);
+  const cs = courseSessions.find((cs) => cs.course);
+
+  cs.registrationList.sort((a, b) => (a.student.id < b.student.id ? -1 : 1));
+
+  cs.names = {};
+
+  for (const teacher of cs.teachers)
+    cs.names[teacher.teacher.id] = teacher.teacher.name;
+  for (const examiner of cs.examiners)
+    cs.names[examiner.teacher.id] = examiner.teacher.name;
+  for (const scrutinizer of cs.scrutinizers)
+    cs.names[scrutinizer.teacher.id] = scrutinizer.teacher.name;
+
+  for (const teacher of cs.teachers) teacher.teacher = teacher.teacher.id;
+  for (const examiner of cs.examiners) examiner.teacher = examiner.teacher.id;
+  for (const scrutinizer of cs.scrutinizers)
+    scrutinizer.teacher = scrutinizer.teacher.id;
+
+  return cs;
 };
 
 module.exports = {

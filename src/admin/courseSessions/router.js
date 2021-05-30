@@ -30,12 +30,25 @@ router.post('/create', async (req,res) => {
 
 router.get('/list', async (req, res) => {
     let match = {}
-
     if (req.query.session) {
         match.session = req.query.session
     }
-   
     try {
+
+        if(req.query.courseID && req.query.syllabusID){
+
+            const course = await Course.findOne({
+                courseID: req.query.courseID,
+                syllabusID: req.query.syllabusID
+            })
+
+            if(!course){
+                throw new Error('Invalid course or syllabus ID')
+            } 
+            match.course = course._id
+    
+
+        }
         const courseSessions = await CourseSession.find(match)
         res.send(courseSessions)
     } catch (error) {

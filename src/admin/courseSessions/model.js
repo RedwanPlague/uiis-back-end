@@ -61,14 +61,14 @@ const courseSessionSchema = new mongoose.Schema({
                         required: true
                     }
                 }
-            ] 
+            ]
         }
     ],
     schedule: [
         {
             _id: false,
             day: String, // mon, sun, fri
-            room: Number,
+            room: String,
             slot: {
                 type: Number,
                 required: true,

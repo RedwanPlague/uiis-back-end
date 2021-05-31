@@ -8,6 +8,7 @@ const hallRouter = require('./halls/router')
 const courseSessionRouter = require('./courseSessions/router')
 const slotRouter = require('./slots/router')
 const courseRegistration = require('./courseRegistrations/router')
+const currentSession = require('./currentSessions/router')
 
 const router = new express.Router()
 
@@ -19,5 +20,6 @@ router.use('/hall', hallRouter)
 router.use('/courseSession', courseSessionRouter)
 router.use('/slot', slotRouter)
 router.use('/courseRegistration', courseRegistration)
+router.use('/currentSession', currentSession)
 
 module.exports = router

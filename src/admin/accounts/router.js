@@ -30,34 +30,6 @@ router.post('/create', async (req, res) => {
     }
 })
 
-router.get('/student/list', async (req, res) => {
-    let match = {}
-
-    const queryList = ['name','email','contactNumber','department',
-        'hall','advisor','level','term'
-    ]
-
-    for (const queryParams of Object.keys(req.query)) {
-        if(queryList.includes(queryParams)) {
-            match[queryParams] = req.query[queryParams]
-        }
-    }
-
-    if(req.query.id) {
-        match['_id'] = req.query.id
-    }
-
-    console.log(match)
-
-   try {
-        const students = await Student.find(match)
-        res.send(students)
-        
-    } catch (error) {
-        req.status(500).send()
-    }
-})
-
 
 router.patch('/update/student/:id', async (req, res) => {
     console.log('hi')
@@ -85,30 +57,6 @@ router.patch('/update/student/:id', async (req, res) => {
 
 })
 
-router.get('/teacher/list', adminRequired, async (req, res) => {
-    let match = {}
-
-    const queryList = ['name','email','contactNumber','department']
-
-    for (const queryParams of Object.keys(req.query)) {
-        if(queryList.includes(queryParams)) {
-            match[queryParams] = req.query[queryParams]
-        }
-    }
-    
-    if(req.query.id) {
-        match['_id'] = req.query.id
-    }
-
-   try {
-        const teachers = await Teacher.find(match)
-        res.send(teachers)
-        
-    } catch (error) {
-        req.status(500).send()
-    }
-     
-})
 
 router.patch('/update/teacher/:id', async (req, res) => {
     const updates = Object.keys(req.body)
@@ -189,12 +137,20 @@ router.get('/admin/list', adminRequired, async (req, res) => {
         match['_id'] = req.query.id
     }
 
+    if(req.query.privileges) {
+        match.privileges = {
+             $all: req.query.privileges 
+        }
+    }
+
+    // console.log(match)
+
    try {
         const admins = await Admin.find(match)
         res.send(admins)
         
     } catch (error) {
-        req.status(500).send()
+        res.status(500).send()
     }
      
 })
@@ -216,19 +172,43 @@ router.get('/student/list', adminRequired, async (req, res) => {
             $regex : new RegExp(req.query.name, 'i')
         }
     }
-
-    if (req.query.designation) {
-        match.designation = {
-            $regex : new RegExp(req.query.designation, 'i')
-        }
-    }
     if(req.query.id) {
         match['_id'] = req.query.id
     }
 
     try {
-        const admins = await Admin.find(match)
-        res.send(admins)
+        const students = await Student.find(match)
+        res.send(students)
+
+    } catch (error) {
+        res.status(500).send()
+    }
+
+})
+
+router.get('/teacher/list', adminRequired, async (req, res) => {
+    let match = {}
+
+    const queryList = ['name','email','contactNumber','department']
+
+    for (const queryParams of Object.keys(req.query)) {
+        if(queryList.includes(queryParams)) {
+            match[queryParams] = req.query[queryParams]
+        }
+    }
+    if (req.query.name) {
+        match.name = {
+            $regex : new RegExp(req.query.name, 'i')
+        }
+    }
+
+    if(req.query.id) {
+        match['_id'] = req.query.id
+    }
+
+    try {
+        const teachers = await Teacher.find(match)
+        res.send(teachers)
 
     } catch (error) {
         req.status(500).send()

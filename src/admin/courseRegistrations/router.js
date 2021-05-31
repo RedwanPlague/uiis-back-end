@@ -1,5 +1,6 @@
 const express = require('express')
-const {CourseRegistration, CurrentSession} = require('./model')
+const {CourseRegistration} = require('./model')
+const CurrentSession = require('../currentSessions/model')
 const {CourseSession} = require('../courseSessions/model')
 const {User,Student} = require('../accounts/model')
 
@@ -150,31 +151,10 @@ router.post('/newSessionBatch', async (req, res)=> {
     }
 })
 
-router.post('/currentSession', async (req, res)=>{
-    try {
-        const currentSession = new CurrentSession(req.body)
-        await currentSession.save()
-        res.status(201).send(currentSession)
 
-    } catch (e){
-        res.status(400).send({
-            error: e.message
-        })
-    }
-
-})
-
-router.get('/currentSession', async (req, res)=>{
-    try{
-        const currentSession = await CurrentSession.findOne({})
-        res.send(currentSession)
-
-    } catch (e){
-        res.status(400).send({
-            error: e.message
-        })
-    }
-})
+/**
+ * Current Session routers
+ */
 
 module.exports = router
 

@@ -99,16 +99,9 @@ const courseRegistrationSchema = new mongoose.Schema({
 })
 
 
-const CurrentSession = mongoose.model('CurrentSession',  new mongoose.Schema({
-    session: {
-        type: Date,
-        required: true
-    }
-}))
 
 const CourseRegistration = mongoose.model('CourseRegistration', courseRegistrationSchema)
 
 module.exports = {
     CourseRegistration,
-    CurrentSession
 }

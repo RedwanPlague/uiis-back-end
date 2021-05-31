@@ -124,4 +124,30 @@ router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
   }
 });
 
+router.put("/:courseID/:session/restore", async (req, res) => {
+  try {
+    const user = req.user;
+    const courseID = req.params.courseID;
+    const session = new Date(req.params.session);
+    const part = req.body.part;
+
+    const courseSession = await getCorSes2(courseID, session);
+
+    const section = courseSession.examiners.find(
+      (examiner) => examiner.part === part && examiner.teacher === user.id
+    );
+
+    if (section) {
+      section.resultEditAccess = true;
+    }
+
+    courseSession.save();
+
+    res.send(req.body);
+  } catch (error) {
+    console.log(error);
+    res.status(404).send(error);
+  }
+});
+
 module.exports = router;

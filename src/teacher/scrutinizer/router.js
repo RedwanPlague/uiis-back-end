@@ -108,4 +108,29 @@ router.put("/:courseID/:session/approve", async (req, res) => {
   }
 });
 
+router.put("/:courseID/:session/restore", async (req, res) => {
+  try {
+    const user = req.user;
+    const courseID = req.params.courseID;
+    const session = new Date(req.params.session);
+
+    const courseSession = await getCorSes2(courseID, session);
+
+    const section = courseSession.scrutinizers.find(
+      (scrutinizer) => scrutinizer.teacher === user.id
+    );
+
+    if (section) {
+      section.hasApprovedResult = false;
+    }
+
+    courseSession.save();
+
+    res.send({ message: "hemlo" });
+  } catch (error) {
+    console.log(error);
+    res.status(404).send(error);
+  }
+});
+
 module.exports = router;

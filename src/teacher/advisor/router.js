@@ -59,11 +59,10 @@ router.get('/advisees/:id/grades', async (req, res) => {
                     }
                 });
         } else if(req.query.filter === 'grade') {
-            /* under construction */
             grades = await CourseRegistration
                 .find({
                     'student': req.params.id,
-                    'result.gradeLetter': req.query.grade
+                    'result.gradeLetter': req.query.gradeLetter
                 })
                 .select('level term result.gradePoint result.gradeLetter status')
                 .populate({

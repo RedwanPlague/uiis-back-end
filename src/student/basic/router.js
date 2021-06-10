@@ -4,6 +4,7 @@ const { Student } = require('../../admin/accounts/model');
 
 const router =  express.Router();
 
+/* backend api calls: main */
 router.get('/basic', async (req, res) => {
     try {
         const student = await Student

@@ -5,6 +5,10 @@ const {courseCreationAuth} = require('./middlewares')
 
 const router = new express.Router()
 
+/**
+ * privilege: COURSE_CREATION
+ */
+
 router.post('/create', courseCreationAuth, async (req, res) => {
 
     try {
@@ -31,6 +35,9 @@ router.post('/create', courseCreationAuth, async (req, res) => {
     }
 })
 
+/**
+ * privilege: COURSE_CREATION || COURSE_UPDATE || COURSE_DELETION
+ */
 router.get('/list', async (req, res) => {
     let match = {}
 
@@ -74,26 +81,24 @@ router.get('/list', async (req, res) => {
         res.status(500).send()
     }
 })
-
+/**
+ * privilege:  COURSE_UPDATE
+ */
 router.patch('/update/:courseID/:syllabusID', async (req, res) => {
     const updates = Object.keys(req.body)
-
     try {
         const course = await Course.findOne({
             courseID : req.params.courseID,
             syllabusID: req.params.syllabusID
         })
-
         if (!course) {
             throw new Error('Course not found')
         }
-        
         updates.forEach((update) => {
             if (update !== 'prerequisites') {
                 course.set(update, req.body[update])
             }
         })
-
         if (req.body.prerequisites){
             let prerequisites = []
             await Promise.all(req.body.prerequisites.map(async (value) => {
@@ -106,13 +111,10 @@ router.patch('/update/:courseID/:syllabusID', async (req, res) => {
             course.prerequisites = prerequisites
         }
         await course.save()
-
         res.send(course)
-
     } catch (error) {
         res.status(400).send({error: error.message})
     }
-
 })
 
 module.exports = router

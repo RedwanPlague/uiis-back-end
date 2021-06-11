@@ -2,8 +2,9 @@ const express = require('express')
 const Slot = require('./model')
  
 const router = new express.Router()
-
-
+/**
+ * Privilege: SLOT_CREATION
+ */
 router.post('/create', async (req, res)=> {
     try {
         const slot = new Slot(req.body)
@@ -14,6 +15,9 @@ router.post('/create', async (req, res)=> {
     }     
 })
 
+/**
+ * Privilege: SLOT_UPDATE
+ */
 router.patch('/update/:id', async (req, res)=> {
     const updates = Object.keys(req.body)
 
@@ -29,6 +33,10 @@ router.patch('/update/:id', async (req, res)=> {
     }     
 })
 
+/**
+ * Privilege: N/A
+ * adminRequired
+ */
 router.get('/list', async (req, res) => {
     try {
         const slots = await Slot.find({})
@@ -37,6 +45,5 @@ router.get('/list', async (req, res) => {
         res.status(400).send({error: error.message})
     }
 })
- 
 
 module.exports = router

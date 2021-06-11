@@ -8,6 +8,9 @@ const Department = require('../departments/model')
 
 const router = new express.Router()
 
+/**
+ * privileges -> ACCOUNT_CREATION
+ */
 router.post('/create', async (req, res) => {
     try {
         let user = undefined
@@ -30,87 +33,78 @@ router.post('/create', async (req, res) => {
     }
 })
 
+/**
+ * privileges -> ACCOUNT_UPDATE
+ * Disclaimer: Student updating his own profile should be handled with another api
+ */
 
 router.patch('/update/student/:id', async (req, res) => {
-    console.log('hi')
     const updates = Object.keys(req.body)
-    
     try {
-
         const student = await Student.findOne({
             _id : req.params.id
         })
-
         if (!student) {
             throw new Error('Student not found')
         }
-        
         updates.forEach((update) => student.set(update, req.body[update]))
-
         await student.save()
-
         res.send()
-
     } catch (error) {
         res.status(400).send({error: error.message})
     }
-
 })
 
+/**
+ * privileges -> ACCOUNT_UPDATE
+ * Disclaimer: Teacher updating his own profile should be handled with another api
+ */
 
 router.patch('/update/teacher/:id', async (req, res) => {
     const updates = Object.keys(req.body)
-    
     try {
         const teacher = await Teacher.findOne({
             _id : req.params.id
         })
-
         if (!teacher) {
             throw new Error('Teacher not found')
         }
-        
         updates.forEach((update) => teacher.set(update, req.body[update]))
-
         await teacher.save()
-
         res.send()
-
     } catch (error) {
         res.status(400).send({error: error.message})
     }
-
 })
 
+/**
+ * privileges -> ACCOUNT_UPDATE
+ * Disclaimer: Admin updating his own profile should be handled with another api
+ */
 router.patch('/update/admin/:id', async (req, res) => {
     const updates = Object.keys(req.body)
-
     try {
-
         const admin = await Admin.findOne({
             _id : req.params.id
         })
-
         if (!admin) {
             throw new Error('Admin not found')
         }
-
         updates.forEach((update) => admin.set(update, req.body[update]))
-
         await admin.save()
-
         res.send(admin)
-
     } catch (error) {
         res.status(400).send({error: error.message})
     }
-
 })
 
 /**
  * Here is the getters
  */
 
+/**
+ * privileges -> AdminRequired
+ */
 
 router.get('/admin/list', adminRequired, async (req, res) => {
     let match = {}
@@ -127,7 +121,6 @@ router.get('/admin/list', adminRequired, async (req, res) => {
             $regex : new RegExp(req.query.name, 'i')
         }
     }
-
     if (req.query.designation) {
         match.designation = {
             $regex : new RegExp(req.query.designation, 'i')
@@ -142,9 +135,6 @@ router.get('/admin/list', adminRequired, async (req, res) => {
              $all: req.query.privileges 
         }
     }
-
-    // console.log(match)
-
    try {
         const admins = await Admin.find(match)
         res.send(admins)
@@ -154,6 +144,10 @@ router.get('/admin/list', adminRequired, async (req, res) => {
     }
      
 })
+
+/**
+ * privileges -> AdminRequired
+ */
 
 router.get('/student/list', adminRequired, async (req, res) => {
     let match = {}
@@ -186,6 +180,10 @@ router.get('/student/list', adminRequired, async (req, res) => {
 
 })
 
+/**
+ * privileges -> AdminRequired
+ */
+
 router.get('/teacher/list', adminRequired, async (req, res) => {
     let match = {}
 
@@ -216,15 +214,21 @@ router.get('/teacher/list', adminRequired, async (req, res) => {
 
 })
 
-router.get('/privileges', logInRequired, async (req, res)=> {
+/**
+ * privileges -> AdminRequired
+ */
+
+router.get('/privileges', adminRequired, async (req, res)=> {
     try {
-        res.send(Object.values(PRIVILEGES))
+        res.send(PRIVILEGES)
     } catch (error) {
         res.status(500).send()
     }
 })
 
-
+/**
+ * privileges -> NA
+ */
 
 router.post('/login', async (req, res) => {
     try {
@@ -242,6 +246,9 @@ router.post('/login', async (req, res) => {
     }
 })
 
+/**
+ * privileges -> LoginRequired
+ */
 router.post('/auto-login', logInRequired, async (req, res) => {
     try {
         res.send(req.user)
@@ -249,6 +256,10 @@ router.post('/auto-login', logInRequired, async (req, res) => {
         res.status(500).send()
     }
 })
+
+/**
+ * privileges -> LoginRequired
+ */
 
 router.post('/logout', logInRequired, async (req, res)=> {
     try {

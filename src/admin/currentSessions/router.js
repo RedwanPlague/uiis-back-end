@@ -3,6 +3,10 @@ const CurrentSession = require('./model')
 
 const router = new express.Router()
 
+/**
+ * Privilege: N/A
+ * but add LoginRequired
+ */
 router.get('/', async (req, res)=>{
     try{
         const currentSession = await CurrentSession.findOne({})
@@ -14,20 +18,9 @@ router.get('/', async (req, res)=>{
         })
     }
 })
-
-// router.post('/create', async (req, res)=>{
-//     try {
-//         const currentSession = new CurrentSession(req.body)
-//         await currentSession.save()
-//         res.status(201).send(currentSession)
-//
-//     } catch (e){
-//         res.status(400).send({
-//             error: e.message
-//         })
-//     }
-//
-// })
+/**
+ * Privilege: CURRENT_SESSION_UPDATE
+ */
 
 router.patch('/update', async (req, res)=>{
     try {

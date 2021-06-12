@@ -5,7 +5,6 @@ const { CourseRegistration } = require('../../admin/courseRegistrations/model');
 
 const router =  express.Router();
 
-/* backend api calls: main */
 router.get('/advisees', async (req, res) => {
     try {
         const advisees = await Student
@@ -56,7 +55,7 @@ router.get('/registrations', async (req, res) => {
 
 router.get('/registrations/:id', async (req, res) => {
     try {
-        const courses = await CourseRegistration
+        const courseRegistrations = await CourseRegistration
             .find({
                 'student': req.params.id,
                 'level': req.query.level,
@@ -72,7 +71,7 @@ router.get('/registrations/:id', async (req, res) => {
                 }
             });
 
-        res.status(200).send(courses);
+        res.status(200).send(courseRegistrations);
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -111,50 +110,6 @@ router.patch('/registrations/:id/reject', async (req, res) => {
                 {
                     $set: {
                         status: 'unregistered'
-                    }
-                });
-
-        res.status(200).send(updatedAdvisee);
-    } catch(error) {
-        res.status(404).send({
-            error: error.message
-        });
-    }
-});
-
-/* backend api calls: auxiliary */
-router.patch('/update', async (req, res) => {
-    try {
-        /* updates courseRegistration documents with level/term based on courseSession */
-        const updatedCourseRegistrations = await CourseRegistration
-            .updateMany({
-                    courseSession: '60ace00a85d812012621f796'
-                },
-                {
-                    $set: {
-                        level: 2,
-                        term: 1
-                    }
-                });
-
-        res.status(200).send(updatedCourseRegistrations);
-    } catch(error) {
-        res.status(404).send({
-            error: error.message
-        });
-    }
-});
-
-router.patch('/registrations/:id/applied', async (req, res) => {
-    try {
-        /* advisee.status: unregistered/applied/waiting/registered -> applied */
-        const updatedAdvisee = await Student
-            .updateOne({
-                    _id: req.params.id
-                },
-                {
-                    $set: {
-                        status: 'applied'
                     }
                 });
 

@@ -4,7 +4,6 @@ const { CourseRegistration } = require('../../admin/courseRegistrations/model');
 
 const router =  express.Router();
 
-/* backend api calls: main */
 router.get('/:id', async (req, res) => {
     try {
         let grades = [];

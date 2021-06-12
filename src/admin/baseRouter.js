@@ -7,8 +7,9 @@ const departmentRouter = require('./departments/router')
 const hallRouter = require('./halls/router')
 const courseSessionRouter = require('./courseSessions/router')
 const slotRouter = require('./slots/router')
-const courseRegistration = require('./courseRegistrations/router')
-const currentSession = require('./currentSessions/router')
+const courseRegistrationRouter = require('./courseRegistrations/router')
+const currentSessionRouter = require('./currentSessions/router')
+const roleRouter = require('./roles/router')
 
 const router = new express.Router()
 
@@ -19,7 +20,8 @@ router.use('/department', departmentRouter)
 router.use('/hall', hallRouter)
 router.use('/courseSession', courseSessionRouter)
 router.use('/slot', slotRouter)
-router.use('/courseRegistration', courseRegistration)
-router.use('/currentSession', currentSession)
+router.use('/courseRegistration', courseRegistrationRouter)
+router.use('/currentSession', currentSessionRouter)
+router.use('/role', roleRouter)
 
 module.exports = router

@@ -19,6 +19,10 @@ const PRIVILEGES = Object.freeze({
 
     SLOT_CREATION: "slot-creation",
     SLOT_UPDATE: "slot-update",
+
+    ROLE_CREATION: "role-creation",
+    ROLE_UPDATE: "role-update",
+    ROLE_DELETION: "role-deletion"
 })
 
 const USER_TYPES = Object.freeze({

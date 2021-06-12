@@ -1,6 +1,6 @@
 const express = require('express');
 
-const basicRouter = require('./basic/router');
+const basicRouter = require('./profile/router');
 const registrationRouter = require('./registrations/router');
 const gradesRouter = require('./grades/router');
 

@@ -28,53 +28,9 @@ router.get('/advisees/:id', async (req, res) => {
             .findById({
                 _id: req.params.id
             })
-            .select('_id name email contactNumber residentialAddress department hall level term cgpa totalCreditHoursCompleted');
+            .select('_id name email contactNumber residentialAddress department hall level term totalCreditHoursCompleted cgpa');
 
         res.status(200).send(advisee);
-    } catch(error) {
-        res.status(400).send({
-            error: error.message
-        });
-    }
-});
-
-router.get('/advisees/:id/grades', async (req, res) => {
-    try {
-        let grades = [];
-
-        if(req.query.filter === 'semester') {
-            grades = await CourseRegistration
-                .find({
-                    'student': req.params.id,
-                    'level': req.query.level,
-                    'term': req.query.term
-                })
-                .select('level term result.gradePoint result.gradeLetter status')
-                .populate({
-                    path: 'courseSession',
-                    select: 'course',
-                    populate: {
-                        path: 'course',
-                        select: 'courseID title credit'
-                    }
-                });
-        } else if(req.query.filter === 'grade') {
-            grades = await CourseRegistration
-                .find({
-                    'student': req.params.id,
-                    'result.gradeLetter': req.query.gradeLetter
-                })
-                .select('level term result.gradePoint result.gradeLetter status')
-                .populate({
-                    path: 'courseSession',
-                    select: 'course',
-                    populate: {
-                        path: 'course',
-                        select: 'courseID title credit'
-                    }
-                });
-        }
-        res.status(200).send(grades);
     } catch(error) {
         res.status(400).send({
             error: error.message

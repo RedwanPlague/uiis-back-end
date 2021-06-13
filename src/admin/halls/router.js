@@ -1,7 +1,7 @@
 const express = require('express')
 
 const Hall = require('./model')
-const {logInRequired, adminRequired} = require('../../utils/middlewares')
+const {adminRequired} = require('../../utils/middlewares')
 
 const router = new express.Router()
 

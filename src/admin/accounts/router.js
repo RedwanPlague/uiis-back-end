@@ -2,17 +2,19 @@ const express = require('express')
 
 const {User, Student, Teacher, Admin} = require('./model')
 const {PRIVILEGES} = require('../../utils/constants')
-const {logInRequired, adminRequired} = require('../../utils/middlewares')
+const {adminRequired,hasAllPrivileges,hasAnyPrivileges} = require('../../utils/middlewares')
 const {addMergePrivileges} = require('../../utils/helpers')
 const constants = require('../../utils/constants')
 const Department = require('../departments/model')
 
 const router = new express.Router()
 
+
+
 /**
  * privileges -> ACCOUNT_CREATION
  */
-router.post('/create', async (req, res) => {
+router.post('/create', hasAllPrivileges([constants.PRIVILEGES.ACCOUNT_CREATION]),async (req, res) => {
     try {
         let user = undefined
 
@@ -39,7 +41,7 @@ router.post('/create', async (req, res) => {
  * Disclaimer: Student updating his own profile should be handled with another api
  */
 
-router.patch('/update/student/:id', async (req, res) => {
+router.patch('/update/student/:id', hasAllPrivileges([constants.PRIVILEGES.ACCOUNT_UPDATE]), async (req, res) => {
     const updates = Object.keys(req.body)
     try {
         const student = await Student.findOne({
@@ -61,7 +63,7 @@ router.patch('/update/student/:id', async (req, res) => {
  * Disclaimer: Teacher updating his own profile should be handled with another api
  */
 
-router.patch('/update/teacher/:id', async (req, res) => {
+router.patch('/update/teacher/:id', hasAllPrivileges([constants.PRIVILEGES.ACCOUNT_UPDATE]), async (req, res) => {
     const updates = Object.keys(req.body)
     try {
         const teacher = await Teacher.findOne({
@@ -82,7 +84,7 @@ router.patch('/update/teacher/:id', async (req, res) => {
  * privileges -> ACCOUNT_UPDATE
  * Disclaimer: Admin updating his own profile should be handled with another api
  */
-router.patch('/update/admin/:id', async (req, res) => {
+router.patch('/update/admin/:id', hasAllPrivileges([constants.PRIVILEGES.ACCOUNT_UPDATE]), async (req, res) => {
     const updates = Object.keys(req.body)
     try {
         const admin = await Admin.findOne({
@@ -231,34 +233,10 @@ router.get('/privileges', adminRequired, async (req, res)=> {
  * privileges -> NA
  */
 
-router.post('/login', async (req, res) => {
-    try {
-        const user = await User.findByCredentials(
-            req.body.id,
-            req.body.password
-        )
-        const token = await user.generateAuthToken()
-        user.tokens = user.tokens.concat({ token })
-
-        await user.save()
-        req.user = user
-
-        addMergePrivileges(req, res)
-
-        res.send({
-            user,
-            token,
-            mergedPrivileges: req.mergedPrivileges
-        })
-    } catch (error) {
-        res.status(400).send({error: error.message})
-    }
-})
-
 /**
  * privileges -> LoginRequired
  */
-router.post('/auto-login', logInRequired, async (req, res) => {
+router.post('/auto-login', async (req, res) => {
     try {
         res.send({
             user: req.user,
@@ -273,7 +251,7 @@ router.post('/auto-login', logInRequired, async (req, res) => {
  * privileges -> LoginRequired
  */
 
-router.post('/logout', logInRequired, async (req, res)=> {
+router.post('/logout', async (req, res)=> {
     try {
         const user = req.user
         user.tokens = user.tokens.filter(token => token.token !== req.token)

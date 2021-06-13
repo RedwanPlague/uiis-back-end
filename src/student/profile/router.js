@@ -4,11 +4,11 @@ const { Student } = require('../../admin/accounts/model');
 
 const router =  express.Router();
 
-router.get('/basic', async (req, res) => {
+router.get('/basic/:id', async (req, res) => {
     try {
         const student = await Student
             .findById({
-                _id: req.user._id
+                _id: req.params.id
             })
             .select('_id level term');
 
@@ -20,11 +20,11 @@ router.get('/basic', async (req, res) => {
     }
 });
 
-router.get('/home', async (req, res) => {
+router.get('/home/:id', async (req, res) => {
     try {
         const student = await Student
             .findById({
-                _id: req.user._id
+                _id: req.params.id
             })
             .select('_id name level term department hall');
 
@@ -36,11 +36,11 @@ router.get('/home', async (req, res) => {
     }
 });
 
-router.get('/profile', async (req, res) => {
+router.get('/profile/:id', async (req, res) => {
     try {
         const student = await Student
             .findById({
-                _id: req.user._id
+                _id: req.params.id
             })
             .select('_id name level term department hall contactNumber email residentialAddress');
 
@@ -52,11 +52,11 @@ router.get('/profile', async (req, res) => {
     }
 });
 
-router.get('/grades_profile', async (req, res) => {
+router.get('/grades_profile/:id', async (req, res) => {
     try {
         const student = await Student
             .findById({
-                _id: req.user._id
+                _id: req.params.id
             })
             .select('_id name department totalCreditHoursCompleted cgpa');
 

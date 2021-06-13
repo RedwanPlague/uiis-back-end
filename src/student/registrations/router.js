@@ -5,11 +5,11 @@ const { CourseRegistration } = require('../../admin/courseRegistrations/model');
 
 const router =  express.Router();
 
-router.get('', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const courseRegistrations = await CourseRegistration
             .find({
-                'student': req.user._id,
+                'student': req.params.id,
                 'level': req.query.level,
                 'term': req.query.term
             })
@@ -54,12 +54,30 @@ router.patch('/status_applied', async (req, res) => {
 
 router.patch('/course_applied', async (req, res) => {
     try {
-        /* courseRegistration.status: offered -> applied */
+        /* courseRegistration.status: offered -> applied (application) */
         const courseRegistration = await CourseRegistration
             .findById({
                 _id: req.body._id
             });
-        courseRegistration.status = req.body.status;
+        courseRegistration.status = 'applied';
+
+        await courseRegistration.save();
+        res.status(201).send(courseRegistration);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/course_offered', async (req, res) => {
+    try {
+        /* courseRegistration.status: applied -> offered (rejection) */
+        const courseRegistration = await CourseRegistration
+            .findById({
+                _id: req.body._id
+            });
+        courseRegistration.status = 'offered';
 
         await courseRegistration.save();
         res.status(201).send(courseRegistration);

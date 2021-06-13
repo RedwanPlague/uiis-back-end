@@ -54,7 +54,7 @@ router.patch('/status_applied', async (req, res) => {
 
 router.patch('/course_applied', async (req, res) => {
     try {
-        /* courseRegistration.status: offered -> applied (application) */
+        /* courseRegistration.status: offered -> applied (application by student) */
         const courseRegistration = await CourseRegistration
             .findById({
                 _id: req.body._id
@@ -72,12 +72,66 @@ router.patch('/course_applied', async (req, res) => {
 
 router.patch('/course_offered', async (req, res) => {
     try {
-        /* courseRegistration.status: applied -> offered (rejection) */
+        /* courseRegistration.status: applied -> offered (rejection by advisor) */
         const courseRegistration = await CourseRegistration
             .findById({
                 _id: req.body._id
             });
         courseRegistration.status = 'offered';
+
+        await courseRegistration.save();
+        res.status(201).send(courseRegistration);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/course_registered', async (req, res) => {
+    try {
+        /* courseRegistration.status: applied -> registered (approval by head) */
+        const courseRegistration = await CourseRegistration
+            .findById({
+                _id: req.body._id
+            });
+        courseRegistration.status = 'registered';
+
+        await courseRegistration.save();
+        res.status(201).send(courseRegistration);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/course_passed', async (req, res) => {
+    try {
+        /* courseRegistration.status: registered -> passed (result publication) */
+        const courseRegistration = await CourseRegistration
+            .findById({
+                _id: req.body._id
+            });
+        courseRegistration.status = 'passed';
+
+        await courseRegistration.save();
+        res.status(201).send(courseRegistration);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/course_failed', async (req, res) => {
+    try {
+        /* courseRegistration.status: registered -> failed (result publication) */
+        const courseRegistration = await CourseRegistration
+            .findById({
+                _id: req.body._id
+            });
+        courseRegistration.status = 'failed';
 
         await courseRegistration.save();
         res.status(201).send(courseRegistration);

@@ -3,6 +3,7 @@ const express = require('express')
 const {User, Student, Teacher, Admin} = require('./model')
 const {PRIVILEGES} = require('../../utils/constants')
 const {logInRequired, adminRequired} = require('../../utils/middlewares')
+const {addMergePrivileges} = require('../../utils/helpers')
 const constants = require('../../utils/constants')
 const Department = require('../departments/model')
 
@@ -238,9 +239,17 @@ router.post('/login', async (req, res) => {
         )
         const token = await user.generateAuthToken()
         user.tokens = user.tokens.concat({ token })
-        await user.save()
 
-        res.send({user,token})
+        await user.save()
+        req.user = user
+
+        addMergePrivileges(req, res)
+
+        res.send({
+            user,
+            token,
+            mergedPrivileges: req.mergedPrivileges
+        })
     } catch (error) {
         res.status(400).send({error: error.message})
     }
@@ -251,7 +260,10 @@ router.post('/login', async (req, res) => {
  */
 router.post('/auto-login', logInRequired, async (req, res) => {
     try {
-        res.send(req.user)
+        res.send({
+            user: req.user,
+            mergedPrivileges: req.mergedPrivileges
+        })
     } catch (error){
         res.status(500).send()
     }

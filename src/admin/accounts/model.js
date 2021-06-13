@@ -49,6 +49,12 @@ const userSchema = new mongoose.Schema({
         trim: true,
         enum: Object.values(constants.PRIVILEGES)
     }],
+    roles: [
+        {
+            type: String,
+            ref: 'Role'
+        }
+    ],
     tokens: [{
         token: {
             type: String,
@@ -73,7 +79,7 @@ userSchema.methods.generateAuthToken = async function(){
 
 userSchema.statics.findByCredentials = async  (id, password) => {
 
-    const user = await User.findById(id)
+    const user = await User.findById(id).populate('roles')
 
     if (!user){
         throw new Error('Invalid User ID')

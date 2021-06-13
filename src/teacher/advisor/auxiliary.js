@@ -19,9 +19,9 @@ router.patch('/update', async (req, res) => {
                     }
                 });
 
-        res.status(200).send(updatedCourseRegistrations);
+        res.status(201).send(updatedCourseRegistrations);
     } catch(error) {
-        res.status(404).send({
+        res.status(400).send({
             error: error.message
         });
     }
@@ -40,9 +40,9 @@ router.patch('/registrations/:id/applied', async (req, res) => {
                     }
                 });
 
-        res.status(200).send(updatedAdvisee);
+        res.status(201).send(updatedAdvisee);
     } catch(error) {
-        res.status(404).send({
+        res.status(400).send({
             error: error.message
         });
     }

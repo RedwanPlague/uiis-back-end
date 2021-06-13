@@ -44,9 +44,27 @@ router.patch('/status_applied', async (req, res) => {
                     }
                 });
 
-        res.status(200).send(updatedStudent);
+        res.status(201).send(updatedStudent);
     } catch(error) {
-        res.status(404).send({
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/course_applied', async (req, res) => {
+    try {
+        /* courseRegistration.status: offered -> applied */
+        const courseRegistration = await CourseRegistration
+            .findById({
+                _id: req.body._id
+            });
+        courseRegistration.status = req.body.status;
+
+        await courseRegistration.save();
+        res.status(201).send(courseRegistration);
+    } catch(error) {
+        res.status(400).send({
             error: error.message
         });
     }

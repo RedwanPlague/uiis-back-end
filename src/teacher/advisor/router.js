@@ -92,9 +92,9 @@ router.patch('/registrations/:id/approve', async (req, res) => {
                     }
                 });
 
-        res.status(200).send(updatedAdvisee);
+        res.status(201).send(updatedAdvisee);
     } catch(error) {
-        res.status(404).send({
+        res.status(400).send({
             error: error.message
         });
     }
@@ -113,9 +113,9 @@ router.patch('/registrations/:id/reject', async (req, res) => {
                     }
                 });
 
-        res.status(200).send(updatedAdvisee);
+        res.status(201).send(updatedAdvisee);
     } catch(error) {
-        res.status(404).send({
+        res.status(400).send({
             error: error.message
         });
     }

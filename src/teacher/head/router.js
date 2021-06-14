@@ -4,31 +4,16 @@ const { Student } = require('../../admin/accounts/model');
 
 const router =  express.Router();
 
-router.get('/advisees', async (req, res) => {
+router.get('/students', async (req, res) => {
     try {
-        const advisees = await Student
+        const students = await Student
             .find({
-                'advisor': req.user._id
+                'department': req.user.department,
+                'status': 'waiting'
             })
-            .select('_id');
+            .select('_id name level term');
 
-        res.status(200).send(advisees);
-    } catch(error) {
-        res.status(400).send({
-            error: error.message
-        });
-    }
-});
-
-router.get('/registrations', async (req, res) => {
-    try {
-        const advisees = await Student
-            .find({
-                'advisor': req.user._id
-            })
-            .select('_id status');
-
-        res.status(200).send(advisees);
+        res.status(200).send(students);
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -38,18 +23,18 @@ router.get('/registrations', async (req, res) => {
 
 router.patch('/registrations/:id/approve', async (req, res) => {
     try {
-        /* advisee.status: applied -> waiting */
-        const updatedAdvisee = await Student
+        /* student.status: waiting -> registered */
+        const updatedStudent = await Student
             .updateOne({
                     _id: req.params.id
                 },
                 {
                     $set: {
-                        status: 'waiting'
+                        status: 'registered'
                     }
                 });
 
-        res.status(201).send(updatedAdvisee);
+        res.status(201).send(updatedStudent);
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -59,18 +44,18 @@ router.patch('/registrations/:id/approve', async (req, res) => {
 
 router.patch('/registrations/:id/reject', async (req, res) => {
     try {
-        /* advisee.status: applied -> unregistered */
-        const updatedAdvisee = await Student
+        /* student.status: waiting -> applied */
+        const updatedStudent = await Student
             .updateOne({
                     _id: req.params.id
                 },
                 {
                     $set: {
-                        status: 'unregistered'
+                        status: 'applied'
                     }
                 });
 
-        res.status(201).send(updatedAdvisee);
+        res.status(201).send(updatedStudent);
     } catch(error) {
         res.status(400).send({
             error: error.message

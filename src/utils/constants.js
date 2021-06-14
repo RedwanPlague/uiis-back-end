@@ -13,6 +13,13 @@ const USER_TYPES = Object.freeze({
     TEACHER: "teacher"
 })
 
+const RESULT_STATUS = Object.freeze( {
+    EXAMINER: "examiner",
+    SCRUTINIZER: "scrutinizer",
+    INTERNAL: "internal",
+    DEPARTMENT_HEAD: "department-head",
+    ECO: "exam-controller-office"
+})
 
 
 module.exports = Object.freeze({
@@ -21,5 +28,6 @@ module.exports = Object.freeze({
     MIN_LEVEL: 1,
     MAX_LEVEL: 2,
     USER_TYPES,
-    PRIVILEGES
+    PRIVILEGES,
+    RESULT_STATUS
 })

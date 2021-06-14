@@ -24,12 +24,16 @@ async function changeResultState(courseID, session, present_status) {
 
 function checkApprovals(courseSession, role) {
 
-	return false;
-	// let ret = true;
-	// courseSession.role.forEach( participant => {
-	// 	ret &= participant.hasApproved;
-	// });
-	// return ret;
+	let ret = true;
+
+	if(Array.isArray(courseSession[role]) ) {
+		courseSession[role].forEach(participant => {
+			ret &= participant.hasForwarded;
+		});
+	}
+	else ret &= courseSession[role].hasForwarded;
+
+	return ret;
 }
 
 async function getCourseSession(courseID, session) {

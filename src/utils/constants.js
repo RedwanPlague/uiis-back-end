@@ -14,11 +14,16 @@ const USER_TYPES = Object.freeze({
 })
 
 const RESULT_STATUS = Object.freeze( {
-    EXAMINER: "examiner",
-    SCRUTINIZER: "scrutinizer",
+    EXAMINER: "examiners",
+    SCRUTINIZER: "scrutinizers",
     INTERNAL: "internal",
     DEPARTMENT_HEAD: "department-head",
     ECO: "exam-controller-office"
+})
+
+const ISSUE_STATUS = Object.freeze({
+  UNRESOLVED: "unresolved",
+  RESOLVED: "resolved"
 })
 
 
@@ -29,5 +34,6 @@ module.exports = Object.freeze({
     MAX_LEVEL: 2,
     USER_TYPES,
     PRIVILEGES,
-    RESULT_STATUS
+    RESULT_STATUS,
+    ISSUE_STATUS
 })

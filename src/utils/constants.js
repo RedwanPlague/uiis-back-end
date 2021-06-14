@@ -22,7 +22,13 @@ const PRIVILEGES = Object.freeze({
 
     ROLE_CREATION: "role-creation",
     ROLE_UPDATE: "role-update",
-    ROLE_DELETION: "role-deletion"
+    ROLE_DELETION: "role-deletion",
+
+    DEPARTMENT_CREATION: "department-creation",
+    DEPARTMENT_UPDATE: "department-update",
+
+    HALL_CREATION: "hall-creation",
+    HALL_UPDATE: "hall-update"
 })
 
 const USER_TYPES = Object.freeze({

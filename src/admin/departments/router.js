@@ -1,12 +1,15 @@
 const express = require('express')
 
 const Department = require('./model')
-const {logInRequired, adminRequired} = require('../../utils/middlewares')
+const {hasAllPrivileges, adminRequired} = require('../../utils/middlewares')
+const {PRIVILEGES} = require('../../utils/constants')
 
 const router = new express.Router()
 
-// checking proper privilege
-router.post('/create', adminRequired, async (req, res)=> {
+/**
+ * priv: DEPARTMENT_CREATION
+ */
+router.post('/create', hasAllPrivileges([PRIVILEGES.DEPARTMENT_CREATION]), async (req, res)=> {
     const department = new Department(req.body)
     try {
         await department.save()
@@ -18,8 +21,10 @@ router.post('/create', adminRequired, async (req, res)=> {
     }
 })
 
-// check proper privilege and if teacher with head id exists?
-router.patch('/update/:id', adminRequired, async (req, res)=> {
+/**
+ * priv: DEPARTMENT_UPDATE
+ */
+router.patch('/update/:id', hasAllPrivileges([PRIVILEGES.DEPARTMENT_UPDATE]), async (req, res)=> {
     const allowedUpdates = ['name', 'head']
     const updates = Object.keys(req.body)
 
@@ -49,7 +54,6 @@ router.patch('/update/:id', adminRequired, async (req, res)=> {
     }
 })
 
-// proper authentication
 router.get('/list', adminRequired, async (req, res)=> {
     try{
         const departments = await Department.find({})

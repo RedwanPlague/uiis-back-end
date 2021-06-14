@@ -1,12 +1,15 @@
 const express = require('express')
 
 const Hall = require('./model')
-const {adminRequired} = require('../../utils/middlewares')
+const {hasAllPrivileges, adminRequired} = require('../../utils/middlewares')
+const {PRIVILEGES} = require('../../utils/constants')
 
 const router = new express.Router()
 
-// checking proper privilege
-router.post('/create', adminRequired, async (req, res)=> {
+/**
+ * HALL_CREATION
+ */
+router.post('/create', hasAllPrivileges([PRIVILEGES.HALL_CREATION]), async (req, res)=> {
     const hall = new Hall(req.body)
     try {
         await hall.save()
@@ -16,8 +19,10 @@ router.post('/create', adminRequired, async (req, res)=> {
     }
 })
 
-// check proper privilege and if teacher with provost id exists?
-router.patch('/update/:id', adminRequired, async (req, res)=> {
+/**
+ * priv: HALL_UPDATE
+ */
+router.patch('/update/:id', hasAllPrivileges([PRIVILEGES.HALL_UPDATE]), async (req, res)=> {
     const allowedUpdates = ['name', 'provost']
     const updates = Object.keys(req.body)
 
@@ -47,7 +52,6 @@ router.patch('/update/:id', adminRequired, async (req, res)=> {
     }
 })
 
-// proper authentication
 router.get('/list', adminRequired, async (req, res)=> {
     try{
         const halls = await Hall.find({})

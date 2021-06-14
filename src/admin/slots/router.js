@@ -1,11 +1,14 @@
 const express = require('express')
 const Slot = require('./model')
+const {hasAllPrivileges, adminRequired} = require('../../utils/middlewares')
+const {PRIVILEGES} = require('../../utils/constants')
+
  
 const router = new express.Router()
 /**
  * Privilege: SLOT_CREATION
  */
-router.post('/create', async (req, res)=> {
+router.post('/create', hasAllPrivileges([PRIVILEGES.SLOT_CREATION]), async (req, res)=> {
     try {
         const slot = new Slot(req.body)
         await slot.save()
@@ -18,7 +21,7 @@ router.post('/create', async (req, res)=> {
 /**
  * Privilege: SLOT_UPDATE
  */
-router.patch('/update/:id', async (req, res)=> {
+router.patch('/update/:id', hasAllPrivileges([PRIVILEGES.SLOT_UPDATE]), async (req, res)=> {
     const updates = Object.keys(req.body)
 
     try {
@@ -37,7 +40,7 @@ router.patch('/update/:id', async (req, res)=> {
  * Privilege: N/A
  * adminRequired
  */
-router.get('/list', async (req, res) => {
+router.get('/list', adminRequired, async (req, res) => {
     try {
         const slots = await Slot.find({})
         res.send(slots)

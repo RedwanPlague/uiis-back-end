@@ -1,6 +1,7 @@
 const express = require('express')
-
 const {PRIVILEGES} = require('../../utils/constants')
+const {adminRequired,hasAllPrivileges} = require('../../utils/middlewares')
+
 const {Role} = require('./model')
 
 const router = new express.Router()
@@ -8,7 +9,7 @@ const router = new express.Router()
 /**
  * Privilege: ROLE_CREATION
  */
-router.post('/create', async (req, res)=> {
+router.post('/create', hasAllPrivileges([PRIVILEGES.ROLE_CREATION]), async (req, res)=> {
     try{
        const role = new Role(req.body)
        await role.save()
@@ -23,7 +24,7 @@ router.post('/create', async (req, res)=> {
 /**
  * Privilege: ROLE_UPDATE
  */
-router.patch('/update/:id', async (req, res)=> {
+router.patch('/update/:id', hasAllPrivileges([PRIVILEGES.ROLE_UPDATE]), async (req, res)=> {
     try{
         const role = await Role.findById(req.params.id)
         if (!role){
@@ -43,7 +44,7 @@ router.patch('/update/:id', async (req, res)=> {
  * Privilege: N/A
  * adminRequired
  */
-router.get('/list', async (req, res)=> {
+router.get('/list', adminRequired, async (req, res)=> {
     try{
         const roles = await Role.find({})
         res.send(roles)

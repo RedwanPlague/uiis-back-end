@@ -13,8 +13,6 @@ const logInRequired = async (req, res, next) => {
 
 const adminRequired = async (req, res, next) => {
     try{
-        await getUserFromToken(req, res)
-        // console.log(req.user)
         if (req.user.userType !== constants.USER_TYPES.ADMIN) {
             throw new Error('User must be admin')
         }
@@ -26,7 +24,33 @@ const adminRequired = async (req, res, next) => {
     }
 }
 
+function hasAllPrivileges(privileges) {
+    return function(req, res, next) {
+        const found = privileges.every(privilege=> req.mergedPrivileges.indexOf(privilege) >= 0)
+        if (!found){
+            res.status(403).send({error: 'Permission denied'})
+        }else {
+            next()
+        } 
+    }
+}
+
+function hasAnyPrivileges(privileges) {
+    return function(req, res, next) {
+        const found = privileges.some(privilege=> req.mergedPrivileges.indexOf(privilege) >= 0)
+        if (!found){
+            res.status(403).send({error:'Permission denied'})
+        }else {
+            next()
+        }
+    }
+}
+
+
+
 module.exports = {
     logInRequired,
-    adminRequired
+    adminRequired,
+    hasAllPrivileges,
+    hasAnyPrivileges
 }

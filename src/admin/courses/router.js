@@ -2,10 +2,16 @@ const express = require('express')
 
 const Course = require('./model')
 const {courseCreationAuth} = require('./middlewares')
+const constants = require('../../utils/constants')
+const {adminRequired,hasAllPrivileges,hasAnyPrivileges} = require('../../utils/middlewares')
 
 const router = new express.Router()
 
-router.post('/create', courseCreationAuth, async (req, res) => {
+/**
+ * privilege: COURSE_CREATION
+ */
+
+router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_CREATION]), async (req, res) => {
 
     try {
         if (req.body.prerequisites){
@@ -31,7 +37,15 @@ router.post('/create', courseCreationAuth, async (req, res) => {
     }
 })
 
-router.get('/list', async (req, res) => {
+/**
+ * privilege: COURSE_CREATION || COURSE_UPDATE || COURSE_DELETION
+ */
+router.get('/list',
+    hasAnyPrivileges([constants.PRIVILEGES.COURSE_CREATION,
+        constants.PRIVILEGES.COURSE_UPDATE,
+        constants.PRIVILEGES.COURSE_DELETION
+    ]),async (req, res) => {
+
     let match = {}
 
     const queryList = ['offeredToDepartment', 'offeredByDepartment',
@@ -74,26 +88,24 @@ router.get('/list', async (req, res) => {
         res.status(500).send()
     }
 })
-
-router.patch('/update/:courseID/:syllabusID', async (req, res) => {
+/**
+ * privilege:  COURSE_UPDATE
+ */
+router.patch('/update/:courseID/:syllabusID', hasAllPrivileges([constants.PRIVILEGES.COURSE_UPDATE]), async (req, res) => {
     const updates = Object.keys(req.body)
-
     try {
         const course = await Course.findOne({
             courseID : req.params.courseID,
             syllabusID: req.params.syllabusID
         })
-
         if (!course) {
             throw new Error('Course not found')
         }
-        
         updates.forEach((update) => {
             if (update !== 'prerequisites') {
                 course.set(update, req.body[update])
             }
         })
-
         if (req.body.prerequisites){
             let prerequisites = []
             await Promise.all(req.body.prerequisites.map(async (value) => {
@@ -106,13 +118,10 @@ router.patch('/update/:courseID/:syllabusID', async (req, res) => {
             course.prerequisites = prerequisites
         }
         await course.save()
-
         res.send(course)
-
     } catch (error) {
         res.status(400).send({error: error.message})
     }
-
 })
 
 module.exports = router

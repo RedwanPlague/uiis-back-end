@@ -21,12 +21,14 @@ router.get('/students', async (req, res) => {
     }
 });
 
-router.patch('/registrations/:id/approve', async (req, res) => {
+router.patch('/registrations/approve', async (req, res) => {
     try {
         /* student.status: waiting -> registered */
-        const updatedStudent = await Student
-            .updateOne({
-                    _id: req.params.id
+        const updatedStudents = await Student
+            .updateMany({
+                    _id: {
+                        '$in': req.body._id
+                    }
                 },
                 {
                     $set: {
@@ -34,7 +36,7 @@ router.patch('/registrations/:id/approve', async (req, res) => {
                     }
                 });
 
-        res.status(201).send(updatedStudent);
+        res.status(201).send(updatedStudents);
     } catch(error) {
         res.status(400).send({
             error: error.message
@@ -42,12 +44,14 @@ router.patch('/registrations/:id/approve', async (req, res) => {
     }
 });
 
-router.patch('/registrations/:id/reject', async (req, res) => {
+router.patch('/registrations/reject', async (req, res) => {
     try {
         /* student.status: waiting -> applied */
-        const updatedStudent = await Student
-            .updateOne({
-                    _id: req.params.id
+        const updatedStudents = await Student
+            .updateMany({
+                    _id: {
+                        '$in': req.body._id
+                    }
                 },
                 {
                     $set: {
@@ -55,7 +59,7 @@ router.patch('/registrations/:id/reject', async (req, res) => {
                     }
                 });
 
-        res.status(201).send(updatedStudent);
+        res.status(201).send(updatedStudents);
     } catch(error) {
         res.status(400).send({
             error: error.message

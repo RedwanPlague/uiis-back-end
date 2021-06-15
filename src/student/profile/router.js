@@ -4,6 +4,12 @@ const { Student } = require('../../admin/accounts/model');
 
 const router =  express.Router();
 
+router.get('/id', async (req, res) => {
+    res.status(200).send({
+        _id: req.user._id
+    });
+});
+
 router.get('/basic/:id', async (req, res) => {
     try {
         const student = await Student

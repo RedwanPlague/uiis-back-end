@@ -49,7 +49,7 @@ async function getCourseSession(courseID, session) {
 					courseID: courseID
 				}
 			})
-			.select('session registrationList teachers');
+			.select('session registrationList');
 
 		_ids = _ids.filter(_id => _id.course);
 		if (_ids) _ids = _ids[0];

@@ -7,6 +7,17 @@ const issueSchema = new mongoose.Schema({
 		type: Number,
 		required: true
 	},
+	evalType: {
+		type: String,
+		required: true
+	},
+	part: {
+		type: String,
+	},
+	evalOwner: {
+		type: String,
+		ref: 'User',
+	},
 	title: {
 		type: String,
 		required: true,
@@ -20,6 +31,10 @@ const issueSchema = new mongoose.Schema({
 		type: String,
 		enum: Object.values(constants.ISSUE_STATUS),
 		default: constants.ISSUE_STATUS.UNRESOLVED
+	},
+	allStudentsSelected: {
+		type: Boolean,
+		default: false
 	},
 	students: [
 		{

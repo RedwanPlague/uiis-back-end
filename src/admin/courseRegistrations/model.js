@@ -61,6 +61,11 @@ const courseRegistrationSchema = new mongoose.Schema({
             evalID: {
                 type: Number,
                 required: true
+            },
+            editAccess: {
+                type: Boolean,
+                required: true,
+                default: true
             }
         }
     ],
@@ -78,6 +83,11 @@ const courseRegistrationSchema = new mongoose.Schema({
             part: {
                 type: String,
                 required: true
+            },
+            editAccess: {
+                type: Boolean,
+                required: true,
+                default: true
             }
         }
     ],

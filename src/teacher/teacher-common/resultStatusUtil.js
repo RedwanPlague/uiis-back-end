@@ -4,6 +4,7 @@ const {CourseSession} = require("../../admin/courseSessions/model");
 
 async function changeResultState(courseID, session, present_status) {
 	const courseSession = await getCourseSession(courseID, session);
+
 	if(courseSession.status !== present_status) return;
 
 	let allApproved = true;
@@ -16,10 +17,11 @@ async function changeResultState(courseID, session, present_status) {
 
 	if(allApproved) {
 
-		const keys = Object.keys(constants.RESULT_STATUS);
-		courseSession.status = keys[keys.indexOf(present_status) + 1];
+		const values = Object.values(constants.RESULT_STATUS);
+		courseSession.status = values[values.indexOf(present_status) + 1 ];
 		await courseSession.save();
 	}
+	return courseSession;
 }
 
 function checkApprovals(courseSession, role) {
@@ -48,8 +50,7 @@ async function getCourseSession(courseID, session) {
 				match: {
 					courseID: courseID
 				}
-			})
-			.select('session registrationList');
+			});
 
 		_ids = _ids.filter(_id => _id.course);
 		if (_ids) _ids = _ids[0];

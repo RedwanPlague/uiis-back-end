@@ -103,7 +103,7 @@ router.patch('/:courseID/:session', async (req, res) => {
 		courseSession.teachers.forEach(entry=> {
 			if(entry.teacher === req.user._id) {
 				entry.classCount = course_data.classCount;
-				entry.editAccess = course_data.editAccess;
+				entry.hasForwarded = course_data.hasForwarded;
 			}
 		});
 
@@ -155,6 +155,72 @@ router.patch('/:courseID/:session', async (req, res) => {
 		});
 	}
 	await changeResultState(req.params.courseID, req.params.session, constants.RESULT_STATUS.EXAMINER);
+});
+
+router.put('/:courseID/:session/reset', async (req, res) => {
+
+	try {
+		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
+		if (!courseSession) {
+			res.status(400).json("");
+			return;
+		}
+		courseSession['teachers'].forEach(teacher => teacher.hasForwarded = false);
+		Object.values(constants.RESULT_STATUS).forEach(role => {
+			if(courseSession[role]) {
+				if (Array.isArray(courseSession[role])) {
+					courseSession[role].forEach(teacher => {
+						teacher.hasForwarded = false;
+
+					});
+				} else courseSession[role].hasForwarded = false;
+			}
+		});
+		courseSession.status = constants.RESULT_STATUS.EXAMINER;
+		await courseSession.save();
+
+		res.status(200).json({
+			courseSession
+		});
+
+	} catch (error) {
+		console.log(error.message);
+		res.status(400).send({
+			error: error.message
+		});
+	}
+});
+
+router.put('/:courseID/:session/:role/set', async (req, res) => {
+	try {
+		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
+
+		if (!courseSession || !courseSession[req.params.role]) {
+			res.status(400).json("");
+			return;
+		}
+
+		if(Array.isArray(courseSession[req.params.role]) ) {
+			courseSession[req.params.role].forEach(teacher => teacher.hasForwarded = true);
+		}
+		else {
+			courseSession[req.params.role].hasForwarded = true;
+		}
+		await courseSession.save();
+		await changeResultState(req.params.courseID, req.params.session, req.params.role);
+
+		const newCourseSession = await getCourseSession(req.params.courseID, req.params.session);
+
+		res.status(200).json({
+			newCourseSession
+		});
+
+	} catch (error) {
+		console.log(error.message);
+		res.status(400).send({
+			error: error.message
+		});
+	}
 });
 
 

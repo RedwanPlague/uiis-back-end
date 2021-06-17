@@ -52,7 +52,7 @@ const courseSessionSchema = new mongoose.Schema({
             },
             hasForwarded: {
                 type: Boolean,
-                default: true
+                default: false
             },
             evalDescriptions: [
                 {
@@ -101,7 +101,10 @@ const courseSessionSchema = new mongoose.Schema({
                 required: true,
                 ref: 'User'
             },
-            hasForwarded: Boolean
+            hasForwarded: {
+                type: Boolean,
+                default: false
+            }
         }
     ],
     scrutinizers: [
@@ -112,7 +115,10 @@ const courseSessionSchema = new mongoose.Schema({
                 required: true,
                 ref: 'User'
             },
-            hasForwarded: Boolean
+            hasForwarded: {
+                type: Boolean,
+                default: false
+            }
         }
     ],
     registrationList: [

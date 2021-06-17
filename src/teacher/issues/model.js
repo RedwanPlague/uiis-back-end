@@ -17,6 +17,7 @@ const issueSchema = new mongoose.Schema({
 	evalOwner: {
 		type: String,
 		ref: 'User',
+		required: true
 	},
 	title: {
 		type: String,
@@ -48,13 +49,13 @@ const issueSchema = new mongoose.Schema({
 			ref: 'User',
 		}
 	],
-	creator: {
+	issueCreator: {
 		type: String,
 		ref: 'User',
 	},
 	posts: [
 		{
-			type: String,
+			postType: String,
 			author: {
 				type: String,
 				ref: 'User'

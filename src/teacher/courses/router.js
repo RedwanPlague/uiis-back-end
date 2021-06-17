@@ -177,6 +177,19 @@ router.put('/:courseID/:session/reset', async (req, res) => {
 			}
 		});
 		courseSession.status = constants.RESULT_STATUS.EXAMINER;
+
+		for(let i = 0 ; i < courseSession.registrationList.length ; i++) {
+			const courseRegistration = await CourseRegistration.findOne(courseSession.registrationList[i]);
+			courseRegistration.evalMarks.forEach(entry => entry.editAccess = true);
+			courseRegistration.termFinalMarks.forEach(entry => entry.editAccess = true);
+			await courseRegistration.save();
+
+			// for testing if this really works
+			// const tmp = await CourseRegistration.findOne(courseSession.registrationList[i]);
+			// console.log(tmp.evalMarks[0].editAccess);
+			// console.log(tmp.termFinalMarks[0].editAccess);
+		}
+
 		await courseSession.save();
 
 		res.status(200).json({

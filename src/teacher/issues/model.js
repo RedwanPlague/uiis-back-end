@@ -55,10 +55,15 @@ const issueSchema = new mongoose.Schema({
 	},
 	posts: [
 		{
-			postType: String,
+			postType: {
+				type: String,
+				enum: Object.values(constants.ISSUE_POST_TYPE),
+				required: true
+			},
 			author: {
 				type: String,
-				ref: 'User'
+				ref: 'User',
+				required: true
 			},
 			date: Date,
 			description: String,

@@ -75,6 +75,11 @@ router.get('/:id', async (req, res) => {
 					select: 'courseID title -_id'
 				}
 			})
+			.populate({
+				path:'posts.author',
+				select: 'name'
+			});
+
 		if(!issue) {
 			res.status(400).json('');
 			return;
@@ -82,6 +87,28 @@ router.get('/:id', async (req, res) => {
 		res.status(200).json(issue);
 	} catch (error) {
 		console.log(error);
+		res.status(400).json({
+			msg: error
+		});
+	}
+});
+
+// add image link
+router.post('/:id/posts/create/', async(req, res) => {
+	try {
+		const issue = await Issues.findOne({_id: req.params.id});
+		if(!issue) throw new Error('No issue found');
+
+		issue.posts.push({
+			postType: constants.ISSUE_POST_TYPE.COMMENT,
+			author: req.user._id,
+			date: new Date(),
+			description: req.body.comment
+		});
+		await issue.save();
+
+		res.status(201).json(issue.posts);
+	} catch (error) {
 		res.status(400).json({
 			msg: error
 		});

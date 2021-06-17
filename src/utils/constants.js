@@ -46,6 +46,11 @@ const RESULT_STATUS = Object.freeze( {
     ECO: "exam-controller-office"
 })
 
+const ISSUE_POST_TYPE = Object.freeze({
+    COMMENT: "comment",
+    ACTIVITY: "activity"
+})
+
 const ISSUE_STATUS = Object.freeze({
   UNRESOLVED: "unresolved",
   RESOLVED: "resolved"
@@ -59,5 +64,6 @@ module.exports = Object.freeze({
     USER_TYPES,
     PRIVILEGES,
     RESULT_STATUS,
-    ISSUE_STATUS
+    ISSUE_STATUS,
+    ISSUE_POST_TYPE
 })

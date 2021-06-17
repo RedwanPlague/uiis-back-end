@@ -2,6 +2,8 @@ const express = require('express');
 const router =  express.Router();
 const {CourseSession} = require('../../admin/courseSessions/model');
 const {CourseRegistration} = require('../../admin/courseRegistrations/model');
+const {changeResultState, getCourseSession} = require('../teacher-common/resultStatusUtil');
+const constants = require('../../utils/constants');
 
 router.get('/', async (req, res)=> {
 
@@ -36,47 +38,20 @@ router.get('/', async (req, res)=> {
 });
 
 
-async function getCourseSession(courseID, session) {
-
-	try {
-		let _ids = await CourseSession
-			.find({
-				session: new Date(session)
-			})
-			.populate({
-				path: 'course',
-				select: 'courseID title',
-				match: {
-					courseID: courseID
-				}
-			})
-			.select('session registrationList teachers');
-
-		_ids = _ids.filter(_id => _id.course);
-		if (_ids) _ids = _ids[0];
-
-		return _ids;
-	} catch (error) {
-		throw new Error(error);
-	}
-
-
-}
-
 router.get('/:courseID/:session', async (req, res) => {
 
 	try {
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 
 		if(!courseSession) {
-			res.status(200).json("");
+			res.status(400).json("");
 			return;
 		}
 
 		let teacher_details = courseSession.teachers.find(entry => entry.teacher === req.user._id );
 
 		if(!teacher_details) {
-			res.status(200).json("");
+			res.status(400).json("");
 			return;
 		}
 
@@ -116,7 +91,6 @@ router.get('/:courseID/:session', async (req, res) => {
 });
 
 router.patch('/:courseID/:session', async (req, res) => {
-
 	try {
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if(!courseSession) {
@@ -129,8 +103,10 @@ router.patch('/:courseID/:session', async (req, res) => {
 		courseSession.teachers.forEach(entry=> {
 			if(entry.teacher === req.user._id) {
 				entry.classCount = course_data.classCount;
+				entry.editAccess = course_data.editAccess;
 			}
 		});
+
 		await courseSession.save();
 
 		for(const student_entry of student_data) {
@@ -178,6 +154,7 @@ router.patch('/:courseID/:session', async (req, res) => {
 			error: error.message
 		});
 	}
+	await changeResultState(req.params.courseID, req.params.session, constants.RESULT_STATUS.EXAMINER);
 });
 
 

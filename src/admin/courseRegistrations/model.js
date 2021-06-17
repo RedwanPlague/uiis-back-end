@@ -98,10 +98,8 @@ const courseRegistrationSchema = new mongoose.Schema({
     }
 })
 
-
-
 const CourseRegistration = mongoose.model('CourseRegistration', courseRegistrationSchema)
 
 module.exports = {
-    CourseRegistration,
+    CourseRegistration
 }

@@ -14,6 +14,11 @@ const courseSessionSchema = new mongoose.Schema({
         type: Date, // starting date
         required: true
     },
+    status: {
+        type: String,
+        enum: Object.values(constants.RESULT_STATUS),
+        default: constants.RESULT_STATUS.EXAMINER
+    },
     perEvalWeight: {
         type: Number   // percentage
     },

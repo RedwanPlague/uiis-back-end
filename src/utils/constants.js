@@ -43,6 +43,19 @@ const DUE_TYPES = Object.freeze({
     DINING_FEE: "dining-fee"
 })
 
+const RESULT_STATUS = Object.freeze( {
+    EXAMINER: "examiners",
+    SCRUTINIZER: "scrutinizers",
+    INTERNAL: "internal",
+    DEPARTMENT_HEAD: "department-head",
+    ECO: "exam-controller-office"
+})
+
+const ISSUE_STATUS = Object.freeze({
+  UNRESOLVED: "unresolved",
+  RESOLVED: "resolved"
+})
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,
@@ -50,5 +63,7 @@ module.exports = Object.freeze({
     MAX_LEVEL: 2,
     USER_TYPES,
     PRIVILEGES,
-    DUE_TYPES
+    DUE_TYPES,
+    RESULT_STATUS,
+    ISSUE_STATUS
 })

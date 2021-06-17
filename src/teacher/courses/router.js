@@ -220,6 +220,28 @@ router.put('/:courseID/:session/:role/set', async (req, res) => {
 			courseSession[req.params.role].hasForwarded = true;
 		}
 		await courseSession.save();
+
+		if(req.params.role === constants.RESULT_STATUS.EXAMINER || req.params.role === 'teachers') {
+
+			for (let i = 0; i < courseSession.registrationList.length; i++) {
+				const courseRegistration = await CourseRegistration.findOne(courseSession.registrationList[i]);
+
+				if(req.params.role === constants.RESULT_STATUS.EXAMINER) {
+					courseRegistration.termFinalMarks.forEach(entry => entry.editAccess = false);
+				}
+				if(req.params.role === 'teachers') {
+					courseRegistration.evalMarks.forEach(entry => entry.editAccess = false);
+				}
+				await courseRegistration.save();
+
+				// for testing if this really works
+				// const tmp = await CourseRegistration.findOne(courseSession.registrationList[i]);
+				// console.log(tmp.evalMarks[0].editAccess);
+				// console.log(tmp.termFinalMarks[0].editAccess);
+			}
+		}
+
+
 		await changeResultState(req.params.courseID, req.params.session, req.params.role);
 
 		const newCourseSession = await getCourseSession(req.params.courseID, req.params.session);

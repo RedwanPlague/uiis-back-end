@@ -37,11 +37,18 @@ const USER_TYPES = Object.freeze({
     TEACHER: "teacher"
 })
 
+const DUE_TYPES = Object.freeze({
+    LEVEL_CHANGING_FEE: "level-changing-fee",
+    EXAM_FEE: "exam-fee",
+    DINING_FEE: "dining-fee"
+})
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,
     MIN_LEVEL: 1,
     MAX_LEVEL: 2,
     USER_TYPES,
-    PRIVILEGES
+    PRIVILEGES,
+    DUE_TYPES
 })

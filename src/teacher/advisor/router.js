@@ -26,7 +26,7 @@ router.get('/registrations', async (req, res) => {
             .find({
                 'advisor': req.user._id
             })
-            .select('_id status');
+            .select('_id level term status');
 
         res.status(200).send(advisees);
     } catch(error) {

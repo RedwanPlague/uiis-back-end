@@ -1,4 +1,3 @@
-const { CourseRegistration } = require("../../admin/courseRegistrations/model");
 const { getCorSes } = require("./helpers");
 
 const saveMarks = async (req, res, next) => {
@@ -17,9 +16,6 @@ const saveMarks = async (req, res, next) => {
       const stuID = student.studentID,
         mark = student.mark;
 
-        //console.log(stuID);
-        //console.log(mark);
-
       const stuRegi = regiList.find((reg) => reg.student.id === stuID);
 
       if (stuRegi) {
@@ -27,22 +23,17 @@ const saveMarks = async (req, res, next) => {
           (section) => section.examiner === user.id && section.part === part
         );
 
-        //console.log(stuID);
-
         if (!section) {
           section = {
             "examiner": user.id,
             "mark": Number(mark),
             "part": part,
+            "editAccess": true,
           };
           stuRegi.termFinalMarks.push(section);
         }
 
         else section.mark = Number(mark);
-
-        //console.log(section);
-
-        //console.log(stuRegi);
 
         stuRegi.save();
       }

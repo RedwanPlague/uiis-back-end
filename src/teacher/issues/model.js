@@ -74,7 +74,6 @@ const issueSchema = new mongoose.Schema({
 	]
 });
 
-
 const Issues = mongoose.model('Issues', issueSchema);
 module.exports = {
 	Issues

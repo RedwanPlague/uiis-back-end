@@ -16,7 +16,7 @@ router.get('/profile/:id', async (req, res) => {
             .findById({
                 _id: req.params.id
             })
-            .select('_id name level term department hall contactNumber email residentialAddress');
+            .select('_id name level term department hall contactNumber email residentialAddress status');
 
         res.status(200).send(student);
     } catch(error) {

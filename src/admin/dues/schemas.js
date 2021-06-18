@@ -2,8 +2,7 @@ const mongoose = require('mongoose')
 
 const levelChangingFeeSchema = new mongoose.Schema({
     session: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'CurrentSession',
+        type: Date,
         required: true
     }
 })
@@ -17,8 +16,7 @@ const diningFeeSchema = new mongoose.Schema({
 
 const examFeeSchema = new mongoose.Schema({
     session: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'CurrentSession',
+        type: Date,
         required: true
     }
 })

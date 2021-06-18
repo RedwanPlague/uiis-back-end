@@ -34,6 +34,7 @@ const dueSchema = new mongoose.Schema({
     },
     status: {
         type: String,
+        default: constants.DUE_STATUS.PENDING,
         enum: Object.values(constants.DUE_STATUS)
     }
 }, {

@@ -56,6 +56,11 @@ const ISSUE_STATUS = Object.freeze({
   RESOLVED: "resolved"
 })
 
+const DUE_STATUS = Object.freeze({
+    PENDING: "pending",
+    CLEARED: "cleared"
+})
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,
@@ -65,5 +70,6 @@ module.exports = Object.freeze({
     PRIVILEGES,
     DUE_TYPES,
     RESULT_STATUS,
-    ISSUE_STATUS
+    ISSUE_STATUS,
+    DUE_STATUS
 })

@@ -6,25 +6,36 @@ const {PRIVILEGES} = require('../../utils/constants')
 const {adminRequired,hasAllPrivileges,hasAnyPrivileges} = require('../../utils/middlewares')
 const {addMergePrivileges} = require('../../utils/helpers')
 const constants = require('../../utils/constants')
+const { User, Student } = require('../accounts/model')
 
 const router = new express.Router()
 
-
-router.post('/create', async (req, res) => {
+// dept, hall, level, term, ids
+router.post('/create/levelChangingFee/', async (req, res) => {
     try {
-        let due = undefined
 
-        if (req.body.dueType === constants.DUE_TYPES.LEVEL_CHANGING_FEE) {
-            // due = new LevelChangingFee(req.body)
-        } else if(req.body.dueType === constants.DUE_TYPES.DINING_FEE) {
-            // due = new DiningFee(req.body)
-        } else if(req.body.dueType === constants.DUE_TYPES.EXAM_FEE) {
-            // due = new ExamFee(req.body)
-        } else {
-            throw new Error('Invalid due type')
+        let match = {}
+        if (req.body.department){
+            match.department = req.body.department
         }
-        await due.save()
-        res.status(201).send()
+        if (req.body.hall){
+            match.hall = req.body.hall
+        }
+        if (req.body.term){
+            match.term = req.body.term
+        }
+        if (req.body.level){
+            match.level = req.body.level
+        }
+        if (req.body.ids){
+            match._id = {
+                $in: req.body.ids
+            }
+        }
+
+        const students = await Student.find(match)
+
+        res.status(201).send(students)
     } catch (error) {
         res.status(400).send({
             error: error.message

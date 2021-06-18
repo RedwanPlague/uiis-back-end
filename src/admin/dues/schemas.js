@@ -26,5 +26,5 @@ const examFeeSchema = new mongoose.Schema({
 module.exports = {
     levelChangingFeeSchema,
     diningFeeSchema,
-    examFeeSche
+    examFeeSchema
 }

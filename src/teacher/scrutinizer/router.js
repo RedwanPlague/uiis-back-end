@@ -68,7 +68,7 @@ router.get("/:courseID/:session", async (req, res) => {
       );
 
       res.send({
-        hasApprovedResult: section.hasApprovedResult,
+        hasForwarded: section.hasForwarded,
         names: courseSession.names,
         teachers: courseSession.teachers,
         examiners: courseSession.examiners,
@@ -96,7 +96,7 @@ router.put("/:courseID/:session/approve", async (req, res) => {
     );
 
     if (section) {
-      section.hasApprovedResult = true;
+      section.hasForwarded = true;
     }
 
     courseSession.save();
@@ -121,7 +121,7 @@ router.put("/:courseID/:session/restore", async (req, res) => {
     );
 
     if (section) {
-      section.hasApprovedResult = false;
+      section.hasForwarded = true;
     }
 
     courseSession.save();

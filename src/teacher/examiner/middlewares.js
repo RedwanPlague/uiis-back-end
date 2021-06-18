@@ -11,6 +11,7 @@ const saveMarks = async (req, res, next) => {
     const courseSession = await getCorSes(courseID, session);
 
     const regiList = courseSession.registrationList;
+    const modStuList = [];
 
     students.forEach((student) => {
       const stuID = student.studentID,
@@ -25,20 +26,23 @@ const saveMarks = async (req, res, next) => {
 
         if (!section) {
           section = {
-            "examiner": user.id,
-            "mark": Number(mark),
-            "part": part,
-            "editAccess": true,
+            examiner: user.id,
+            mark: Number(mark),
+            part: part,
+            editAccess: true,
           };
           stuRegi.termFinalMarks.push(section);
+          modStuList.push(stuID);
+        } else {
+          if (Number(section.mark) != Number(mark)) modStuList.push(stuID);
+          section.mark = Number(mark);
         }
-
-        else section.mark = Number(mark);
 
         stuRegi.save();
       }
     });
 
+    req.modStuList = modStuList;
     next();
   } catch (error) {
     console.log(error);

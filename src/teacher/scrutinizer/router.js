@@ -3,6 +3,9 @@ const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
 const { CourseRegistration } = require("../../admin/courseRegistrations/model");
 const { getCorSes, getCorSes2 } = require("../examiner/helpers");
+const constants = require("../../utils/constants");
+const { changeResultState } = require("../teacher-common/resultStatusUtil");
+
 
 router.get("/:session", async (req, res) => {
   try {
@@ -99,7 +102,13 @@ router.put("/:courseID/:session/approve", async (req, res) => {
       section.hasForwarded = true;
     }
 
-    courseSession.save();
+    await courseSession.save();
+
+    await changeResultState(
+      courseID,
+      req.params.session,
+      constants.RESULT_STATUS.SCRUTINIZER
+    );
 
     res.send({ message: "hemlo" });
   } catch (error) {
@@ -121,7 +130,7 @@ router.put("/:courseID/:session/restore", async (req, res) => {
     );
 
     if (section) {
-      section.hasForwarded = true;
+      section.hasForwarded = false;
     }
 
     courseSession.save();

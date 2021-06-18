@@ -4,6 +4,7 @@ const {CourseSession} = require('../../admin/courseSessions/model');
 const {CourseRegistration} = require('../../admin/courseRegistrations/model');
 const {changeResultState, getCourseSession} = require('../teacher-common/resultStatusUtil');
 const constants = require('../../utils/constants');
+const {addIssueActivity} = require("../issues/service");
 
 router.get('/', async (req, res)=> {
 
@@ -100,12 +101,17 @@ router.patch('/:courseID/:session', async (req, res) => {
 		const student_data = req.body.student_data;
 		const course_data = req.body.course_data;
 
+		let issueActivity = false;
+		let issuePosts = [];
+
 		courseSession.teachers.forEach(entry=> {
 			if(entry.teacher === req.user._id) {
+				issueActivity |= entry.hasForwarded;
 				entry.classCount = course_data.classCount;
 				entry.hasForwarded = course_data.hasForwarded;
 			}
 		});
+		console.log(issueActivity);
 
 		await courseSession.save();
 
@@ -116,6 +122,10 @@ router.patch('/:courseID/:session', async (req, res) => {
 			let added = false;
 			courseReg.attendanceMarks.forEach(attendance_entry => {
 				if( attendance_entry.teacher === req.user._id) {
+
+					if(attendance_entry.mark !== student_entry.attendance_mark) {
+						issuePosts.push(student_entry.student_id)
+					}
 					attendance_entry.mark = student_entry.attendance_mark
 					added = true;
 				}
@@ -130,6 +140,9 @@ router.patch('/:courseID/:session', async (req, res) => {
 				let added = false;
 				courseReg.evalMarks.forEach(course_reg_entry => {
 					if( course_reg_entry.teacher === req.user._id && eval_entry.evalID === course_reg_entry.evalID) {
+						if(eval_entry.mark !== course_reg_entry.mark) {
+							issuePosts.push(student_entry.student_id)
+						}
 						course_reg_entry.mark = eval_entry.mark;
 						added = true;
 					}
@@ -142,11 +155,15 @@ router.patch('/:courseID/:session', async (req, res) => {
 				})
 			});
 			await courseReg.save();
-
 		}
 		res.status(200).json({
 			message: "updated"
 		});
+
+		if(issueActivity && issuePosts) {
+			issuePosts = [ ...new Set(issuePosts)];
+			await addIssueActivity(issuePosts, req.user._id, constants.ISSUE_EVAL_TYPE.COURSE_EVAL);
+		}
 
 	} catch (error) {
 		console.log(error.message);

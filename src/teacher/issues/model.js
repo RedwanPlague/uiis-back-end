@@ -53,6 +53,7 @@ const issueSchema = new mongoose.Schema({
 	issueCreator: {
 		type: String,
 		ref: 'User',
+		required: true,
 	},
 	posts: [
 		{

@@ -11,7 +11,11 @@ router.get('/students', async (req, res) => {
                 'department': req.user.department,
                 'status': 'waiting'
             })
-            .select('_id name level term');
+            .select('_id name level term')
+            .populate({
+                path: 'advisor',
+                select: '_id name'
+            });
 
         res.status(200).send(students);
     } catch(error) {

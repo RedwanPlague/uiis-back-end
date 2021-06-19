@@ -32,7 +32,7 @@ const issueSchema = new mongoose.Schema({
 		enum: Object.values(constants.ISSUE_STATUS),
 		default: constants.ISSUE_STATUS.UNRESOLVED
 	},
-	allStudentsSelected: {
+	allStudentSelected: {
 		type: Boolean,
 		default: false
 	},

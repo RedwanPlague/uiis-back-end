@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
 const { Issues } = require("../issues/model");
+const { addIssueActivity } = require("../issues/service");
 const { saveMarks } = require("./middlewares");
 const { getCorSes, getCorSes2 } = require("./helpers");
 const constants = require("../../utils/constants");
+const { changeResultState } = require("../teacher-common/resultStatusUtil");
 
 router.get("/:session", async (req, res) => {
   try {
@@ -93,28 +95,14 @@ router.put("/:courseID/:session/save", saveMarks, async (req, res) => {
       (examiner) => examiner.part === part && examiner.teacher === user.id
     );
 
-
     if (section) {
       if (section.hasForwarded) {
-        const issues = await Issues.find({
-          evalType: "term-final-eval",
-          part: part,
-          evalOwner: user.id,
-          courseSession: courseSession._id,
-          status: constants.ISSUE_STATUS.UNRESOLVED,
-        });
-
-        issues.forEach((issue) => {
-          issue.posts.push({
-            postType: "Mark update",
-            author: user.id,
-            date: Date.now,
-            description: `${user.id} updated marks in ${courseID} - part ${part}`,
-            imageLink: 'https://avatars.githubusercontent.com/u/32516061?s=80&amp;v=4',
-          });
-
-          issue.save();
-        });
+        addIssueActivity(
+          req.modStuList,
+          user.id,
+          constants.ISSUE_EVAL_TYPE.TF_EVAL,
+          part
+        );
       }
     }
 
@@ -138,20 +126,26 @@ router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
       (examiner) => examiner.part === part && examiner.teacher === user.id
     );
 
-    console.log(section);
-
     if (section) {
       section.hasForwarded = true;
     }
 
     const regiList = courseSession.registrationList;
-    regiList.forEach(regi => {
-      const ami = regi.termFinalMarks.find(tf => tf.examiner === user.id && tf.part === part);
-      if(ami) ami.editAccess = false;
+    regiList.forEach((regi) => {
+      const ami = regi.termFinalMarks.find(
+        (tf) => tf.examiner === user.id && tf.part === part
+      );
+      if (ami) ami.editAccess = false;
       regi.save();
-    })
+    });
 
     courseSession.save();
+
+    await changeResultState(
+      courseID,
+      req.params.session,
+      constants.RESULT_STATUS.EXAMINER
+    );
 
     res.send(req.body);
   } catch (error) {
@@ -178,11 +172,13 @@ router.put("/:courseID/:session/restore", async (req, res) => {
     }
 
     const regiList = courseSession.registrationList;
-    regiList.forEach(regi => {
-      const ami = regi.termFinalMarks.find(tf => tf.examiner === user.id && tf.part === part);
-      if(ami) ami.editAccess = true;
+    regiList.forEach((regi) => {
+      const ami = regi.termFinalMarks.find(
+        (tf) => tf.examiner === user.id && tf.part === part
+      );
+      if (ami) ami.editAccess = true;
       regi.save();
-    })
+    });
 
     courseSession.save();
 

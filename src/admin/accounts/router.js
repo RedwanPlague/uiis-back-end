@@ -101,9 +101,7 @@ router.patch('/update/admin/:id', hasAllPrivileges([constants.PRIVILEGES.ACCOUNT
     }
 })
 
-/**
- * Here is the getters
- */
+// getters from here
 
 /**
  * privileges -> AdminRequired

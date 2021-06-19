@@ -46,8 +46,6 @@ function hasAnyPrivileges(privileges) {
     }
 }
 
-
-
 module.exports = {
     logInRequired,
     adminRequired,

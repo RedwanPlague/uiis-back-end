@@ -113,7 +113,7 @@ router.post('/create', async (req, res) => {
 				{
 					postType: constants.ISSUE_POST_TYPE.ACTIVITY,
 					author: req.user._id,
-					date: req.body.date,
+					date: Date.now(),
 					description: "created this issue"
 				}
 			]
@@ -122,7 +122,7 @@ router.post('/create', async (req, res) => {
 			issue.posts.push({
 				postType: constants.ISSUE_POST_TYPE.COMMENT,
 				author: req.user._id,
-				date: req.body.date,
+				date: Date.now(),
 				description: req.body.description
 			});
 		}

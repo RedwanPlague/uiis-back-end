@@ -37,6 +37,11 @@ const USER_TYPES = Object.freeze({
     TEACHER: "teacher"
 })
 
+const TF_PARTS = Object.freeze({
+    A: 'A',
+    B: 'B',
+    NONE: '-'
+})
 
 const RESULT_STATUS = Object.freeze( {
     EXAMINER: "examiners",
@@ -71,5 +76,6 @@ module.exports = Object.freeze({
     RESULT_STATUS,
     ISSUE_STATUS,
     ISSUE_POST_TYPE,
-    ISSUE_EVAL_TYPE
+    ISSUE_EVAL_TYPE,
+    TF_PARTS
 })

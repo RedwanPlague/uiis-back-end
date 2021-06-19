@@ -3,7 +3,9 @@ const router =  express.Router();
 const {Issues} = require('./model');
 const {getCourseSession} = require('../teacher-common/resultStatusUtil');
 const {CourseRegistration} = require('../../admin/courseRegistrations/model');
+const {setEditStatus, removeEditAccess} = require('./service');
 const constants = require('../../utils/constants');
+const {CourseSession} = require("../../admin/courseSessions/model");
 
 router.get('/', async (req, res) => {
 	try {
@@ -124,40 +126,9 @@ router.post('/create', async (req, res) => {
 				description: req.body.description
 			});
 		}
-
-		const courseRegistrations = await CourseRegistration
-			.find(  {'_id': { $in: courseSession.registrationList} , 'student': { $in: req.body.students} } );
-
-		for(let i = 0 ; i < courseRegistrations.length ; i++) {
-			const entry = courseRegistrations[i];
-
-			if(req.body.evalType === constants.ISSUE_EVAL_TYPE.COURSE_EVAL) {
-
-				const eval = entry.evalMarks.find(entry => entry.teacher === req.body.evalOwner);
-				const id = entry.evalMarks.indexOf(eval);
-				entry.evalMarks[id].editAccess  = true;
-			}
-			else if(req.body.evalType === constants.ISSUE_EVAL_TYPE.TF_EVAL) {
-
-				const eval = entry.termFinalMarks.find(entry => entry.examiner === req.body.evalOwner);
-				const id = entry.termFinalMarks.indexOf(eval);
-				entry.termFinalMarks[id].editAccess  = true;
-			}
-			await entry.save();
-		}
-
 		await issue.save();
 
-		// for testing
-		// const tmp = await CourseRegistration
-		// 	.find(  {'_id': { $in: courseSession.registrationList} , 'student': { $in: req.body.students} } );
-		// console.log("---------------");
-		//
-		// tmp.forEach( entry => {
-		// 	console.log(entry.student)
-		// 	console.log(entry.evalMarks);
-		// });
-
+		await setEditStatus(courseSession, req.body.students, req.body.evalType, req.body.part, req.body.evalOwner, true);
 		res.status(201).json(issue);
 
 	} catch (error) {
@@ -185,6 +156,74 @@ router.post('/:id/posts/create/', async(req, res) => {
 		await issue.populate( { path: 'posts.author', select: 'name'}).execPopulate();
 
 		res.status(201).json(issue.posts);
+	} catch (error) {
+		res.status(400).json({
+			msg: error
+		});
+	}
+});
+
+router.put('/:issueID/changeStatus', async (req, res) => {
+	try {
+		const issue = await Issues.findOne({_id: req.params.issueID });
+		if(!issue) throw('No issue found');
+		if(issue.status === constants.ISSUE_STATUS.UNRESOLVED) {
+			issue.status = constants.ISSUE_STATUS.RESOLVED;
+		}
+		else {
+			issue.status = constants.ISSUE_STATUS.UNRESOLVED;
+		}
+		issue.posts.push({
+			postType: constants.ISSUE_POST_TYPE.ACTIVITY,
+			author: req.user._id,
+			date: new Date(),
+			description: `${issue.status === constants.ISSUE_STATUS.RESOLVED ? 'closed': 'reopened'} this issue`
+
+		})
+		await issue.save();
+		await issue.populate( { path: 'posts.author', select: 'name'}).execPopulate();
+
+		const courseSession = await CourseSession
+			.findOne({_id: issue.courseSession})
+			.select('registrationList');
+
+		if(issue.status === constants.ISSUE_STATUS.UNRESOLVED) {
+			await setEditStatus(courseSession, issue.students, issue.evalType, issue.part, issue.evalOwner, true);
+		}
+		else {
+			await removeEditAccess(courseSession, issue.students, issue.evalType, issue.part, issue.evalOwner);
+		}
+
+		res.status(200).json({
+			status: issue.status,
+			posts: issue.posts
+		});
+	} catch (error) {
+		res.status(400).json({
+			msg: error
+		});
+	}
+});
+
+router.get('/:courseID/:session/eligibleList', async (req, res) => {
+	try {
+		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
+		const statuses = Object.values(constants.RESULT_STATUS);
+		const till = statuses.indexOf(courseSession.status);
+		const list = [];
+
+		for(let i = 1 ; i <= till ; i++) {
+			await courseSession.populate({path: `${statuses[i]}.teacher`, select:'name'}).execPopulate();
+
+			if( Array.isArray(courseSession[statuses[i]]) ) {
+				courseSession[statuses[i]].forEach(entry => {
+					list.push(entry.teacher);
+				});
+			}
+			else list.push(courseSession[statuses[i]]);
+		}
+		res.status(200).json(list);
+
 	} catch (error) {
 		res.status(400).json({
 			msg: error

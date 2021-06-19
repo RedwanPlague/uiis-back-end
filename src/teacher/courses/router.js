@@ -4,7 +4,7 @@ const {CourseSession} = require('../../admin/courseSessions/model');
 const {CourseRegistration} = require('../../admin/courseRegistrations/model');
 const {changeResultState, getCourseSession} = require('../teacher-common/resultStatusUtil');
 const constants = require('../../utils/constants');
-const {addIssueActivity} = require("../issues/service");
+const {addMarkUpdateActivity} = require("../issues/service");
 
 router.get('/', async (req, res)=> {
 
@@ -111,7 +111,6 @@ router.patch('/:courseID/:session', async (req, res) => {
 				entry.hasForwarded = course_data.hasForwarded;
 			}
 		});
-		console.log(issueActivity);
 
 		await courseSession.save();
 
@@ -144,6 +143,7 @@ router.patch('/:courseID/:session', async (req, res) => {
 							issuePosts.push(student_entry.student_id)
 						}
 						course_reg_entry.mark = eval_entry.mark;
+						course_reg_entry.editAccess = eval_entry.editAccess;
 						added = true;
 					}
 				});
@@ -162,8 +162,9 @@ router.patch('/:courseID/:session', async (req, res) => {
 
 		if(issueActivity && issuePosts) {
 			issuePosts = [ ...new Set(issuePosts)];
-			await addIssueActivity(issuePosts, req.user._id, constants.ISSUE_EVAL_TYPE.COURSE_EVAL);
+			await addMarkUpdateActivity(issuePosts, req.user._id, constants.ISSUE_EVAL_TYPE.COURSE_EVAL, constants.TF_PARTS.NONE);
 		}
+		await changeResultState(req.params.courseID, req.params.session, constants.RESULT_STATUS.EXAMINER);
 
 	} catch (error) {
 		console.log(error.message);
@@ -171,7 +172,7 @@ router.patch('/:courseID/:session', async (req, res) => {
 			error: error.message
 		});
 	}
-	await changeResultState(req.params.courseID, req.params.session, constants.RESULT_STATUS.EXAMINER);
+
 });
 
 router.put('/:courseID/:session/reset', async (req, res) => {

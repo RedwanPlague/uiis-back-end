@@ -3,10 +3,6 @@ const constants = require('../../utils/constants');
 
 const issueSchema = new mongoose.Schema({
 
-	// _id: {
-	// 	type: Number,
-	// 	required: true
-	// },
 	evalType: {
 		type: String,
 		enum: Object.values(constants.ISSUE_EVAL_TYPE),
@@ -14,6 +10,8 @@ const issueSchema = new mongoose.Schema({
 	},
 	part: {
 		type: String,
+		enum: Object.values(constants.TF_PARTS),
+		default: constants.TF_PARTS.NONE
 	},
 	evalOwner: {
 		type: String,

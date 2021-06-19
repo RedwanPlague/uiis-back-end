@@ -14,7 +14,7 @@ async function addMarkUpdateActivity(studentList, evalOwnerID, evalType, part) {
 					postType: constants.ISSUE_POST_TYPE.ACTIVITY,
 					author: evalOwnerID,
 					date: new Date(),
-					description: `has updated the mark of ${student}`
+					description: `updated the mark of ${student}`
 				});
 			}
 		});

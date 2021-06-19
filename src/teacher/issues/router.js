@@ -231,6 +231,18 @@ router.get('/:courseID/:session/eligibleList', async (req, res) => {
 	}
 });
 
+router.put('/empty', async (req, res) => {
+	try {
+		await Issues.deleteMany();
+		res.status(200).send({"message": "you don't have any issues left :'("});
+
+	} catch (error) {
+		res.status(400).json({
+			msg: error
+		});
+	}
+});
+
 // router.post('/',async (req, res) => {
 //
 // 	try {

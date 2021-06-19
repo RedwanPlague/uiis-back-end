@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
 const { Issues } = require("../issues/model");
-const { addIssueActivity } = require("../issues/service");
+const { addMarkUpdateActivity } = require("../issues/service");
 const { saveMarks } = require("./middlewares");
 const { getCorSes, getCorSes2 } = require("./helpers");
 const constants = require("../../utils/constants");
@@ -97,7 +97,7 @@ router.put("/:courseID/:session/save", saveMarks, async (req, res) => {
 
     if (section) {
       if (section.hasForwarded) {
-        addIssueActivity(
+        await addMarkUpdateActivity(
           req.modStuList,
           user.id,
           constants.ISSUE_EVAL_TYPE.TF_EVAL,

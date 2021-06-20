@@ -9,9 +9,9 @@ router.get('/students', async (req, res) => {
         const students = await Student
             .find({
                 'department': req.user.department,
-                'status': 'waiting'
+                $or: [{ 'status': 'waiting' }, { 'status': 'applied' }, {'status': 'unregistered' }]
             })
-            .select('_id name level term')
+            .select('_id name level term status')
             .populate({
                 path: 'advisor',
                 select: '_id name'

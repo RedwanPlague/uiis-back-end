@@ -1,5 +1,5 @@
-
 const express = require('express')
+const mongoose = require('mongoose')
 
 const {Due, LevelChangingFee, ExamFee, DiningFee} = require('./model')
 const {PRIVILEGES} = require('../../utils/constants')
@@ -32,93 +32,75 @@ router.post('/create/levelChangingFee/', async (req, res) => {
             $in: req.body.ids
         }
     }
-
+    let cnt = 0, it = 0, totalTime
     try {
         let dues = []
-        let cnt = 0, it = 0, totalTime
         const startTime = Date.now()
         const cursor = await Student.find(match).cursor()
 
         await cursor.eachAsync(async function (student) {
-            const due = new LevelChangingFee({
-                amount: (student._id === "1605010")?undefined: req.body.amount,
-                issueDate: Date.now(),
-                deadline: req.body.deadline,
-                delayFine: req.body.delayFine,
-                issuedTo: student.id,
-                level: student.level,
-                term: student.term,
-                dueType: req.body.dueType,
-                session: req.body.session
-            })
-
+            const due = {
+                updateOne: {
+                    filter: {issuedTo: student._id, session: new Date(req.body.session)} ,
+                    update: {
+                        amount: req.body.amount,
+                        issueDate: Date.now(),
+                        deadline: req.body.deadline,
+                        delayFine: req.body.delayFine,
+                        issuedTo: student.id,
+                        level: student.level,
+                        term: student.term,
+                        session: req.body.session
+                    },
+                    upsert: true
+                }
+            }
             dues.push(due)
 
             if (dues.length === bulkSize) {
-                // console.log(dues[1])
-
                 it++
                 console.log(`Iteration No ${it}`)
-                cnt += dues.length
-                await LevelChangingFee.insertMany(dues)
+                const res = await runInTransaction(dues)
+                cnt += res.upsertedCount + res.modifiedCount
                 dues = []
             }
         })
 
         if (dues.length > 0){
             console.log(`Last iteration!`)
-            cnt += dues.length
-            await LevelChangingFee.insertMany(dues)
+            const res = await runInTransaction(dues)
+            cnt += res.upsertedCount + res.modifiedCount
             dues = []
         }
         totalTime = (Date.now() - startTime)
         console.log(`Inserted ${cnt} elements in ${totalTime} ms`)
 
-        res.status(201).send()
-
-    } catch (error) {
-        const cursor = await Student.find(match).cursor()
-        let stIds = []
-        await cursor.eachAsync(async (student) => {
-            stIds.push(student._id)
-
-            if (stIds.length === 1000) {
-                await Due.deleteMany({
-                    session: new Date(req.body.session),
-                    issuedTo: {
-                        $in : stIds
-                    }
-                })
-                stIds = []
-            }
+        res.status(201).send({
+            duesModified: cnt
         })
 
-        console.log(stIds)
-
-        if (stIds.length > 0) {
-            const dues = await Due.find({
-                session: new Date(req.body.session),
-                issuedTo: {
-                    $in : stIds
-                }
-            })
-            console.log(dues)
-
-            await Due.deleteMany({
-                session: new Date(req.body.session),
-                issuedTo: {
-                    $in : stIds
-                }
-            })
-            console.log("Successfully Rolled-back!")
-        }
-        console.log("Successfully Rolled-back!")
-
+    } catch (error) {
         res.status(400).send({
-            error: error.message
+            error: error.message,
+            duesModified: cnt
         })
     }
 })
+
+const runInTransaction = async function(dues) {
+    const session = await mongoose.startSession()
+    session.startTransaction()
+    try {
+        const res = await LevelChangingFee.bulkWrite(dues, {session})
+        await session.commitTransaction()
+        return res
+    } catch (error){
+        await session.abortTransaction()
+        throw error
+    } finally {
+        session.endSession()
+    }
+}
 
 
 router.patch('/update/levelChangingFee/', async (req, res) => {

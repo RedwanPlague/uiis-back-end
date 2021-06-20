@@ -303,6 +303,49 @@ const runInTransaction = async function(dues, TargetModel) {
     }
 }
 
+router.get('/upsert/', async (req, res) => {
+
+    let match = {}
+
+    if (req.body.department){
+        match.department = req.body.department
+    }
+    if (req.body.hall){
+        match.hall = req.body.hall
+    }
+    if (req.body.term){
+        match.term = req.body.term
+    }
+    if (req.body.level){
+        match.level = req.body.level
+    }
+    if (req.body.ids){
+        match._id = {
+            $in: req.body.ids
+        }
+    }
+    if(req.body.dueType){
+        match.dueType = req.body.dueType
+    }
+    
+    if(req.body.dueType === constants.DUE_TYPES.LEVEL_CHANGING_FEE || req.body.dueType === constants.DUE_TYPES.EXAM_FEE){
+        if(req.body.session){
+            match.session = req.body.session
+        }
+    }
+    if(req.body.dueType === constants.DUE_TYPES.DINING_FEE){
+        if(req.body.session){
+            match.yearMonth = req.body.yearMonth
+        }
+    }
+
+    try {
+        const cnt = await Student.countDocuments(match)
+        res.send({willAffect: cnt})
+    } catch (error) {
+        res.status(400).send(error)
+    }
+})
 
 
 

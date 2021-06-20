@@ -10,23 +10,7 @@ router.get('/advisees', async (req, res) => {
             .find({
                 'advisor': req.user._id
             })
-            .select('_id');
-
-        res.status(200).send(advisees);
-    } catch(error) {
-        res.status(400).send({
-            error: error.message
-        });
-    }
-});
-
-router.get('/registrations', async (req, res) => {
-    try {
-        const advisees = await Student
-            .find({
-                'advisor': req.user._id
-            })
-            .select('_id status');
+            .select('_id level term status');
 
         res.status(200).send(advisees);
     } catch(error) {

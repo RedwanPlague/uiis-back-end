@@ -37,6 +37,7 @@ router.post('/create/levelChangingFee/', async (req, res) => {
         let dues = []
         const startTime = Date.now()
         const cursor = await Student.find(match).cursor()
+        let mongoDue = undefined
 
         await cursor.eachAsync(async function (student) {
             const due = {
@@ -55,6 +56,23 @@ router.post('/create/levelChangingFee/', async (req, res) => {
                     upsert: true
                 }
             }
+            mongoDue = new LevelChangingFee({
+                // amount: req.body.amount,
+                amount: (student._id === '1605001' || student._id === '1605003')? undefined: req.body.amount,
+                issueDate: Date.now(),
+                deadline: req.body.deadline,
+                delayFine: req.body.delayFine,
+                issuedTo: student.id,
+                level: student.level,
+                term: student.term,
+                session: req.body.session
+            })
+            const err = mongoDue.validateSync()
+            if (err) {
+                throw new Error(err)
+            }
+            console.log(mongoDue)
+
             dues.push(due)
 
             if (dues.length === bulkSize) {

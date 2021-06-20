@@ -24,6 +24,7 @@ async function addMarkUpdateActivity(studentList, evalOwnerID, evalType, part) {
 
 async function removeEditAccess(courseSession, studentList, evalType, part, evalOwnerID) {
 	try {
+		console.log(studentList);
 		const issues = await Issues
 			.find({
 				evalOwner: evalOwnerID,
@@ -33,12 +34,14 @@ async function removeEditAccess(courseSession, studentList, evalType, part, eval
 				status: constants.ISSUE_STATUS.UNRESOLVED
 			});
 
+
 		const accessRemovalList = [];
 		studentList.forEach(student => {
 			let issueExist = false;
 			issues.forEach(issue => issueExist |= issue.students.includes(student));
 			if (!issueExist) accessRemovalList.push(student);
 		});
+		console.log(accessRemovalList);
 
 		await setEditStatus(courseSession, accessRemovalList, evalType, part, evalOwnerID, false);
 	} catch (error) {
@@ -57,19 +60,21 @@ async function setEditStatus(courseSession, studentList, evalType, part, evalOwn
 			const entry = courseRegistrations[i];
 
 			if (evalType === constants.ISSUE_EVAL_TYPE.COURSE_EVAL) {
-
-				const eval = entry.evalMarks.find(marks => marks.teacher === evalOwnerID);
-				const id = entry.evalMarks.indexOf(eval);
-				entry.evalMarks[id].editAccess = accessStatus;
+				for(let j = 0 ; j < entry.evalMarks.length ; j++) {
+					if(entry.evalMarks[j].teacher === evalOwnerID) {
+						entry.evalMarks[j].editAccess = accessStatus;
+					}
+				}
 			} else if (evalType === constants.ISSUE_EVAL_TYPE.TF_EVAL) {
-
-				const eval = entry.termFinalMarks.find(marks => marks.part === part);
-				const id = entry.termFinalMarks.indexOf(eval);
-				entry.termFinalMarks[id].editAccess = accessStatus;
+				for(let j = 0 ; j < entry.termFinalMarks.length ; j++) {
+					if(entry.termFinalMarks[j].part === part && entry.termFinalMarks[j].examiner === evalOwnerID) {
+						entry.termFinalMarks[j].editAccess = accessStatus;
+					}
+				}
 			}
 			await entry.save();
 		}
-		// // for testing
+		// for testing
 		// const tmp = await CourseRegistration
 		// 	.find({'_id': {$in: courseSession.registrationList}, 'student': {$in: studentList}});
 		// console.log("---------------");

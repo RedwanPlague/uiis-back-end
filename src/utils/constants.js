@@ -28,7 +28,15 @@ const PRIVILEGES = Object.freeze({
     DEPARTMENT_UPDATE: "department-update",
 
     HALL_CREATION: "hall-creation",
-    HALL_UPDATE: "hall-update"
+    HALL_UPDATE: "hall-update",
+
+    LEVEL_CHANGING_FEE_MANAGEMENT: "level-changing-fee-management",
+    DINING_FEE_MANAGEMENT: "dining-fee-management",
+    EXAM_FEE_MANAGEMENT: "exam-fee-management",
+
+    LIBRARY_FINE_MANAGEMENT: 'library-fine-management',
+    LAB_FINE_MANAGEMENT: 'laboratory-fine-management',
+    DISCIPLINARY_FINE_MANAGEMENT: 'disciplinary-fine-management'
 })
 
 const USER_TYPES = Object.freeze({

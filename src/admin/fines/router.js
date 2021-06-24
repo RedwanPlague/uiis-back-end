@@ -34,9 +34,8 @@ router.post('/assign', hasFinePrivilege, async (req, res) => {
 
 router.get('/list/:studentID', adminRequired, async (req, res)=> {
     try{
-        console.log(req.params.studentID)
         const fines = await Fine.find({
-                status: constants.DUE_STATUS.PENDING,
+                // status: constants.DUE_STATUS.PENDING,
                 issuedTo: req.params.studentID
             }
         )

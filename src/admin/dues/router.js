@@ -203,7 +203,7 @@ router.post('/getDue', async (req, res) => {
                $in: req.body.ids
            }
        }
-       filterParam.status = constants.DUE_STATUS.PENDING
+       // filterParam.status = constants.DUE_STATUS.PENDING
        const dues = await Due.find(filterParam)
        res.send(dues)
    } catch (error){

@@ -43,11 +43,17 @@ const dueSchema = new mongoose.Schema({
         virtuals: true
     }
 })
- 
+
+dueSchema.virtual('currentAmount').get(function (){
+    return this.amount +
+        (Date.now() > this.deadline) * this.delayFine;
+})
+
 const Due = mongoose.model('Due', dueSchema)
 const LevelChangingFee = Due.discriminator(constants.DUE_TYPES.LEVEL_CHANGING_FEE, levelChangingFeeSchema)
 const DiningFee = Due.discriminator(constants.DUE_TYPES.DINING_FEE, diningFeeSchema)
 const ExamFee = Due.discriminator(constants.DUE_TYPES.EXAM_FEE, examFeeSchema)
+
 
 module.exports = {
     Due,

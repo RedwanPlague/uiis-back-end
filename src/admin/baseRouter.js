@@ -8,6 +8,7 @@ const hallRouter = require('./halls/router')
 const courseSessionRouter = require('./courseSessions/router')
 const slotRouter = require('./slots/router')
 const dueRouter = require('./dues/router')
+const fineRouter = require('./fines/router')
 
 const courseRegistrationRouter = require('./courseRegistrations/router')
 const currentSessionRouter = require('./currentSessions/router')
@@ -27,12 +28,9 @@ router.post('/account/login', async (req, res) => {
 		)
 		const token = await user.generateAuthToken()
 		user.tokens = user.tokens.concat({ token })
-
 		await user.save()
 		req.user = user
-
 		addMergePrivileges(req, res)
-
 		res.send({
 			user,
 			token,
@@ -54,6 +52,7 @@ router.use('/hall', hallRouter)
 router.use('/courseSession', courseSessionRouter)
 router.use('/slot', slotRouter)
 router.use('/due', dueRouter)
+router.use('/fine', fineRouter)
 
 router.use('/courseRegistration', courseRegistrationRouter)
 router.use('/currentSession', currentSessionRouter)

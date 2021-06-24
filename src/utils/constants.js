@@ -61,6 +61,12 @@ const DUE_STATUS = Object.freeze({
     CLEARED: "cleared"
 })
 
+const FINE_TYPES = Object.freeze({
+    LIBRARY_FINE: 'library-fine',
+    LAB_FINE: 'laboratory-fine',
+    DISCIPLINARY_FINE: 'disciplinary-fine'
+})
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,
@@ -71,5 +77,6 @@ module.exports = Object.freeze({
     DUE_TYPES,
     RESULT_STATUS,
     ISSUE_STATUS,
-    DUE_STATUS
+    DUE_STATUS,
+    FINE_TYPES
 })

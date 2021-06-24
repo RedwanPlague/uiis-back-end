@@ -177,8 +177,85 @@ router.post('/batchInfo', async (req, res) => {
     }
 })
 
+router.post('/getDue', async (req, res) => {
+   try{
+       let filterParam = {}
+       if (!req.body.dueType) {
+           throw new Error("Due type not specified!")
+       }
+       filterParam.dueType = req.body.dueType
 
+       if(req.body.dueType === constants.DUE_TYPES.LEVEL_CHANGING_FEE || req.body.dueType === constants.DUE_TYPES.EXAM_FEE){
+           if (!req.body.session) {
+               throw new Error("Session is not specified!")
+           }
+           if(req.body.session){
+               filterParam.session = new Date(req.body.session)
+           }
+       }
+       if(req.body.dueType === constants.DUE_TYPES.DINING_FEE){
+           if (!req.body.yearMonth) {
+               throw new Error("yearMonth is not specified!")
+           }
+           if(req.body.yearMonth){
+               filterParam.yearMonth = new Date(req.body.yearMonth)
+           }
+       }
+       if (req.body.ids){
+           filterParam.issuedTo = {
+               $in: req.body.ids
+           }
+       }
+       filterParam.status = constants.DUE_STATUS.PENDING
+       const dues = await Due.find(filterParam)
+       res.send(dues)
+   } catch (error){
+        res.status(400).send({error: error.message})
+   }
 
+})
 
- 
+router.post('/clearDue', async (req, res) => {
+    try{
+        let filterParam = {}
+        if (!req.body.dueType) {
+            throw new Error("Due type not specified!")
+        }
+        filterParam.dueType = req.body.dueType
+
+        if(req.body.dueType === constants.DUE_TYPES.LEVEL_CHANGING_FEE || req.body.dueType === constants.DUE_TYPES.EXAM_FEE){
+            if (!req.body.session) {
+                throw new Error("Session is not specified!")
+            }
+            if(req.body.session){
+                filterParam.session = new Date(req.body.session)
+            }
+        }
+        if(req.body.dueType === constants.DUE_TYPES.DINING_FEE){
+            if (!req.body.yearMonth) {
+                throw new Error("yearMonth is not specified!")
+            }
+            if(req.body.yearMonth){
+                filterParam.yearMonth = new Date(req.body.yearMonth)
+            }
+        }
+        if (req.body.ids){
+            filterParam.issuedTo = {
+                $in: req.body.ids
+            }
+        }
+        filterParam.status = constants.DUE_STATUS.PENDING
+        const dues = await Due.updateMany(filterParam, {
+            $set:{
+                status: constants.DUE_STATUS.CLEARED
+            }
+        })
+        res.send({
+            modifiedCount: dues.nModified
+        })
+    } catch (error){
+        res.status(400).send({error: error.message})
+    }
+})
+
 module.exports = router

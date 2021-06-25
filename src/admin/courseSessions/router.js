@@ -110,16 +110,15 @@ router.patch('/update/:courseID/:syllabusID/:session/teachers',hasAllPrivileges(
         if(!course){
             throw new Error('This course does not exist')
         }
-        const courseSession = await CourseSession.findOne({
+        await CourseSession.updateOne({
             course: course._id,
             session: req.params.session
+        },{
+            $set: {
+                teachers: req.body
+            }
         })
-        if(!courseSession){
-            throw new Error('This course session does not exist')
-        }
-        courseSession.teachers = req.body
-        await courseSession.update()
-        res.send(courseSession)
+        res.send()
     } catch (error) {
         res.status(400).send({
             error: error.message
@@ -140,16 +139,16 @@ router.patch('/update/:courseID/:syllabusID/:session/examiners',hasAllPrivileges
         if(!course){
             throw new Error('This course does not exist')
         }
-        const courseSession = await CourseSession.findOne({
+        await CourseSession.updateOne({
             course: course._id,
             session: req.params.session
+        },{
+            $set: {
+                examiners: req.body
+            }
         })
-        if(!courseSession){
-            throw new Error('This course session does not exist')
-        }
-        courseSession.examiners = req.body
-        await courseSession.update()
-        res.send(courseSession)
+         
+        res.send()
     } catch (error) {
         res.status(400).send({
             error: error.message
@@ -168,16 +167,16 @@ router.patch('/update/:courseID/:syllabusID/:session/scrutinizers',hasAllPrivile
         if(!course){
             throw new Error('This course does not exist')
         }
-        const courseSession = await CourseSession.findOne({
+        await CourseSession.updateOne({
             course: course._id,
             session: req.params.session
+        },{
+            $set: {
+                scrutinizers: req.body
+            }
         })
-        if(!courseSession){
-            throw new Error('This course session does not exist')
-        }
-        courseSession.scrutinizers = req.body
-        await courseSession.update()
-        res.send(courseSession)
+        
+        res.send()
     } catch (error) {
         res.status(400).send({
             error: error.message
@@ -197,16 +196,16 @@ router.patch('/update/:courseID/:syllabusID/:session/resultAccessHolders',hasAll
         if(!course){
             throw new Error('This course does not exist')
         }
-        const courseSession = await CourseSession.findOne({
+        await CourseSession.updateOne({
             course: course._id,
             session: req.params.session
+        },{
+            $set: {
+                resultAccessHolders: req.body
+            }
         })
-        if(!courseSession){
-            throw new Error('This course session does not exist')
-        }
-        courseSession.resultAccessHolders = req.body
-        await courseSession.update()
-        res.send(courseSession)
+         
+        res.send()
     } catch (error) {
         res.status(400).send({
             error: error.message
@@ -226,16 +225,16 @@ router.patch('/update/:courseID/:syllabusID/:session/schedule',hasAllPrivileges(
         if(!course){
             throw new Error('This course does not exist')
         }
-        const courseSession = await CourseSession.findOne({
+        await CourseSession.updateOne({
             course: course._id,
             session: req.params.session
+        },{
+            $set: {
+                schedule: req.body
+            }
         })
-        if(!courseSession){
-            throw new Error('This course session does not exist')
-        }
-        courseSession.schedule = req.body
-        await courseSession.update()
-        res.send(courseSession)
+         
+        res.send()
     } catch (error) {
         res.status(400).send({
             error: error.message

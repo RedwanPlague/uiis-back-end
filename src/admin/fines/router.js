@@ -65,7 +65,7 @@ router.get('/get/:fineID', async (req, res) => {
             throw new Error("No such fine exists!")
         }
         failIfAdminDoesNotHaveFinePrivilege(req, fine)
-        res.send(fine)
+        res.send([fine])
     } catch (error) {
         res.status(400).send({error: error.message})
     }

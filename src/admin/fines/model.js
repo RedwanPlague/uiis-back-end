@@ -53,7 +53,7 @@ function dateDiffInDays(a, b) {
     return Math.floor((utc2 - utc1) / _MS_PER_DAY);
 }
 
-fineSchema.virtual('currentDue').get(function (){
+fineSchema.virtual('currentAmount').get(function (){
     if (this.fineType === constants.FINE_TYPES.LIBRARY_FINE){
         let amount = this.amount
         if (Date.now() > this.deadline){

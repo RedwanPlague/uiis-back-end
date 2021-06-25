@@ -73,7 +73,7 @@ router.get('/get/:fineID', async (req, res) => {
 })
 
 
-router.post('/update/:fineID', async (req, res) => {
+router.patch('/update/:fineID', async (req, res) => {
     try {
         const fine = await Fine.findById(req.params.fineID)
         if (!fine){

@@ -103,11 +103,30 @@ function hasFinePrivilege(req, res, next) {
     }
 }
 
+const failIfAdminDoesNotHaveFinePrivilege = (req, fine) => {
+    let privilege = undefined
+
+    if (fine.fineType === constants.FINE_TYPES.LIBRARY_FINE){
+        privilege = constants.PRIVILEGES.LIBRARY_FINE_MANAGEMENT
+    }
+    else if (fine.fineType === constants.FINE_TYPES.LAB_FINE) {
+        privilege = constants.PRIVILEGES.LAB_FINE_MANAGEMENT
+    }
+    else if (fine.fineType === constants.FINE_TYPES.DISCIPLINARY_FINE) {
+        privilege = constants.PRIVILEGES.DISCIPLINARY_FINE_MANAGEMENT
+    }
+
+    if (req.mergedPrivileges.indexOf(privilege) < 0) {
+        throw new Error("Permission Denied!")
+    }
+}
+
 module.exports = {
     logInRequired,
     adminRequired,
     hasAllPrivileges,
     hasAnyPrivileges,
     hasDueTypePrivilege,
-    hasFinePrivilege
+    hasFinePrivilege,
+    failIfAdminDoesNotHaveFinePrivilege
 }

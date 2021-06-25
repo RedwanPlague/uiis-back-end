@@ -32,6 +32,7 @@ const addMergePrivileges = async(req, res) => {
     req.mergedPrivileges = [...new Set(mergedPrivileges)]
 }
 
+
 module.exports = {
     getUserFromToken,
     addMergePrivileges

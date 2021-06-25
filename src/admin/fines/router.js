@@ -58,9 +58,22 @@ router.get('/list/:studentID', adminRequired, async (req, res)=> {
     }
 })
 
+router.get('/get/:fineID', async (req, res) => {
+    try {
+        const fine = await Fine.findById(req.params.fineID)
+        if (!fine){
+            throw new Error("No such fine exists!")
+        }
+        failIfAdminDoesNotHaveFinePrivilege(req, fine)
+        res.send([fine])
+    } catch (error) {
+        res.status(400).send({error: error.message})
+    }
+
+})
 
 
-router.post('/update/:fineID', async (req, res) => {
+router.patch('/update/:fineID', async (req, res) => {
     try {
         const fine = await Fine.findById(req.params.fineID)
         if (!fine){

@@ -33,8 +33,22 @@ router.post('/assign', hasFinePrivilege, async (req, res) => {
 
 router.get('/list/:studentID', adminRequired, async (req, res)=> {
     try{
+        let allowedType = []
+        if (req.mergedPrivileges.indexOf(constants.PRIVILEGES.LAB_FINE_MANAGEMENT) >= 0) {
+            allowedType.push(constants.FINE_TYPES.LAB_FINE)
+        }
+        if (req.mergedPrivileges.indexOf(constants.PRIVILEGES.LIBRARY_FINE_MANAGEMENT) >= 0) {
+            allowedType.push(constants.FINE_TYPES.LIBRARY_FINE)
+        }
+        if (req.mergedPrivileges.indexOf(constants.PRIVILEGES.DISCIPLINARY_FINE_MANAGEMENT) >= 0) {
+            allowedType.push(constants.FINE_TYPES.DISCIPLINARY_FINE)
+        }
+
         const fines = await Fine.find({
                 // status: constants.DUE_STATUS.PENDING,
+                fineType: {
+                    $in : allowedType
+                },
                 issuedTo: req.params.studentID
             }
         )

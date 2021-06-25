@@ -118,7 +118,7 @@ router.patch('/update/:courseID/:syllabusID/:session/teachers',hasAllPrivileges(
             throw new Error('This course session does not exist')
         }
         courseSession.teachers = req.body
-        await courseSession.save()
+        await courseSession.update()
         res.send(courseSession)
     } catch (error) {
         res.status(400).send({
@@ -148,7 +148,7 @@ router.patch('/update/:courseID/:syllabusID/:session/examiners',hasAllPrivileges
             throw new Error('This course session does not exist')
         }
         courseSession.examiners = req.body
-        await courseSession.save()
+        await courseSession.update()
         res.send(courseSession)
     } catch (error) {
         res.status(400).send({
@@ -176,7 +176,7 @@ router.patch('/update/:courseID/:syllabusID/:session/scrutinizers',hasAllPrivile
             throw new Error('This course session does not exist')
         }
         courseSession.scrutinizers = req.body
-        await courseSession.save()
+        await courseSession.update()
         res.send(courseSession)
     } catch (error) {
         res.status(400).send({
@@ -205,7 +205,7 @@ router.patch('/update/:courseID/:syllabusID/:session/resultAccessHolders',hasAll
             throw new Error('This course session does not exist')
         }
         courseSession.resultAccessHolders = req.body
-        await courseSession.save()
+        await courseSession.update()
         res.send(courseSession)
     } catch (error) {
         res.status(400).send({
@@ -234,7 +234,7 @@ router.patch('/update/:courseID/:syllabusID/:session/schedule',hasAllPrivileges(
             throw new Error('This course session does not exist')
         }
         courseSession.schedule = req.body
-        await courseSession.save()
+        await courseSession.update()
         res.send(courseSession)
     } catch (error) {
         res.status(400).send({

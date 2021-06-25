@@ -79,6 +79,9 @@ router.patch('/update/:fineID', async (req, res) => {
         if (!fine){
             throw new Error("No such fine exists!")
         }
+        if(fine.status === constants.DUE_STATUS.CLEARED){
+            throw new Error("Already cleared. No more updates!") 
+        }
 
         failIfAdminDoesNotHaveFinePrivilege(req, fine)
 

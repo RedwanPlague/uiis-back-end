@@ -28,7 +28,15 @@ const PRIVILEGES = Object.freeze({
     DEPARTMENT_UPDATE: "department-update",
 
     HALL_CREATION: "hall-creation",
-    HALL_UPDATE: "hall-update"
+    HALL_UPDATE: "hall-update",
+
+    LEVEL_CHANGING_FEE_MANAGEMENT: "level-changing-fee-management",
+    DINING_FEE_MANAGEMENT: "dining-fee-management",
+    EXAM_FEE_MANAGEMENT: "exam-fee-management",
+
+    LIBRARY_FINE_MANAGEMENT: 'library-fine-management',
+    LAB_FINE_MANAGEMENT: 'laboratory-fine-management',
+    DISCIPLINARY_FINE_MANAGEMENT: 'disciplinary-fine-management'
 })
 
 const USER_TYPES = Object.freeze({
@@ -41,6 +49,11 @@ const TF_PARTS = Object.freeze({
     A: 'A',
     B: 'B',
     NONE: '-'
+})
+const DUE_TYPES = Object.freeze({
+    LEVEL_CHANGING_FEE: "level-changing-fee",
+    EXAM_FEE: "exam-fee",
+    DINING_FEE: "dining-fee"
 })
 
 const RESULT_STATUS = Object.freeze( {
@@ -66,6 +79,17 @@ const ISSUE_STATUS = Object.freeze({
   RESOLVED: "resolved"
 })
 
+const DUE_STATUS = Object.freeze({
+    PENDING: "pending",
+    CLEARED: "cleared"
+})
+
+const FINE_TYPES = Object.freeze({
+    LIBRARY_FINE: 'library-fine',
+    LAB_FINE: 'laboratory-fine',
+    DISCIPLINARY_FINE: 'disciplinary-fine'
+})
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,
@@ -73,9 +97,12 @@ module.exports = Object.freeze({
     MAX_LEVEL: 2,
     USER_TYPES,
     PRIVILEGES,
+    DUE_TYPES,
     RESULT_STATUS,
     ISSUE_STATUS,
     ISSUE_POST_TYPE,
     ISSUE_EVAL_TYPE,
-    TF_PARTS
+    TF_PARTS,
+    DUE_STATUS,
+    FINE_TYPES
 })

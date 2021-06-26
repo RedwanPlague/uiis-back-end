@@ -28,6 +28,7 @@ router.post('/create', hasAllPrivileges([constants.PRIVILEGES.ACCOUNT_CREATION])
             throw new Error('Invalid user type')
         }
         await user.save()
+
         res.status(201).send()
     } catch (error) {
         res.status(400).send({
@@ -101,9 +102,7 @@ router.patch('/update/admin/:id', hasAllPrivileges([constants.PRIVILEGES.ACCOUNT
     }
 })
 
-/**
- * Here is the getters
- */
+// getters from here
 
 /**
  * privileges -> AdminRequired

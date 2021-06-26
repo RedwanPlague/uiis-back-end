@@ -122,9 +122,5 @@ router.get('/test', async (req, res) => {
     }
 })
 
-router.post('/ssl/test', (req, res) => {
-    console.log(req.body)
-})
-
 module.exports = router
 

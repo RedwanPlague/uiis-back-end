@@ -1,6 +1,10 @@
 const express = require('express')
 const cors = require('cors')
 
+require("@babel/core").transform("code", {
+    presets: ["@babel/preset-env"],
+});
+
 /* connect with the db */
 require('./db/mongoose')
 
@@ -15,6 +19,17 @@ const port = 3000
 
 app.use(express.json())
 app.use(cors())
+
+app.post('/ssl/test', (req, res) => {
+    try {
+        console.log('We have arrived at Beauty')
+        console.log(req.body)
+        res.send(req.body)
+    }
+    catch (error) {
+        res.status(400).send(error)
+    }
+})
 
 /* admin side router registration */
 app.use(adminRouter)

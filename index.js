@@ -1,10 +1,6 @@
 const express = require('express')
 const cors = require('cors')
 
-require("@babel/core").transform("code", {
-    presets: ["@babel/preset-env"],
-});
-
 /* connect with the db */
 require('./db/mongoose')
 

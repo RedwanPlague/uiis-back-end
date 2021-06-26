@@ -6,7 +6,7 @@ const { Fine } = require('../../admin/fines/model')
 
 const router =  express.Router()
 
-router.get('/getDue', async (req, res) => {
+router.get('/list', async (req, res) => {
     try {
         if(req.user.userType !== constants.USER_TYPES.STUDENT){
             throw new Error('Only for students!')

@@ -41,10 +41,11 @@ router.get('/test', async (req, res) => {
         const data = await payment.init({
             total_amount: '100',
             currency: 'BDT',
-            tran_id: 'uiis',
+            tran_id: 'uiis'+Math.floor(Math.random()*1000),
             success_url: 'http://localhost:8081/admin',
             fail_url: 'http://localhost:8081/admin',
             cancel_url: 'http://localhost:8081/admin',
+            ipn_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/test',
             cus_name: 'Bishwajit',
             cus_email: 'bishwajit@yahoo.com',
             cus_add1: 'Dhaka',

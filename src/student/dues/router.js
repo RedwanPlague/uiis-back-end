@@ -42,7 +42,8 @@ router.get('/test', async (req, res) => {
             total_amount: '100',
             currency: 'BDT',
             tran_id: 'uiis'+Math.floor(Math.random()*1000),
-            success_url: 'http://localhost:8081/admin',
+            // success_url: 'http://localhost:8081/admin',
+            success_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/success',
             fail_url: 'http://localhost:8081/admin',
             cancel_url: 'http://localhost:8081/admin',
             ipn_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/test',
@@ -59,7 +60,6 @@ router.get('/test', async (req, res) => {
             product_profile: 'general'
         })
 
-        console.log(data)
         res.send(data)
 
     } catch (error) {

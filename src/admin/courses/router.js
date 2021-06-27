@@ -43,7 +43,13 @@ router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_CREATION]), 
 router.get('/list',
     hasAnyPrivileges([constants.PRIVILEGES.COURSE_CREATION,
         constants.PRIVILEGES.COURSE_UPDATE,
-        constants.PRIVILEGES.COURSE_DELETION
+        constants.PRIVILEGES.COURSE_DELETION,
+        constants.PRIVILEGES.COURSE_SESSION_UPDATE,
+        constants.PRIVILEGES.COURSE_SESSION_ASSIGN_EXAMINER,
+        constants.PRIVILEGES.COURSE_SESSION_ASSIGN_TEACHER,
+        constants.PRIVILEGES.COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER,
+        constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE,
+        constants.PRIVILEGES.COURSE_SESSION_ASSIGN_SCRUTINIZER
     ]),async (req, res) => {
 
     let match = {}

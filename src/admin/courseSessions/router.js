@@ -7,9 +7,9 @@ const constants = require('../../utils/constants')
 const router = new express.Router()
 
 /**
- * Privilege : COURSE_SESSION_CREATION
+ * Privilege : COURSE_SESSION_UPDATE
  */
-router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_CREATION]),async (req,res) => {
+router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_UPDATE]),async (req,res) => {
     try {
         const course = await Course.findOne({
             courseID: req.body.courseID,
@@ -37,14 +37,17 @@ router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_CREA
  COURSE_SESSION_ASSIGN_TEACHER
  COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER
  COURSE_SESSION_ALLOT_SCHEDULE
+ COURSE_SESSION_ASSIGN_SCRUTINIZER
  */
 router.get('/list',
-    hasAnyPrivileges([constants.PRIVILEGES.COURSE_SESSION_CREATION,
+    hasAnyPrivileges([
+        // constants.PRIVILEGES.COURSE_SESSION_CREATION,
         constants.PRIVILEGES.COURSE_SESSION_UPDATE,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_EXAMINER,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_TEACHER,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER,
-        constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE
+        constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE,
+        constants.PRIVILEGES.COURSE_SESSION_ASSIGN_SCRUTINIZER
     ]),async (req, res) => {
     let match = {}
     if (req.query.session) {

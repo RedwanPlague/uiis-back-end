@@ -36,10 +36,11 @@ router.post('/test', async (req, res) => {
             } else {
                 console.log(`type does not match!`)
             }
-            console.log("collection : " + collection)
+            console.log("collection : " + collection.constructor.modelName)
             const doc = await collection.find({
                 transactionID : tran_id
             })
+            console.log("document " + doc)
             console.log(doc.currentAmount.toFixed(2).toString(), amount)
 
             // if (doc.currentAmount.toFixed(2).toString() !== amount) {

@@ -36,6 +36,7 @@ router.post('/test', async (req, res) => {
             } else {
                 console.log(`type does not match!`)
             }
+            console.log("collection : " + collection)
             const doc = await collection.find({
                 transactionID : tran_id
             })
@@ -57,6 +58,8 @@ router.post('/test', async (req, res) => {
         res.status(200).send()
     }
     catch (error) {
+        console.log('error ...')
+        console.log(error.message)
         res.status(400).send(error)
     }
 })

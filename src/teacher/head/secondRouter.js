@@ -7,7 +7,7 @@ const { changeResultState } = require("../teacher-common/resultStatusUtil");
 const Department = require("../../admin/departments/model");
 
 router.get("/:session", async (req, res) => {
-  console.log(req.ke);
+  const user = req.user;
   
   try {
     const user = req.user;
@@ -36,6 +36,7 @@ router.get("/:session", async (req, res) => {
       courseID: cs.course.courseID,
       courseTitle: cs.course.title,
       hasForwarded: cs.headForwarded,
+      prevDone: (cs.headForwarded || cs.status === constants.RESULT_STATUS["DEPARTMENT_HEAD"]),
     }));
 
     res.send({ toRet });

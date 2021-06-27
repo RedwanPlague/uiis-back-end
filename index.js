@@ -39,6 +39,15 @@ app.post('/ssl/success', (req, res) => {
     }
 })
 
+app.get('/ssl/redirect', (req, res) => {
+    try {
+        res.status(301).redirect('localhost:8081/student/dues')
+    }
+    catch (error) {
+        res.status(400).send(error)
+    }
+})
+
 /* admin side router registration */
 app.use(adminRouter)
 /* student side router registration */

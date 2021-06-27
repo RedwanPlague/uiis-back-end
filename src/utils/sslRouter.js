@@ -30,11 +30,11 @@ router.post('/test', async (req, res) => {
 
             let doc = undefined
             if (type === "due"){
-                doc = await Due.find({
+                doc = await Due.findOne({
                     transactionID : tran_id
                 })
             } else if (type === "fine") {
-                doc = await Fine.find({
+                doc = await Fine.findOne({
                     transactionID : tran_id
                 })
             } else {

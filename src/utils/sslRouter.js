@@ -28,18 +28,18 @@ router.post('/test', async (req, res) => {
             const {val_id, tran_id, amount} = req.body
             console.log(`after destruct : ${val_id} ${tran_id} ${amount}`)
 
-            let collection = undefined
+            let doc = undefined
             if (type === "due"){
-                collection = Due
+                doc = await Due.find({
+                    transactionID : tran_id
+                })
             } else if (type === "fine") {
-                collection = Fine
+                doc = await Fine.find({
+                    transactionID : tran_id
+                })
             } else {
                 console.log(`type does not match!`)
             }
-            console.log("collection : " + collection.constructor.modelName)
-            const doc = await collection.find({
-                transactionID : tran_id
-            })
             console.log("document " + doc)
             console.log(doc.currentAmount.toFixed(2).toString(), amount)
 

@@ -39,7 +39,9 @@ router.post('/test', async (req, res) => {
             const doc = await collection.find({
                 transactionID : tran_id
             })
-            if (doc.currentAmount !== amount) {
+            console.log(doc.currentAmount.toFixed(2).toString(), amount)
+
+            if (doc.currentAmount.toFixed(2).toString() !== amount) {
                 throw new Error("amount does not match")
             }
             const validationRes = await ssl.validate({

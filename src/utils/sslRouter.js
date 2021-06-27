@@ -63,7 +63,7 @@ router.post('/test', async (req, res) => {
 router.post('/success', async (req, res) => {
 
     try {
-        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues/success')
+        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues/status/success')
     }
     catch (error) {
         res.status(400).send(error)
@@ -72,7 +72,7 @@ router.post('/success', async (req, res) => {
 
 router.post('/fail', async (req, res) => {
     try {
-        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues/fail')
+        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues/status/fail')
     }
     catch (error) {
         res.status(400).send(error)
@@ -81,7 +81,7 @@ router.post('/fail', async (req, res) => {
 
 router.post('/cancel', async (req, res) => {
     try {
-        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues/cancel')
+        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues/status/cancel')
     }
     catch (error) {
         res.status(400).send(error)

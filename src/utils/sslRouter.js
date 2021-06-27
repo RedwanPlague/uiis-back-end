@@ -50,9 +50,8 @@ router.post('/test', async (req, res) => {
             console.log("transaction successful!")
             doc.status = constant.DUE_STATUS.CLEARED
             await doc.save()
-            res.send()
         }
-        res.status(400).send()
+        res.status(200).send()
     }
     catch (error) {
         res.status(400).send(error)

@@ -81,7 +81,7 @@ router.get('/initiate-payment', async (req, res) => {
         if (data.status === "SUCCESS"){
             doc.sessionKey = data.sessionkey
             await doc.save()
-            console.log('session key ${doc.sessionKey}')
+            console.log(`session key ${doc.sessionKey}`)
             res.send(data.GatewayPageURL)
         }
         else {

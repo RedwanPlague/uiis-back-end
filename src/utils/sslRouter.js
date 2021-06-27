@@ -41,9 +41,9 @@ router.post('/test', async (req, res) => {
             })
             console.log(doc.currentAmount.toFixed(2).toString(), amount)
 
-            if (doc.currentAmount.toFixed(2).toString() !== amount) {
-                throw new Error("amount does not match")
-            }
+            // if (doc.currentAmount.toFixed(2).toString() !== amount) {
+            //     throw new Error("amount does not match")
+            // }
             const validationRes = await ssl.validate({
                 val_id
             })

@@ -47,12 +47,10 @@ router.post('/test', async (req, res) => {
             })
             console.log(validationRes)
 
-            if (validationRes.status === 'VALID') {
-                console.log("transaction successful!")
-                doc.status = constant.DUE_STATUS.CLEARED
-                await doc.save()
-                res.send()
-            }
+            console.log("transaction successful!")
+            doc.status = constant.DUE_STATUS.CLEARED
+            await doc.save()
+            res.send()
         }
         res.status(400).send()
     }

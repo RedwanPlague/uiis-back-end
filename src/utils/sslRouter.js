@@ -41,7 +41,8 @@ router.post('/test', async (req, res) => {
                 console.log(`type does not match!`)
             }
             console.log("document " + doc)
-            console.log(doc.currentAmount.toFixed(2).toString(), amount)
+            console.log(doc.currentAmount)
+
 
             // if (doc.currentAmount.toFixed(2).toString() !== amount) {
             //     throw new Error("amount does not match")

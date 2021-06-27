@@ -44,13 +44,14 @@ router.post('/test', async (req, res) => {
             // if (doc.currentAmount.toFixed(2).toString() !== amount) {
             //     throw new Error("amount does not match")
             // }
-            const validationRes = await ssl.validate({
-                val_id
-            })
-            console.log(validationRes)
+            // const validationRes = await ssl.validate({
+            //     val_id
+            // })
+            // console.log(validationRes)
 
             console.log("transaction successful!")
             doc.status = constant.DUE_STATUS.CLEARED
+            console.log(doc)
             await doc.save()
         }
         res.status(200).send()

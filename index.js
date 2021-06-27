@@ -41,7 +41,7 @@ app.post('/ssl/success', (req, res) => {
 
 app.get('/ssl/redirect', (req, res) => {
     try {
-        res.status(301).redirect('localhost:8081/student/dues')
+        res.status(301).redirect('www.redwan.com:8081/student/dues')
     }
     catch (error) {
         res.status(400).send(error)

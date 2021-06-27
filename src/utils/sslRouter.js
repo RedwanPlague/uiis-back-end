@@ -29,28 +29,34 @@ router.post('/test', async (req, res) => {
             console.log(`after destruct : ${val_id} ${tran_id} ${amount}`)
 
             let doc = undefined
+            let doc_pojo = undefined
             if (type === "due"){
                 doc = await Due.findOne({
                     transactionID : tran_id
                 })
+                doc_pojo = await Due.findOne({
+                    transactionID : tran_id
+                }).lean()
             } else if (type === "fine") {
                 doc = await Fine.findOne({
                     transactionID : tran_id
                 })
+                doc_pojo = await Fine.findOne({
+                    transactionID : tran_id
+                }).lean()
             } else {
                 console.log(`type does not match!`)
             }
             console.log("document " + doc)
             console.log(doc.currentAmount)
 
-
-            // if (doc.currentAmount.toFixed(2).toString() !== amount) {
+            // if (doc.currentAmount !== amount) {
             //     throw new Error("amount does not match")
             // }
-            // const validationRes = await ssl.validate({
-            //     val_id
-            // })
-            // console.log(validationRes)
+            const validationRes = await ssl.validate({
+                val_id
+            })
+            console.log(validationRes)
 
             console.log("transaction successful!")
             doc.status = constant.DUE_STATUS.CLEARED

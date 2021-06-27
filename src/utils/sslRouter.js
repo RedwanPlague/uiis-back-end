@@ -40,7 +40,7 @@ router.post('/test', async (req, res) => {
                 transactionID : tran_id
             })
             if (doc.currentAmount !== amount) {
-                res.status(301).redirect(failUrl)
+                throw new Error("amount does not match")
             }
             const validationRes = await ssl.validate({
                 val_id

@@ -36,6 +36,9 @@ const dueSchema = new mongoose.Schema({
         type: String,
         default: constants.DUE_STATUS.PENDING,
         enum: Object.values(constants.DUE_STATUS)
+    },
+    transactionID: {
+        type: String
     }
 }, {
     discriminatorKey: 'dueType',

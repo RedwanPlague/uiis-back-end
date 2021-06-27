@@ -30,25 +30,32 @@ router.get('/list', async (req, res) => {
     }
 })
 
-router.get('/test', async (req, res) => {
+router.get('/initiatePayment/:dueID', async (req, res) => {
     try {
         const payment = new SSLCommerzPayment(
             'buet60d7026a407ce',
             'buet60d7026a407ce@ssl'
         )
-        console.log(payment)
+        const due = await Due.findById(req.params.dueID).populate({
+            path: 'issuedTo'
+        })
 
+        console.log("due ID " + req.params.dueID)
+
+        if (!due){
+            throw new Error("No such due exists!")
+        }
         const data = await payment.init({
-            total_amount: '100',
+            total_amount: due.currentAmount,
             currency: 'BDT',
-            tran_id: 'uiis'+Math.floor(Math.random()*1000),
+            tran_id: due._id +Math.floor(Math.random()*1000),
             // success_url: 'http://localhost:8081/admin',
             success_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/success',
             fail_url: 'http://localhost:8081/admin',
             cancel_url: 'http://localhost:8081/admin',
             ipn_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/test',
-            cus_name: 'Bishwajit',
-            cus_email: 'bishwajit@yahoo.com',
+            cus_name: due.issuedTo.name,
+            cus_email: due.issuedTo.email || "dummy@gmail.com",
             cus_add1: 'Dhaka',
             cus_city: 'Dhaka',
             cus_postcode: '1000',
@@ -59,6 +66,8 @@ router.get('/test', async (req, res) => {
             product_category: 'Due',
             product_profile: 'general'
         })
+
+        console.log(data)
 
         res.send(data)
 

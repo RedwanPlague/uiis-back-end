@@ -16,7 +16,6 @@ const store_passwd = 'buet60d7026a407ce@ssl'
 router.post('/test', async (req, res) => {
     try {
         console.log('We have arrived at IPN')
-        console.log(req.body)
 
         const ssl = new SSLCommerzPayment(
             'buet60d7026a407ce',
@@ -24,9 +23,9 @@ router.post('/test', async (req, res) => {
         )
         if (req.body.status === "VALID"){
             const type = req.body.value_a
-            console.log("Type from ipn : " + type)
+            // console.log("Type from ipn : " + type)
             const {val_id, tran_id, amount} = req.body
-            console.log(`after destruct : ${val_id} ${tran_id} ${amount}`)
+            // console.log(`after destruct : ${val_id} ${tran_id} ${amount}`)
 
             let doc
             if (type === "due"){
@@ -40,8 +39,8 @@ router.post('/test', async (req, res) => {
             } else {
                 console.log(`type does not match!`)
             }
-            console.log("document " + doc)
-            console.log(doc.currentAmount)
+            // console.log("document " + doc)
+            // console.log(doc.currentAmount)
 
             // if (doc.currentAmount !== amount) {
             //     throw new Error("amount does not match")
@@ -68,7 +67,7 @@ router.post('/test', async (req, res) => {
 router.post('/success', async (req, res) => {
 
     try {
-        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues/status/success')
+        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues/status/success?txid='+req.body.tran_id)
     }
     catch (error) {
         res.status(400).send(error)

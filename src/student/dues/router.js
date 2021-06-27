@@ -30,17 +30,17 @@ router.get('/list', async (req, res) => {
     }
 })
 
-router.get('/initiatePayment/:dueID', async (req, res) => {
+router.get('/test', async (req, res) => {
     try {
         const payment = new SSLCommerzPayment(
             'buet60d7026a407ce',
             'buet60d7026a407ce@ssl'
         )
-        const due = await Due.findById(req.params.dueID).populate({
+        const due = await Due.findById(req.query.dueID).populate({
             path: 'issuedTo'
         })
 
-        console.log("due ID " + req.params.dueID)
+        console.log("due ID " + req.query.dueID)
 
         if (!due){
             throw new Error("No such due exists!")

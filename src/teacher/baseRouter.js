@@ -14,6 +14,7 @@ router.use('/courses', courseRouter);
 router.use('/examiner', examinerRouter);
 router.use('/head', headRouter);
 router.use('/scrutinizer', scrutinizerRouter);
+router.use('/internal', scrutinizerRouter);
 router.use('/issues', issueRouter);
 
 module.exports = router

@@ -1,13 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { CourseSession } = require("../../admin/courseSessions/model");
-const { CourseRegistration } = require("../../admin/courseRegistrations/model");
 const { getCorSes, getCorSes2 } = require("../examiner/helpers");
 const constants = require("../../utils/constants");
 const { changeResultState } = require("../teacher-common/resultStatusUtil");
-const { setKe } = require("./middlewares");
-
-router.use(setKe);
+const Department = require("../../admin/departments/model");
 
 router.get("/:session", async (req, res) => {
   console.log(req.ke);
@@ -16,19 +13,29 @@ router.get("/:session", async (req, res) => {
     const user = req.user;
     const session = new Date(req.params.session);
 
-    courseSessions = await CourseSession.find({
+    const dept = await Department.findOne({
+      head: user.id,
+    });
+    const deptID = dept.id;
+
+    const courseSessions = await CourseSession.find({
       session: session,
-      [`${req.ke}s.teacher`]: user.id,
     })
       .select("course")
       .populate({
         path: "course",
+        match: {
+          offeredToDepartment: deptID,
+        },
         select: "courseID title",
       });
+    
+    const deptCS = courseSessions.filter(cs => cs.course);
 
-    const toRet = courseSessions.map((cs) => ({
+    const toRet = deptCS.map((cs) => ({
       courseID: cs.course.courseID,
       courseTitle: cs.course.title,
+      hasForwarded: cs.headForwarded,
     }));
 
     res.send({ toRet });
@@ -42,40 +49,15 @@ router.get("/:courseID/:session", async (req, res) => {
   try {
     const courseID = req.params.courseID;
     const session = new Date(req.params.session);
-    const user = req.user;
 
     const courseSession = await getCorSes(courseID, session);
 
     let allApproved = true;
-    // courseSession.teachers.forEach(teacher => {
-    //   allApproved = (allApproved && !teacher.editAccess);
-    // });
-    // courseSession.examiners.forEach(examiner => {
-    //   allApproved = (allApproved && !examiner.resultEditAccess);
-    // });
 
     if (allApproved) {
-      // let attendanceCount = 0;
-      // let evalTotalMarks = [];
-      // let tfTotalMarks = courseSession.examiners;
-
-      // courseSession.teachers.forEach(teacher => {
-      //   attendanceCount += teacher.classCount;
-      //   evalTotalMarks.push(...teacher.evalDescriptions);
-      // });
-
-      // const totalMarks = {
-      //   attendanceCount,
-      //   evalTotalMarks,
-      //   tfTotalMarks,
-      // };
-
-      const section = courseSession[`${req.ke}s`].find(
-        (who) => who.teacher === user.id
-      );
 
       res.send({
-        hasForwarded: section.hasForwarded,
+        hasForwarded: courseSession.headForwarded,
         names: courseSession.names,
         teachers: courseSession.teachers,
         examiners: courseSession.examiners,
@@ -92,26 +74,19 @@ router.get("/:courseID/:session", async (req, res) => {
 
 router.put("/:courseID/:session/approve", async (req, res) => {
   try {
-    const user = req.user;
     const courseID = req.params.courseID;
     const session = new Date(req.params.session);
 
     const courseSession = await getCorSes2(courseID, session);
 
-    const section = courseSession[`${req.ke}s`].find(
-      (who) => who.teacher === user.id
-    );
-
-    if (section) {
-      section.hasForwarded = true;
-    }
+    courseSession.headForwarded = true;
 
     await courseSession.save();
 
     await changeResultState(
       courseID,
       req.params.session,
-      constants[`RESULT_STATUS.${req.ke.toUpperCase()}`]
+      constants[`RESULT_STATUS.DEPARTMENT_HEAD`]
     );
 
     res.send({ message: "hemlo" });
@@ -123,19 +98,12 @@ router.put("/:courseID/:session/approve", async (req, res) => {
 
 router.put("/:courseID/:session/restore", async (req, res) => {
   try {
-    const user = req.user;
     const courseID = req.params.courseID;
     const session = new Date(req.params.session);
 
     const courseSession = await getCorSes2(courseID, session);
 
-    const section = courseSession[`${req.ke}s`].find(
-      (who) => who.teacher === user.id
-    );
-
-    if (section) {
-      section.hasForwarded = false;
-    }
+    courseSession.headForwarded = false;
 
     courseSession.save();
 

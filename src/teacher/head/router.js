@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { Student } = require('../../admin/accounts/model');
+const secondRouter = require("./secondRouter");
 
 const router =  express.Router();
 
@@ -70,5 +71,7 @@ router.patch('/registrations/reject', async (req, res) => {
         });
     }
 });
+
+router.use(secondRouter);
 
 module.exports = router;

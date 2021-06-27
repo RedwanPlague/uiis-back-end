@@ -60,8 +60,8 @@ router.get('/initiate-payment', async (req, res) => {
             tran_id: doc._id +Math.floor(Math.random()*1000),
             // success_url: 'http://localhost:8081/admin',
             success_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/success',
-            fail_url: 'http://localhost:8081/admin',
-            cancel_url: 'http://localhost:8081/admin',
+            fail_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/fail',
+            cancel_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/cancel',
             ipn_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/test',
             cus_name: doc.issuedTo.name,
             cus_email: doc.issuedTo.email || "dummy@gmail.com",
@@ -73,7 +73,8 @@ router.get('/initiate-payment', async (req, res) => {
             shipping_method: 'NO',
             product_name: req.query.type,
             product_category: 'Due',
-            product_profile: 'general'
+            product_profile: 'general',
+            value_a: req.query.type
         })
         console.log(data)
 

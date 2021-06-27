@@ -47,6 +47,9 @@ const dueSchema = new mongoose.Schema({
     discriminatorKey: 'dueType',
     toJSON : {
         virtuals: true
+    },
+    toObject: {
+        virtuals: true
     }
 })
 

@@ -39,6 +39,9 @@ const dueSchema = new mongoose.Schema({
     },
     transactionID: {
         type: String
+    },
+    sessionKey: {
+        type: String
     }
 }, {
     discriminatorKey: 'dueType',

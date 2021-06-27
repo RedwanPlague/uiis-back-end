@@ -35,6 +35,12 @@ const fineSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true
+    },
+    transactionID: {
+        type: String
+    },
+    sessionKey: {
+        type: String
     }
 }, {
     toJSON : {

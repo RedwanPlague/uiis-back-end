@@ -41,7 +41,7 @@ app.post('/ssl/success', (req, res) => {
 
 app.get('/ssl/redirect', (req, res) => {
     try {
-        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/student/dues')
+        res.status(301).redirect('https://redwanplague.github.io/hosted-websites/uiis/#/student/dues')
     }
     catch (error) {
         res.status(400).send(error)

@@ -19,8 +19,8 @@ app.use(cors())
 app.post('/ssl/test', (req, res) => {
     try {
         console.log('We have arrived at IPN')
-        console.log(req.body)
-        res.send(req.body)
+        console.log(req)
+        res.send(req)
     }
     catch (error) {
         res.status(400).send(error)
@@ -30,8 +30,8 @@ app.post('/ssl/test', (req, res) => {
 app.post('/ssl/success', (req, res) => {
     try {
         console.log('We have arrived at success')
-        console.log(req.body)
-        res.send(req.body)
+        console.log(req)
+        res.send(req)
     }
     catch (error) {
         res.status(400).send(error)

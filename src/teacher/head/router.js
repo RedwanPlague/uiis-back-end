@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { Student } = require('../../admin/accounts/model');
+const Department = require('../../admin/departments/model');
 
 const router =  express.Router();
 
@@ -64,6 +65,22 @@ router.patch('/registrations/reject', async (req, res) => {
                 });
 
         res.status(201).send(updatedStudents);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.get('/:department', async (req, res) => {
+    try {
+        const department = await Department
+            .findById({
+                _id: req.params.department
+            })
+            .select('_id head');
+
+        res.status(200).send(department);
     } catch(error) {
         res.status(400).send({
             error: error.message

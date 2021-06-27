@@ -1,8 +1,8 @@
 const express = require('express')
 
 const Department = require('./model')
-const {hasAllPrivileges, adminRequired} = require('../../utils/middlewares')
-const {PRIVILEGES} = require('../../utils/constants')
+const { hasAllPrivileges, adminRequired } = require('../../utils/middlewares')
+const { PRIVILEGES } = require('../../utils/constants')
 
 const router = new express.Router()
 

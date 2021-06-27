@@ -54,10 +54,11 @@ router.get('/initiate-payment', async (req, res) => {
         if (!doc){
             throw new Error("No such doc exists!")
         }
+        const tran_id = doc._id +Math.floor(Math.random()*1000)
         const data = await payment.init({
             total_amount: doc.currentAmount,
             currency: 'BDT',
-            tran_id: doc._id +Math.floor(Math.random()*1000),
+            tran_id,
             // success_url: 'http://localhost:8081/admin',
             success_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/success',
             fail_url: 'https://uiis-back-end.redwanplague.repl.co/ssl/fail',
@@ -80,6 +81,7 @@ router.get('/initiate-payment', async (req, res) => {
 
         if (data.status === "SUCCESS"){
             doc.sessionKey = data.sessionkey
+            doc.transactionID = tran_id
             await doc.save()
             console.log(`session key ${doc.sessionKey}`)
             res.send(data.GatewayPageURL)

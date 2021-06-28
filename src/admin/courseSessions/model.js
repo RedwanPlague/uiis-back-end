@@ -121,12 +121,30 @@ const courseSessionSchema = new mongoose.Schema({
             }
         }
     ],
+    internals: [
+        {
+            _id: false,
+            teacher: {
+                type: String,
+                required: true,
+                ref: 'User'
+            },
+            hasForwarded: {
+                type: Boolean,
+                default: false
+            }
+        }
+    ],
     registrationList: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'CourseRegistration'
         }
-    ]
+    ],
+    headForwarded: {
+        type: Boolean,
+        default: false
+    }
 })
 
 // starting time needs validation

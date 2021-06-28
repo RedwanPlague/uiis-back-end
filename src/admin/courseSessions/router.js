@@ -7,9 +7,9 @@ const constants = require('../../utils/constants')
 const router = new express.Router()
 
 /**
- * Privilege : COURSE_SESSION_CREATION
+ * Privilege : COURSE_SESSION_UPDATE
  */
-router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_CREATION]),async (req,res) => {
+router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_UPDATE]),async (req,res) => {
     try {
         const course = await Course.findOne({
             courseID: req.body.courseID,
@@ -37,14 +37,19 @@ router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_CREA
  COURSE_SESSION_ASSIGN_TEACHER
  COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER
  COURSE_SESSION_ALLOT_SCHEDULE
+ COURSE_SESSION_ASSIGN_SCRUTINIZER
+ COURSE_SESSION_ASSIGN_INTERNAL
  */
 router.get('/list',
-    hasAnyPrivileges([constants.PRIVILEGES.COURSE_SESSION_CREATION,
+    hasAnyPrivileges([
+        // constants.PRIVILEGES.COURSE_SESSION_CREATION,
         constants.PRIVILEGES.COURSE_SESSION_UPDATE,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_EXAMINER,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_TEACHER,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER,
-        constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE
+        constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE,
+        constants.PRIVILEGES.COURSE_SESSION_ASSIGN_SCRUTINIZER,
+        constants.PRIVILEGES.COURSE_SESSION_ASSIGN_INTERNAL
     ]),async (req, res) => {
     let match = {}
     if (req.query.session) {
@@ -155,6 +160,7 @@ router.patch('/update/:courseID/:syllabusID/:session/examiners',hasAllPrivileges
         })
     }
 })
+
 /**
  * Privilege : COURSE_SESSION_ASSIGN_SCRUTINIZER
  */
@@ -183,10 +189,39 @@ router.patch('/update/:courseID/:syllabusID/:session/scrutinizers',hasAllPrivile
         })
     }
 })
+
+/**
+ * Privilege : COURSE_SESSION_ASSIGN_INTERNAL
+ */
+router.patch('/update/:courseID/:syllabusID/:session/internals',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_INTERNAL]) ,async (req, res) => {
+    try {
+        const course = await Course.findOne({
+            courseID: req.params.courseID,
+            syllabusID: req.params.syllabusID,
+        })
+        if(!course){
+            throw new Error('This course does not exist')
+        }
+        await CourseSession.updateOne({
+            course: course._id,
+            session: req.params.session
+        },{
+            $set: {
+                internals: req.body
+            }
+        })
+        
+        res.send()
+    } catch (error) {
+        res.status(400).send({
+            error: error.message
+        })
+    }
+})
+
 /**
  * Privilege : COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER
  */
-
 router.patch('/update/:courseID/:syllabusID/:session/resultAccessHolders',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER]) ,async (req, res) => {
     try {
         const course = await Course.findOne({

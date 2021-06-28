@@ -36,10 +36,19 @@ const dueSchema = new mongoose.Schema({
         type: String,
         default: constants.DUE_STATUS.PENDING,
         enum: Object.values(constants.DUE_STATUS)
+    },
+    transactionID: {
+        type: String
+    },
+    sessionKey: {
+        type: String
     }
 }, {
     discriminatorKey: 'dueType',
     toJSON : {
+        virtuals: true
+    },
+    toObject: {
         virtuals: true
     }
 })

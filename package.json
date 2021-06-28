@@ -13,8 +13,10 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "form-data": "^2.5.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.4",
+    "node-fetch": "^2.6.1",
     "validator": "^13.5.2"
   },
   "devDependencies": {

@@ -21,7 +21,7 @@ router.get("/:session", async (req, res) => {
     const courseSessions = await CourseSession.find({
       session: session,
     })
-      .select("course")
+      .select("course status headForwarded")
       .populate({
         path: "course",
         match: {
@@ -31,13 +31,14 @@ router.get("/:session", async (req, res) => {
       });
     
     const deptCS = courseSessions.filter(cs => cs.course);
-
     const toRet = deptCS.map((cs) => ({
       courseID: cs.course.courseID,
       courseTitle: cs.course.title,
       hasForwarded: cs.headForwarded,
-      prevDone: (cs.headForwarded || cs.status === constants.RESULT_STATUS["DEPARTMENT_HEAD"]),
+      prevDone: (cs.headForwarded || cs.status === constants.RESULT_STATUS.DEPARTMENT_HEAD),
     }));
+
+    console.log(toRet);
 
     res.send({ toRet });
   } catch (error) {
@@ -87,7 +88,7 @@ router.put("/:courseID/:session/approve", async (req, res) => {
     await changeResultState(
       courseID,
       req.params.session,
-      constants[`RESULT_STATUS.DEPARTMENT_HEAD`]
+      constants.RESULT_STATUS.DEPARTMENT_HEAD
     );
 
     res.send({ message: "hemlo" });

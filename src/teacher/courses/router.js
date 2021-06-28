@@ -223,9 +223,10 @@ router.put('/:courseID/:session/reset', async (req, res) => {
 });
 
 router.put('/:courseID/:session/:role/set', async (req, res) => {
+
+
 	try {
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
-
 		if (!courseSession || !courseSession[req.params.role]) {
 			res.status(400).json("");
 			return;

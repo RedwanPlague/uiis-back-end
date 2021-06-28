@@ -72,7 +72,7 @@ router.get('/:id', async (req, res) => {
 			})
 			.populate({
 				path: 'courseSession',
-				select: 'teachers examiners scrutinizers -_id',
+				select: 'teachers examiners scrutinizers internals -_id',
 				populate: {
 					path: 'course',
 					select: 'courseID title -_id'
@@ -93,8 +93,11 @@ router.get('/:id', async (req, res) => {
 			if(issue.part === '-') issue.role = 'course'
 			else issue.role = 'examiner';
 		}
-		else if(issue.courseSession.scrutinizers.filter(scrutinizer => scrutinizer.teacher === req.user._id)) {
+		else if(issue.courseSession.scrutinizers.filter(scrutinizer => scrutinizer.teacher === req.user._id).length > 0) {
 			issue.role = 'scrutinizer';
+		}
+		else if(issue.courseSession.internals.filter(internal => internal.teacher === req.user._id).length > 0) {
+			issue.role = 'internal';
 		}
 		else issue.role = 'none';
 
@@ -217,25 +220,50 @@ router.put('/:issueID/changeStatus', async (req, res) => {
 });
 
 router.get('/:courseID/:session/eligibleList', async (req, res) => {
+
 	try {
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		const statuses = Object.values(constants.RESULT_STATUS);
 		const till = statuses.indexOf(courseSession.status);
-		const list = [];
+		let list = [];
 
 		for(let i = 1 ; i <= till ; i++) {
 			await courseSession.populate({path: `${statuses[i]}.teacher`, select:'name'}).execPopulate();
 
-			if( Array.isArray(courseSession[statuses[i]]) ) {
+			if(statuses[i] === constants.RESULT_STATUS.DEPARTMENT_HEAD) {
+				list.push({
+					userType: req.user.userType,
+					_id: req.user._id,
+					name: req.user.name
+				})
+			}
+			else if( Array.isArray(courseSession[statuses[i]]) ) {
 				courseSession[statuses[i]].forEach(entry => {
-					list.push(entry.teacher);
+					list.push(entry.teacher.toObject());
 				});
 			}
-			else list.push(courseSession[statuses[i]]);
+			else {
+				list.push(courseSession[statuses[i]].toObject());
+			}
 		}
+
+		let teacher_ids = [], return_list = [];
+
+		list.forEach(teacher=> {
+			if(!teacher_ids[teacher._id]) {
+				teacher.id = teacher._id;
+				return_list.push(teacher);
+
+			}
+			teacher_ids[teacher._id] = 1;
+		});
+
+		list = return_list;
+
 		res.status(200).json(list);
 
 	} catch (error) {
+		console.log(error);
 		res.status(400).json({
 			msg: error
 		});

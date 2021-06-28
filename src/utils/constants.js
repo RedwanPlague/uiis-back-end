@@ -60,7 +60,7 @@ const DUE_TYPES = Object.freeze({
 const RESULT_STATUS = Object.freeze( {
     EXAMINER: "examiners",
     SCRUTINIZER: "scrutinizers",
-    INTERNAL: "internal",
+    INTERNAL: "internals",
     DEPARTMENT_HEAD: "department-head",
     ECO: "exam-controller-office"
 })

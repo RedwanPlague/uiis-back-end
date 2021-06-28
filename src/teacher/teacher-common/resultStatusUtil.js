@@ -3,6 +3,9 @@ const {CourseSession} = require("../../admin/courseSessions/model");
 
 
 async function changeResultState(courseID, session, present_status) {
+
+
+	console.log(present_status);
 	const courseSession = await getCourseSession(courseID, session);
 
 	if(courseSession.status !== present_status) return;

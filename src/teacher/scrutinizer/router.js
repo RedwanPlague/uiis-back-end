@@ -10,7 +10,6 @@ const { setKe } = require("./middlewares");
 router.use(setKe);
 
 router.get("/:session", async (req, res) => {
-
   try {
     const user = req.user;
     const session = new Date(req.params.session);
@@ -24,12 +23,14 @@ router.get("/:session", async (req, res) => {
         path: "course",
         select: "courseID title",
       })
-      .populate("scrutinizers");
+      .populate("scrutinizers internals");
 
     const toRet = courseSessions.map((cs) => {
       const section = cs[`${req.ke}s`].find(
         (who) => who.teacher === user.id
       );
+
+
 
       const prevDone = section.hasForwarded || cs.status === constants.RESULT_STATUS[req.ke.toUpperCase()];
 
@@ -123,7 +124,7 @@ router.put("/:courseID/:session/approve", async (req, res) => {
     await changeResultState(
       courseID,
       req.params.session,
-      constants[`RESULT_STATUS.${req.ke.toUpperCase()}`]
+      constants.RESULT_STATUS[req.ke.toUpperCase()]
     );
 
     res.send({ message: "hemlo" });

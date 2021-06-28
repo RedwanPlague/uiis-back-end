@@ -72,7 +72,7 @@ router.patch('/registrations/reject', async (req, res) => {
     }
 });
 
-router.get('/:department', async (req, res) => {
+router.get('/department/:department', async (req, res) => {
     try {
         const department = await Department
             .findById({

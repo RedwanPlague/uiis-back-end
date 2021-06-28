@@ -10,7 +10,6 @@ const { setKe } = require("./middlewares");
 router.use(setKe);
 
 router.get("/:session", async (req, res) => {
-  console.log(req.ke);
 
   try {
     const user = req.user;
@@ -20,7 +19,7 @@ router.get("/:session", async (req, res) => {
       session: session,
       [`${req.ke}s.teacher`]: user.id,
     })
-      .select("course")
+      .select("course status")
       .populate({
         path: "course",
         select: "courseID title",
@@ -31,9 +30,6 @@ router.get("/:session", async (req, res) => {
       const section = cs[`${req.ke}s`].find(
         (who) => who.teacher === user.id
       );
-
-      console.log(cs.status);
-      console.log(req.ke.toUpperCase());
 
       const prevDone = section.hasForwarded || cs.status === constants.RESULT_STATUS[req.ke.toUpperCase()];
 
@@ -59,8 +55,6 @@ router.get("/:courseID/:session", async (req, res) => {
     const courseID = req.params.courseID;
     const session = new Date(req.params.session);
     const user = req.user;
-
-    console.log("hemlo");
 
     const courseSession = await getCorSes(courseID, session);
 

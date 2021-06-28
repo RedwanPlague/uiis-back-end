@@ -56,7 +56,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
 	try {
-		const issue = await Issues
+		let issue = await Issues
 			.findOne({_id: req.params.id})
 			.populate({
 				path: 'teachers',
@@ -72,7 +72,7 @@ router.get('/:id', async (req, res) => {
 			})
 			.populate({
 				path: 'courseSession',
-				select: 'course -_id',
+				select: 'teachers examiners scrutinizers -_id',
 				populate: {
 					path: 'course',
 					select: 'courseID title -_id'
@@ -87,6 +87,17 @@ router.get('/:id', async (req, res) => {
 			res.status(400).json('');
 			return;
 		}
+		issue = issue.toObject();
+
+		if(req.user._id === issue.evalOwner._id) {
+			if(issue.part === '-') issue.role = 'course'
+			else issue.role = 'examiner';
+		}
+		else if(issue.courseSession.scrutinizers.filter(scrutinizer => scrutinizer.teacher === req.user._id)) {
+			issue.role = 'scrutinizer';
+		}
+		else issue.role = 'none';
+
 		res.status(200).json(issue);
 	} catch (error) {
 		console.log(error);

@@ -18,7 +18,6 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors())
 
-
 app.use('/ssl', sslRouter)
 /* admin side router registration */
 app.use(adminRouter)

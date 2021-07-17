@@ -15,7 +15,7 @@ router.get('/:id', async (req, res) => {
                     'level': req.query.level,
                     'term': req.query.term
                 })
-                .select('level term result.gradePoint result.gradeLetter status')
+                .select('level term result.gradePoint result.gradeLetter status courseSession')
                 .populate({
                     path: 'courseSession',
                     select: 'course',

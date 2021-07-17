@@ -48,4 +48,24 @@ router.patch('/profile/edit', async (req, res) => {
     }
 });
 
+router.get('/advisor', async (req, res) => {
+    try {
+        const advisor = await Student
+            .findById({
+                _id: req.user._id
+            })
+            .select('advisor')
+            .populate({
+                path: 'advisor',
+                select: 'name contactNumber email department'
+            });
+
+        res.status(200).send(advisor);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;

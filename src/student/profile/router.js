@@ -79,17 +79,11 @@ router.get('/routine', async (req, res) => {
             .select('_id')
             .populate({
                 path: 'courseSession',
-                select: 'schedule',
-                populate: [
-                    {
-                        path: 'course',
-                        select: 'courseID title offeredByDepartment offeredToDepartment credit level term'
-                    },
-                    {
-                        path: 'teachers.teacher',
-                        select: 'name contactNumber email department'
-                    }
-                ]
+                select: 'schedule teachers.teacher',
+                populate: {
+                    path: 'course',
+                    select: 'courseID'
+                }
             });
 
         res.status(200).send(currentCourseRegistrations);

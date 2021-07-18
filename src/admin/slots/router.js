@@ -3,7 +3,6 @@ const Slot = require('./model')
 const {hasAllPrivileges, adminRequired} = require('../../utils/middlewares')
 const {PRIVILEGES} = require('../../utils/constants')
 
- 
 const router = new express.Router()
 /**
  * Privilege: SLOT_CREATION
@@ -48,5 +47,17 @@ router.get('/list', adminRequired, async (req, res) => {
         res.status(400).send({error: error.message})
     }
 })
+
+/* added by sahil */
+router.get('', async (req, res) => {
+    try {
+        const slots = await Slot.find({});
+        res.status(200).send(slots);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
 
 module.exports = router

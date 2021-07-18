@@ -50,14 +50,10 @@ router.get('/routine', async (req, res) => {
                 'session': req.query.session,
                 'teachers.teacher': req.user._id
             })
-            .select('schedule')
+            .select('schedule teachers.teacher')
             .populate({
                 path: 'course',
-                select: 'courseID title offeredByDepartment offeredToDepartment credit level term'
-            })
-            .populate({
-                path: 'teachers.teacher',
-                select: 'name contactNumber email department'
+                select: 'courseID'
             });
 
         res.status(200).send(currentCourseSessions);

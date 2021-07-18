@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { Student } = require('../../admin/accounts/model');
+const { CourseRegistration } = require('../../admin/courseRegistrations/model');
 
 const router = express.Router();
 
@@ -61,6 +62,37 @@ router.get('/advisor', async (req, res) => {
             });
 
         res.status(200).send(advisor);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.get('/routine', async (req, res) => {
+    try {
+        const currentCourseRegistrations = await CourseRegistration
+            .find({
+                'student': req.user._id,
+                'status': 'registered'
+            })
+            .select('_id')
+            .populate({
+                path: 'courseSession',
+                select: 'schedule',
+                populate: [
+                    {
+                        path: 'course',
+                        select: 'courseID title offeredByDepartment offeredToDepartment credit level term'
+                    },
+                    {
+                        path: 'teachers.teacher',
+                        select: 'name contactNumber email department'
+                    }
+                ]
+            });
+
+        res.status(200).send(currentCourseRegistrations);
     } catch(error) {
         res.status(400).send({
             error: error.message

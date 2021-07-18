@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { Teacher } = require('../../../admin/accounts/model');
+const { CourseSession } = require('../../../admin/courseSessions/model');
 
 const router = express.Router();
 
@@ -35,6 +36,31 @@ router.patch('/profile/edit', async (req, res) => {
                 });
 
         res.status(201).send(updatedTeacher);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.get('/routine', async (req, res) => {
+    try {
+        const currentCourseSessions = await CourseSession
+            .find({
+                'session': req.query.session,
+                'teachers.teacher': req.user._id
+            })
+            .select('schedule')
+            .populate({
+                path: 'course',
+                select: 'courseID title offeredByDepartment offeredToDepartment credit level term'
+            })
+            .populate({
+                path: 'teachers.teacher',
+                select: 'name contactNumber email department'
+            });
+
+        res.status(200).send(currentCourseSessions);
     } catch(error) {
         res.status(400).send({
             error: error.message

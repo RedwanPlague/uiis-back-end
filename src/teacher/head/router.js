@@ -6,7 +6,6 @@ const secondRouter = require("./secondRouter");
 
 const Department = require('../../admin/departments/model');
 
-
 const router =  express.Router();
 
 router.get('/students', async (req, res) => {

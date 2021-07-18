@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 			.populate({
 				path:'teachers',
 				select:'name'
-			})
+			});
 		issues.forEach(issue => {
 			issue.courseID = issue.courseSession.course.courseID;
 			issue.courseTitle = issue.courseSession.course.title;
@@ -219,6 +219,8 @@ router.put('/:issueID/changeStatus', async (req, res) => {
 	}
 });
 
+
+
 router.get('/:courseID/:session/eligibleList', async (req, res) => {
 
 	try {
@@ -276,6 +278,59 @@ router.put('/empty', async (req, res) => {
 		res.status(200).send({"message": "you don't have any issues left :'("});
 
 	} catch (error) {
+		res.status(400).json({
+			msg: error
+		});
+	}
+});
+
+router.get('/studentList/markedStudents', async (req, res) => {
+
+	try {
+		const issues = await Issues
+			.find({teachers: req.user._id, status: constants.ISSUE_STATUS.UNRESOLVED})
+			.lean()
+			.select('students posts')
+			.populate({
+				path: 'courseSession',
+				populate: {
+					path: 'course',
+					match: { courseID: req.params.courseID}
+				}
+			});
+
+		let unchanged_list = [], union_list = [];
+
+		issues.forEach(issue => {
+
+			union_list = union_list.concat(issue.students);
+			let unchanged_current_list = issue.students;
+
+			let done = false;
+			issue.posts.slice().reverse().forEach(post => {
+				if(post.postType !== constants.ISSUE_POST_TYPE.ACTIVITY) return;
+				if(done) return;
+
+				const descriptionType = post.description.split(" ")[0];
+				if(descriptionType === "reopened") done =  true;
+				else if(descriptionType === "updated") {
+					const student_id = post.description.split(" ")[4];
+					unchanged_current_list = unchanged_current_list.filter( student => (student !== student_id) );
+				}
+			});
+			unchanged_list = unchanged_list.concat(unchanged_current_list);
+		});
+		let updated_list = union_list.filter(student => !unchanged_list.includes(student));
+
+		unchanged_list = [...new Set(unchanged_list)];
+		updated_list = [...new Set(updated_list)];
+
+		res.status(200).json({
+			unchanged_list,
+			updated_list
+		});
+	} catch (error) {
+		console.log(error);
 		res.status(400).json({
 			msg: error
 		});

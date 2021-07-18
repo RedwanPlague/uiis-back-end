@@ -6,6 +6,7 @@ async function changeResultState(courseID, session, present_status) {
 
 
 	console.log(present_status);
+	console.log(courseID, session);
 	const courseSession = await getCourseSession(courseID, session);
 
 	if(courseSession.status !== present_status) return;
@@ -22,21 +23,30 @@ async function changeResultState(courseID, session, present_status) {
 
 		const values = Object.values(constants.RESULT_STATUS);
 		courseSession.status = values[values.indexOf(present_status) + 1 ];
+
+		console.log("updating");
+		console.log(courseSession.status);
 		await courseSession.save();
 	}
 	return courseSession;
 }
 
 function checkApprovals(courseSession, role) {
-
+	console.log("-=========================");
+	console.log(role);
 	let ret = true;
 
 	if(Array.isArray(courseSession[role]) ) {
 		courseSession[role].forEach(participant => {
+
+			console.log(participant);
 			ret &= participant.hasForwarded;
 		});
 	}
-	else ret &= courseSession[role].hasForwarded;
+	else {
+		console.log(courseSession[role]);
+		ret &= courseSession[role].hasForwarded;
+	}
 
 	return ret;
 }

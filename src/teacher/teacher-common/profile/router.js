@@ -20,4 +20,26 @@ router.get('/profile', async (req, res) => {
     }
 });
 
+router.patch('/profile/edit', async (req, res) => {
+    try {
+        const updatedTeacher = await Teacher
+            .updateOne({
+                    _id: req.user._id
+                },
+                {
+                    $set: {
+                        contactNumber: req.body.contactNumber,
+                        email: req.body.email,
+                        residentialAddress: req.body.residentialAddress
+                    }
+                });
+
+        res.status(201).send(updatedTeacher);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;

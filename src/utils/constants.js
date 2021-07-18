@@ -15,7 +15,6 @@ const PRIVILEGES = Object.freeze({
     COURSE_SESSION_ASSIGN_TEACHER: "course-session-assign-teacher",
     COURSE_SESSION_ASSIGN_SCRUTINIZER: "course-session-assign-scrutinizer",
     COURSE_SESSION_ASSIGN_INTERNAL: "course-session-assign-internal",
-    COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER: "course-session-assign-result-access-holder",
     COURSE_SESSION_ALLOT_SCHEDULE: "course-session-allot-schedule",
 
     SLOT_CREATION: "slot-creation",

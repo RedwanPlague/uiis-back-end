@@ -220,35 +220,6 @@ router.patch('/update/:courseID/:syllabusID/:session/internals',hasAllPrivileges
 })
 
 /**
- * Privilege : COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER
- */
-router.patch('/update/:courseID/:syllabusID/:session/resultAccessHolders',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER]) ,async (req, res) => {
-    try {
-        const course = await Course.findOne({
-            courseID: req.params.courseID,
-            syllabusID: req.params.syllabusID,
-        })
-        if(!course){
-            throw new Error('This course does not exist')
-        }
-        await CourseSession.updateOne({
-            course: course._id,
-            session: req.params.session
-        },{
-            $set: {
-                resultAccessHolders: req.body
-            }
-        })
-         
-        res.send()
-    } catch (error) {
-        res.status(400).send({
-            error: error.message
-        })
-    }
-})
-
-/**
  * Privilege : COURSE_SESSION_ALLOT_SCHEDULE
  */
 router.patch('/update/:courseID/:syllabusID/:session/schedule',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE]),async (req, res) => {

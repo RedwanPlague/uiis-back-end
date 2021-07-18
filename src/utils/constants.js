@@ -90,6 +90,10 @@ const FINE_TYPES = Object.freeze({
     DISCIPLINARY_FINE: 'disciplinary-fine'
 })
 
+const CLEARANCE = Object.freeze({
+    MIN_REQ_CREDITS: 100.0 
+})
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,
@@ -104,5 +108,6 @@ module.exports = Object.freeze({
     ISSUE_EVAL_TYPE,
     TF_PARTS,
     DUE_STATUS,
-    FINE_TYPES
+    FINE_TYPES,
+    CLEARANCE
 })

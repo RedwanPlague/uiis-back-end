@@ -9,6 +9,7 @@ const getCorSes = async (courseID, session) => {
       match: {
         courseID: { $eq: courseID },
       },
+      select: "credit",
     })
     .populate({
       path: "teachers.teacher",

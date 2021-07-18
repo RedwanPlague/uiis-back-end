@@ -30,8 +30,6 @@ router.get("/:session", async (req, res) => {
         (who) => who.teacher === user.id
       );
 
-
-
       const prevDone = section.hasForwarded || cs.status === constants.RESULT_STATUS[req.ke.toUpperCase()];
 
       const cr = {
@@ -93,6 +91,12 @@ router.get("/:courseID/:session", async (req, res) => {
         teachers: courseSession.teachers,
         examiners: courseSession.examiners,
         students: courseSession.registrationList,
+        credit: courseSession.course.credit,
+        perEvalWeight:courseSession.perEvalWeight,
+        totalEvalCount: courseSession.totalEvalCount,
+        consideredEvalCount: courseSession.consideredEvalCount,
+        attendanceWeight: courseSession.attendanceWeight,
+        totalMarks: courseSession.totalMarks,
       });
     } else {
       res.status(401).send({ message: "Not everyone submitted" });

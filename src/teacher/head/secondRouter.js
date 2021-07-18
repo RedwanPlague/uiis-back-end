@@ -8,7 +8,7 @@ const Department = require("../../admin/departments/model");
 
 router.get("/:session", async (req, res) => {
   const user = req.user;
-  
+
   try {
     const user = req.user;
     const session = new Date(req.params.session);
@@ -29,7 +29,7 @@ router.get("/:session", async (req, res) => {
         },
         select: "courseID title",
       });
-    
+
     const deptCS = courseSessions.filter(cs => cs.course);
     const toRet = deptCS.map((cs) => ({
       courseID: cs.course.courseID,
@@ -38,7 +38,7 @@ router.get("/:session", async (req, res) => {
       prevDone: (cs.headForwarded || cs.status === constants.RESULT_STATUS.DEPARTMENT_HEAD),
     }));
 
-    console.log(toRet);
+    //console.log(toRet);
 
     res.send({ toRet });
   } catch (error) {
@@ -64,6 +64,12 @@ router.get("/:courseID/:session", async (req, res) => {
         teachers: courseSession.teachers,
         examiners: courseSession.examiners,
         students: courseSession.registrationList,
+        credit: courseSession.course.credit,
+        perEvalWeight:courseSession.perEvalWeight,
+        totalEvalCount: courseSession.totalEvalCount,
+        consideredEvalCount: courseSession.consideredEvalCount,
+        attendanceWeight: courseSession.attendanceWeight,
+        totalMarks: courseSession.totalMarks,
       });
     } else {
       res.status(401).send({ message: "Not everyone submitted" });
@@ -110,6 +116,40 @@ router.put("/:courseID/:session/restore", async (req, res) => {
     courseSession.save();
 
     res.send({ message: "hemlo" });
+  } catch (error) {
+    console.log(error);
+    res.status(404).send(error);
+  }
+});
+
+router.put("/:courseID/:session/setmarks", async (req, res) => {
+  try {
+    const courseID = req.params.courseID;
+    const session = new Date(req.params.session);
+
+    const courseSessions = await CourseSession.find({
+      session,
+    })
+      .populate({
+        path: "course",
+        match: {
+          courseID: { $eq: courseID },
+        },
+        select: "credit",
+      });
+    
+    const cs = courseSessions.find(cs => cs.course);
+    const credit = cs.course.credit;
+
+    cs.perEvalWeight = 20/credit; // I know this is khaishta but sorry
+    cs.totalEvalCount = credit+1;
+    cs.consideredEvalCount = credit;
+    cs.attendanceWeight = 10;
+    cs.totalMarks = 100*credit;
+
+    await cs.save();
+
+    res.send(cs);
   } catch (error) {
     console.log(error);
     res.status(404).send(error);

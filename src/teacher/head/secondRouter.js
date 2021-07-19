@@ -5,6 +5,7 @@ const { getCorSes, getCorSes2 } = require("../examiner/helpers");
 const constants = require("../../utils/constants");
 const { changeResultState } = require("../teacher-common/resultStatusUtil");
 const Department = require("../../admin/departments/model");
+const { get_marked_student_list } = require("../issues/service");
 
 router.get("/:session", async (req, res) => {
   const user = req.user;
@@ -69,6 +70,7 @@ router.get("/:courseID/:session", async (req, res) => {
         totalEvalCount: courseSession.totalEvalCount,
         consideredEvalCount: courseSession.consideredEvalCount,
         attendanceWeight: courseSession.attendanceWeight,
+        termFinalParts: courseSession.termFinalParts,
         totalMarks: courseSession.totalMarks,
       });
     } else {
@@ -141,10 +143,11 @@ router.put("/:courseID/:session/setmarks", async (req, res) => {
     const cs = courseSessions.find(cs => cs.course);
     const credit = cs.course.credit;
 
-    cs.perEvalWeight = 20/credit; // I know this is khaishta but sorry
-    cs.totalEvalCount = credit+1;
-    cs.consideredEvalCount = credit;
+    cs.perEvalWeight = 20/(2*credit-2); // I know this is khaishta but sorry
+    cs.totalEvalCount = 2*credit;
+    cs.consideredEvalCount = 2*credit-2;
     cs.attendanceWeight = 10;
+    cs.termFinalParts = 2;
     cs.totalMarks = 100*credit;
 
     await cs.save();

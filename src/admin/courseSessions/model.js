@@ -31,6 +31,10 @@ const courseSessionSchema = new mongoose.Schema({
     attendanceWeight: {
         type: Number   // percentage
     },
+    termFinalParts: {
+        type: Number,
+        default: 2
+    },
     totalMarks: {
         type: Number
     },

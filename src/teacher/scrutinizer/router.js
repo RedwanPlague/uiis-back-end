@@ -6,6 +6,7 @@ const { getCorSes, getCorSes2 } = require("../examiner/helpers");
 const constants = require("../../utils/constants");
 const { changeResultState } = require("../teacher-common/resultStatusUtil");
 const { setKe } = require("./middlewares");
+const { get_marked_student_list } = require("../issues/service");
 
 router.use(setKe);
 
@@ -29,7 +30,7 @@ router.get("/:session", async (req, res) => {
       const section = cs[`${req.ke}s`].find(
         (who) => who.teacher === user.id
       );
-      
+
       const prevDone = section.hasForwarded || cs.status === constants.RESULT_STATUS[req.ke.toUpperCase()];
 
       const cr = {
@@ -38,12 +39,12 @@ router.get("/:session", async (req, res) => {
         hasForwarded: section.hasForwarded,
         prevDone,
       }
-      console.log(cs);
+      //console.log(cs);
 
       return cr;
     });
 
-    console.log(toRet);
+    //console.log(toRet);
 
     res.send({ toRet });
   } catch (error) {
@@ -88,6 +89,8 @@ router.get("/:courseID/:session", async (req, res) => {
         (who) => who.teacher === user.id
       );
 
+      // const colored = get_marked_student_list(user.id, courseID, session, )
+
       res.send({
         hasForwarded: section.hasForwarded,
         names: courseSession.names,
@@ -99,6 +102,7 @@ router.get("/:courseID/:session", async (req, res) => {
         totalEvalCount: courseSession.totalEvalCount,
         consideredEvalCount: courseSession.consideredEvalCount,
         attendanceWeight: courseSession.attendanceWeight,
+        termFinalParts: courseSession.termFinalParts,
         totalMarks: courseSession.totalMarks,
       });
     } else {

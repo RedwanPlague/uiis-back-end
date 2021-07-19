@@ -9,7 +9,10 @@ const router = new express.Router()
 /**
  * Privilege : COURSE_SESSION_UPDATE
  */
-router.post('/create',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_UPDATE]),async (req,res) => {
+router.post('/create',
+    hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_UPDATE]),
+    async (req,res) => {
+
     try {
         const course = await Course.findOne({
             courseID: req.body.courseID,
@@ -46,7 +49,6 @@ router.get('/list',
         constants.PRIVILEGES.COURSE_SESSION_UPDATE,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_EXAMINER,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_TEACHER,
-        constants.PRIVILEGES.COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER,
         constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_SCRUTINIZER,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_INTERNAL
@@ -164,7 +166,9 @@ router.patch('/update/:courseID/:syllabusID/:session/examiners',hasAllPrivileges
 /**
  * Privilege : COURSE_SESSION_ASSIGN_SCRUTINIZER
  */
-router.patch('/update/:courseID/:syllabusID/:session/scrutinizers',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_SCRUTINIZER]) ,async (req, res) => {
+router.patch('/update/:courseID/:syllabusID/:session/scrutinizers',
+    hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_SCRUTINIZER]) ,
+    async (req, res) => {
     try {
         const course = await Course.findOne({
             courseID: req.params.courseID,
@@ -193,7 +197,10 @@ router.patch('/update/:courseID/:syllabusID/:session/scrutinizers',hasAllPrivile
 /**
  * Privilege : COURSE_SESSION_ASSIGN_INTERNAL
  */
-router.patch('/update/:courseID/:syllabusID/:session/internals',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_INTERNAL]) ,async (req, res) => {
+router.patch('/update/:courseID/:syllabusID/:session/internals',
+    hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_INTERNAL]) ,
+    async (req, res) => {
+
     try {
         const course = await Course.findOne({
             courseID: req.params.courseID,
@@ -222,7 +229,10 @@ router.patch('/update/:courseID/:syllabusID/:session/internals',hasAllPrivileges
 /**
  * Privilege : COURSE_SESSION_ALLOT_SCHEDULE
  */
-router.patch('/update/:courseID/:syllabusID/:session/schedule',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE]),async (req, res) => {
+router.patch('/update/:courseID/:syllabusID/:session/schedule',
+    hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE]),
+    async (req, res) => {
+
     try {
         const course = await Course.findOne({
             courseID: req.params.courseID,

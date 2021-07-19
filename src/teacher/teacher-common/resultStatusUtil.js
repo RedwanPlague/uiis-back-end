@@ -95,7 +95,7 @@ async function calculateResult(courseReg) {
 	courseReg.termFinalMarks.forEach(entry => tfObtainedMark += entry.mark);
 
 	let percentage = 0;
-	percentage += (attendedClassCount / totalClassCount) * courseSession.attendanceWeight;
+	percentage += (attendedClassCount / totalClassCount) * 10.0;
 	percentage += (obtainedEvalMark / totalEvalMark ) * 20.0;
 	percentage += (tfObtainedMark / tfTotalMark) * 70.0;
 

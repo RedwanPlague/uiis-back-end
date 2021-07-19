@@ -152,5 +152,6 @@ async function publishResult() {
 
 module.exports = {
 	changeResultState,
-	getCourseSession
+	getCourseSession,
+	publishResult
 }

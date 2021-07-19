@@ -56,7 +56,25 @@ const studentSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'CourseRegistration'
         }
-    ]
+    ],
+    isThesisCleared: {
+        type: Boolean,
+        default: false
+    },
+    hasAppliedForClearance: {
+        type: Boolean,
+        default: false
+    },
+    results: [{
+        totalCreditHoursCompleted: {
+            type: Number,
+            default: 0.0
+        },
+        cgpa: {
+            type: Number,
+            default: 0.0
+        }
+    }]
 })
 
 const teacherSchema = new mongoose.Schema({

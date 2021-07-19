@@ -81,16 +81,6 @@ const courseSessionSchema = new mongoose.Schema({
             }
         }
     ],
-    resultAccessHolders: [
-        {
-            _id: false,
-            teacher: {
-                type: String,
-                required: true,
-                ref: 'User'
-            }
-        }
-    ],
     examiners: [
         {
             _id: false,

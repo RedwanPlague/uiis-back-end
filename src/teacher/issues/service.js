@@ -90,11 +90,11 @@ async function setEditStatus(courseSession, studentList, evalType, part, evalOwn
 
 
 
-async function get_marked_student_list(teacherID, courseID, session, part) {
+async function get_marked_student_list(teacherID, courseID, session, part, evalOwner) {
 
 	try {
 		const issues = await Issues
-			.find({teachers: teacherID, status: constants.ISSUE_STATUS.UNRESOLVED, part: part})
+			.find({teachers: teacherID, status: constants.ISSUE_STATUS.UNRESOLVED, part: part, evalOwner: evalOwner})
 			.lean()
 			.select('students posts')
 			.populate({

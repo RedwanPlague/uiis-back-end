@@ -15,7 +15,6 @@ const PRIVILEGES = Object.freeze({
     COURSE_SESSION_ASSIGN_TEACHER: "course-session-assign-teacher",
     COURSE_SESSION_ASSIGN_SCRUTINIZER: "course-session-assign-scrutinizer",
     COURSE_SESSION_ASSIGN_INTERNAL: "course-session-assign-internal",
-    COURSE_SESSION_ASSIGN_RESULT_ACCESS_HOLDER: "course-session-assign-result-access-holder",
     COURSE_SESSION_ALLOT_SCHEDULE: "course-session-allot-schedule",
 
     SLOT_CREATION: "slot-creation",
@@ -91,12 +90,17 @@ const FINE_TYPES = Object.freeze({
     DISCIPLINARY_FINE: 'disciplinary-fine'
 })
 
+
 const COURSE_REGISTRATION_STATUS = Object.freeze({
     OFFERED: 'offered',
     APPLIED: 'applied',
     REGISTERED: 'registered',
     PASSED: 'passed',
     FAILED: 'failed'
+})
+
+const CLEARANCE = Object.freeze({
+    MIN_REQ_CREDITS: 100.0
 })
 
 module.exports = Object.freeze({
@@ -114,5 +118,6 @@ module.exports = Object.freeze({
     TF_PARTS,
     DUE_STATUS,
     FINE_TYPES,
-    COURSE_REGISTRATION_STATUS
+    COURSE_REGISTRATION_STATUS,
+    CLEARANCE,
 })

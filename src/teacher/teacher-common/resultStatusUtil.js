@@ -1,7 +1,7 @@
 const constants = require('../../utils/constants');
 const {CourseSession} = require("../../admin/courseSessions/model");
 const {CourseRegistration} = require("../../admin/courseRegistrations/model");
-
+const {runInTransaction} = require("../../utils/helpers");
 
 async function changeResultState(courseID, session, present_status) {
 
@@ -127,7 +127,6 @@ async function publishResult() {
 		await students.eachAsync(courseReg => {
 
 			const result = calculateResult(courseReg);
-
 			const courseRegistration = {
 				updateOne: {
 					filter: { _id: courseReg._id },

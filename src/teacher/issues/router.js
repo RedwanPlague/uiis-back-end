@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 			.populate({
 				path:'teachers',
 				select:'name'
-			})
+			});
 		issues.forEach(issue => {
 			issue.courseID = issue.courseSession.course.courseID;
 			issue.courseTitle = issue.courseSession.course.title;
@@ -219,6 +219,8 @@ router.put('/:issueID/changeStatus', async (req, res) => {
 	}
 });
 
+
+
 router.get('/:courseID/:session/eligibleList', async (req, res) => {
 
 	try {
@@ -281,6 +283,7 @@ router.put('/empty', async (req, res) => {
 		});
 	}
 });
+
 
 // router.post('/',async (req, res) => {
 //

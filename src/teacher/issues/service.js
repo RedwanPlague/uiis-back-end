@@ -88,8 +88,62 @@ async function setEditStatus(courseSession, studentList, evalType, part, evalOwn
 	}
 }
 
+
+
+async function get_marked_student_list(teacherID, courseID, session, part) {
+
+	try {
+		const issues = await Issues
+			.find({teachers: teacherID, status: constants.ISSUE_STATUS.UNRESOLVED, part: part})
+			.lean()
+			.select('students posts')
+			.populate({
+				path: 'courseSession',
+				populate: {
+					path: 'course',
+					match: { courseID: courseID }
+				},
+				match: { session: session }
+			});
+
+		let unchanged_list = [], union_list = [];
+
+		issues.forEach(issue => {
+
+			union_list = union_list.concat(issue.students);
+			let unchanged_current_list = issue.students;
+
+			let done = false;
+			issue.posts.slice().reverse().forEach(post => {
+				if(post.postType !== constants.ISSUE_POST_TYPE.ACTIVITY) return;
+				if(done) return;
+
+				const descriptionType = post.description.split(" ")[0];
+				if(descriptionType === "reopened") done =  true;
+				else if(descriptionType === "updated") {
+					const student_id = post.description.split(" ")[4];
+					unchanged_current_list = unchanged_current_list.filter( student => (student !== student_id) );
+				}
+			});
+			unchanged_list = unchanged_list.concat(unchanged_current_list);
+		});
+		let updated_list = union_list.filter(student => !unchanged_list.includes(student));
+
+		unchanged_list = [...new Set(unchanged_list)];
+		updated_list = [...new Set(updated_list)];
+
+		return {
+			unchanged_list,
+			updated_list
+		}
+	} catch (error) {
+		console.log(error);
+	}
+}
+
 module.exports = {
 	addMarkUpdateActivity,
 	setEditStatus,
-	removeEditAccess
+	removeEditAccess,
+	get_marked_student_list
 }

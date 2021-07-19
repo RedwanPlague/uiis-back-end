@@ -14,7 +14,7 @@ router.get("/:session", async (req, res) => {
     const user = req.user;
     const session = new Date(req.params.session);
 
-    courseSessions = await CourseSession.find({
+    const courseSessions = await CourseSession.find({
       session: session,
       [`${req.ke}s.teacher`]: user.id,
     })
@@ -29,7 +29,7 @@ router.get("/:session", async (req, res) => {
       const section = cs[`${req.ke}s`].find(
         (who) => who.teacher === user.id
       );
-
+      
       const prevDone = section.hasForwarded || cs.status === constants.RESULT_STATUS[req.ke.toUpperCase()];
 
       const cr = {
@@ -38,9 +38,12 @@ router.get("/:session", async (req, res) => {
         hasForwarded: section.hasForwarded,
         prevDone,
       }
+      console.log(cs);
 
       return cr;
     });
+
+    console.log(toRet);
 
     res.send({ toRet });
   } catch (error) {

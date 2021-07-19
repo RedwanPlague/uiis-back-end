@@ -104,7 +104,7 @@ const courseRegistrationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['offered', 'applied', 'registered', 'passed', 'failed']
+        enum: Object.values(constants.COURSE_REGISTRATION_STATUS),
     }
 })
 

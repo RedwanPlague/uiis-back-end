@@ -91,6 +91,14 @@ const FINE_TYPES = Object.freeze({
     DISCIPLINARY_FINE: 'disciplinary-fine'
 })
 
+const COURSE_REGISTRATION_STATUS = Object.freeze({
+    OFFERED: 'offered',
+    APPLIED: 'applied',
+    REGISTERED: 'registered',
+    PASSED: 'passed',
+    FAILED: 'failed'
+})
+
 module.exports = Object.freeze({
     MIN_TERM: 1,
     MAX_TERM: 5,
@@ -105,5 +113,6 @@ module.exports = Object.freeze({
     ISSUE_EVAL_TYPE,
     TF_PARTS,
     DUE_STATUS,
-    FINE_TYPES
+    FINE_TYPES,
+    COURSE_REGISTRATION_STATUS
 })

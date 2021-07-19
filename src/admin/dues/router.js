@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const {Due, LevelChangingFee, ExamFee, DiningFee} = require('./model')
 const {PRIVILEGES} = require('../../utils/constants')
 const {adminRequired,hasAllPrivileges,hasAnyPrivileges} = require('../../utils/middlewares')
+const {runInTransaction} = require('../../utils/helpers')
 const constants = require('../../utils/constants')
 const { User, Student } = require('../accounts/model')
 
@@ -108,6 +109,7 @@ router.post('/upsert/', async (req, res) => {
         })
         if (dues.length > 0){
             console.log(`Last iteration!`)
+            // throw new Error("Fail!")
             const res = await runInTransaction(dues, Due)
             cnt += res.upsertedCount + res.modifiedCount
             dues = []
@@ -128,21 +130,6 @@ router.post('/upsert/', async (req, res) => {
 })
  
 
-const runInTransaction = async function(dues, TargetModel) {
-    const session = await mongoose.startSession()
-    session.startTransaction()
-
-    try {
-        const res = await TargetModel.bulkWrite(dues, {session})
-        await session.commitTransaction()
-        return res
-    } catch (error){
-        await session.abortTransaction()
-        throw error
-    } finally {
-        session.endSession()
-    }
-}
 
 router.post('/batchInfo', async (req, res) => {
 

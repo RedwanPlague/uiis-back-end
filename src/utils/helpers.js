@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 const {User, Student, Teacher, Admin} = require('../admin/accounts/model')
 const {Role} = require('../admin/roles/model')
 
@@ -32,8 +33,24 @@ const addMergePrivileges = async(req, res) => {
     req.mergedPrivileges = [...new Set(mergedPrivileges)]
 }
 
+const runInTransaction = async function(ops, TargetModel) {
+    const session = await mongoose.startSession()
+    session.startTransaction()
+
+    try {
+        const res = await TargetModel.bulkWrite(ops, {session})
+        await session.commitTransaction()
+        return res
+    } catch (error){
+        await session.abortTransaction()
+        throw error
+    } finally {
+        session.endSession()
+    }
+}
 
 module.exports = {
     getUserFromToken,
-    addMergePrivileges
+    addMergePrivileges,
+    runInTransaction
 }

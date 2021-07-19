@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 const slotSchema = new mongoose.Schema({
-
     _id: {
         type: Number,
         alias: 'id'
@@ -16,7 +15,6 @@ const slotSchema = new mongoose.Schema({
     }
 })
 
-
 slotSchema.methods.toJSON = function() {
     const slot = this.toObject()
     slot.id = slot._id
@@ -27,9 +25,5 @@ slotSchema.methods.toJSON = function() {
     return slot
 }
 
-
 const Slot = mongoose.model('Slot', slotSchema)
-
-
-
 module.exports = Slot

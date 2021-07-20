@@ -44,14 +44,6 @@ const studentSchema = new mongoose.Schema({
         enum: ['unregistered', 'applied', 'waiting', 'registered'],
         default: 'unregistered'
     },
-    totalCreditHoursCompleted: {
-        type: Number,
-        default: 0.0
-    },
-    cgpa: {
-        type: Number,
-        default: 0.0
-    },
     registrationList: [
         {
             type: mongoose.Schema.Types.ObjectId,

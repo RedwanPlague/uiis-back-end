@@ -35,8 +35,26 @@ router.patch('/update',
 
     try {
         const currentSession = await CurrentSession.findOne({})
-        currentSession.session = req.body.session
+
+        if(req.body.session){
+            currentSession.session = req.body.session
+        }
+        
+        if(req.body.coursesToOffer){
+            
+            let courses = []
+            await Promise.all(req.body.coursesToOffer.map(async (value) => {
+                const course = await Course.findOne(value)
+                if (!course){
+                    throw new Error(`(courseID: ${value.courseID},syllabusID: ${value.syllabusID}) does not exist`)
+                }
+                courses.push(course._id)
+            }))
+            currentSession.coursesToOffer = courses
+        }
+
         await currentSession.save()
+
         // await createNewCourseSessions(currentSession)
 
         res.status(201).send(currentSession)
@@ -48,17 +66,28 @@ router.patch('/update',
 })
 
 
-const createNewCourseSessions = async (currentSession) => {
-    const courses = await Course.find({})
+router.post('/newCourseSessionsBatch/',
+    hasAllPrivileges([PRIVILEGES.CURRENT_SESSION_UPDATE]),
+    async (req, res) => {
+        try {
+            const currentSession = await CurrentSession.findOne({})
+            const coursesToOffer = currentSession.coursesToOffer
 
-    await Promise.all(courses.map(async (course) => {
-        const courseSession = new CurrentSession({
-            course,
-            session: currentSession.session
-        })
-        await courseSession.save()
-    }))
-}
+            await Promise.all(coursesToOffer.map(async (courseID) => {
+                const courseSession = new CourseSession({
+                    course: courseID,
+                    session: currentSession.session
+                })
+                await courseSession.save()
+            }))
+            res.send() 
+        } catch (error) {
+            res.status(400).send()
+        }
+})
+
+
+ 
 
 
 router.patch('/minimum_credit/update', async (req, res) => {

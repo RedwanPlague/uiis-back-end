@@ -36,7 +36,9 @@ const PRIVILEGES = Object.freeze({
 
     LIBRARY_FINE_MANAGEMENT: 'library-fine-management',
     LAB_FINE_MANAGEMENT: 'laboratory-fine-management',
-    DISCIPLINARY_FINE_MANAGEMENT: 'disciplinary-fine-management'
+    DISCIPLINARY_FINE_MANAGEMENT: 'disciplinary-fine-management',
+
+    THESIS_CLEARANCE: 'thesis-clearance'
 })
 
 const USER_TYPES = Object.freeze({

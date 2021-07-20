@@ -80,7 +80,9 @@ router.patch('/update/coursesToOffer',
 })
 
 
-router.get('/coursesToOffer', async (req,res) => {
+router.get('/coursesToOffer',
+    hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
+    async (req,res) => {
     try {
         const currentSession = await CurrentSession.findOne({})
         let courses = []
@@ -199,7 +201,9 @@ const newCourseRegistration = async () =>{
 
 
 
-router.post('/updateLevelTerm', async (req, res) => {
+router.post('/updateLevelTerm',
+    hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
+    async (req, res) => {
     try {
         const students = await Student.find({})
 

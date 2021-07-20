@@ -3,14 +3,15 @@ const express = require('express')
 const {Student} = require('../accounts/model')
 const {Due} = require('../dues/model')
 const {PRIVILEGES} = require('../../utils/constants')
-const {adminRequired,hasAllPrivileges,hasAnyPrivileges} = require('../../utils/middlewares')
-const {addMergePrivileges} = require('../../utils/helpers')
+const {hasAllPrivileges} = require('../../utils/middlewares')
 const constants = require('../../utils/constants')
  
 
 const router = new express.Router()
 
-router.post('/thesis/clear', async (req, res) => {
+router.post('/thesis/clear',
+    hasAllPrivileges([PRIVILEGES.THESIS_CLEARANCE]),
+    async (req, res) => {
     try {
         const ids = req.body.ids
         if(!ids){

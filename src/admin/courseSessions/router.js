@@ -2,6 +2,7 @@ const express = require('express')
 
 const Course = require('../courses/model')
 const {CourseSession} = require('./model')
+const CurrentSession = require('../currentSessions/model')
 const {adminRequired,hasAllPrivileges,hasAnyPrivileges} = require('../../utils/middlewares')
 const constants = require('../../utils/constants')
 const router = new express.Router()
@@ -44,7 +45,7 @@ router.post('/create',
  */
 router.get('/list',
     hasAnyPrivileges([
-        // constants.PRIVILEGES.COURSE_SESSION_CREATION,
+        constants.PRIVILEGES.COURSE_SESSION_CREATION,
         constants.PRIVILEGES.COURSE_SESSION_UPDATE,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_EXAMINER,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_TEACHER,
@@ -53,10 +54,9 @@ router.get('/list',
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_INTERNAL
     ]),async (req, res) => {
     let match = {}
-    if (req.query.session) {
-        match.session = req.query.session
-    }
     try {
+        const currentSession = await CurrentSession.findOne()
+        match.session = currentSession.session
         if(req.query.courseID && req.query.syllabusID){
             const course = await Course.findOne({
                 courseID: req.query.courseID,

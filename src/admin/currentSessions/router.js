@@ -107,6 +107,32 @@ router.get('/coursesToOffer',
 })
 
 
+router.get('/coursesToOfferWithTitle',
+    hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
+    async (req,res) => {
+    try {
+        const currentSession = await CurrentSession.findOne({})
+        let courses = []
+
+        await Promise.all(currentSession.coursesToOffer.map(async (value) => {
+            const course = await Course.findById(value)
+            if (!course){
+                throw new Error(`(courseID: ${value.courseID},syllabusID: ${value.syllabusID}) does not exist`)
+            }
+            courses.push({
+                courseID: course.courseID,
+                syllabusID: course.syllabusID,
+                title: course.title
+            })
+        }))
+        res.send({coursesToOffer: courses}) 
+        
+    } catch(e) {
+        res.status(400).send({
+            error: e.message
+        })
+    }
+})
 
 router.post('/newCourseSessionsBatch',
     hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
@@ -129,7 +155,8 @@ router.post('/newCourseSessionsBatch',
         } catch (error) {
             res.status(400).send(error.message)
         }
-})
+    }
+)
 
 const newCourseRegistration = async () =>{
 

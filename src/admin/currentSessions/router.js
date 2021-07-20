@@ -92,7 +92,7 @@ router.get('/coursesToOffer', async (req,res) => {
                 syllabusID: course.syllabusID
             })
         }))
-        res.send(courses) 
+        res.send({coursesToOffer: courses}) 
         
     } catch(e) {
         res.status(400).send({

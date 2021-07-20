@@ -28,7 +28,7 @@ router.post('/thesis/clear', async (req, res) => {
         res.send()
 
     } catch (error) {
-        res.status(400).send()
+        res.status(400).send(error.message)
     }
 })
 
@@ -61,12 +61,14 @@ router.get('/status/:id', async (req,res) => {
 
         const thesisSubmitted = student.isThesisCleared
         const hasApplied = student.hasAppliedForClearance
+        const hasGraduated = student.hasGraduated
 
         res.send({
             minCreditDone,
             duesCleared,
             thesisSubmitted,
-            hasApplied
+            hasApplied,
+            hasGraduated
         })
         
     } catch (error) {
@@ -92,7 +94,7 @@ router.post('/apply/:id', async (req, res) => {
         res.send()
         
     } catch (error) {
-        res.status(400).send()
+        res.status(400).send(error.message)
     }
 })
 

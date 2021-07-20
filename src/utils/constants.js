@@ -91,12 +91,12 @@ const FINE_TYPES = Object.freeze({
 })
 
 const CLEARANCE = Object.freeze({
-    MIN_REQ_CREDITS: 100.0 
+    MIN_REQ_CREDITS: 0.0 
 })
 
 module.exports = Object.freeze({
     MIN_TERM: 1,
-    MAX_TERM: 5,
+    MAX_TERM: 2,
     MIN_LEVEL: 1,
     MAX_LEVEL: 2,
     USER_TYPES,

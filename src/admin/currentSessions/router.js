@@ -7,6 +7,7 @@ const {hasAllPrivileges} = require('../../utils/middlewares')
 const {PRIVILEGES} = require('../../utils/constants')
 const {Student} = require('../accounts/model')
 const {CourseRegistration} = require('../courseRegistrations/model')
+const constants = require('../../utils/constants')
 
 
 const router = new express.Router()
@@ -105,7 +106,7 @@ router.get('/coursesToOffer', async (req,res) => {
 
 
 
-router.post('/newCourseSessionsBatch/',
+router.post('/newCourseSessionsBatch',
     hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
     async (req, res) => {
         try {
@@ -194,10 +195,43 @@ const newCourseRegistration = async () =>{
         await student.save()
         await courseSession.save()
     }
-
 }
 
 
+
+router.post('/updateLevelTerm', async (req, res) => {
+    try {
+        const students = await Student.find({})
+
+        await Promise.all(students.map(async (student) => {
+
+            let level = student.level
+            let term = student.term + 1
+
+            if(term > constants.MAX_TERM){
+                term = 1
+                level += 1
+            }
+
+            if(level > constants.MAX_LEVEL){
+                level = constants.MAX_LEVEL
+                term = constants.MAX_TERM
+                student.hasGraduated = true
+            }
+
+            student.level = level
+            student.term = term
+
+            await student.save()
+
+        }))
+
+        res.send()
+
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
+})
  
 
 

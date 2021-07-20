@@ -1,10 +1,12 @@
 const express = require('express')
 
 const CurrentSession = require('./model')
-const CourseSession = require('../courseSessions/model')
+const {CourseSession} = require('../courseSessions/model')
 const Course = require('../courses/model')
 const {hasAllPrivileges} = require('../../utils/middlewares')
 const {PRIVILEGES} = require('../../utils/constants')
+const {Student} = require('../accounts/model')
+const {CourseRegistration} = require('../courseRegistrations/model')
 
 
 const router = new express.Router()
@@ -48,7 +50,7 @@ router.patch('/update',
 })
 
 router.patch('/update/coursesToOffer',
-    hasAllPrivileges([PRIVILEGES.CURRENT_SESSION_UPDATE]),
+    hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
     async (req, res)=>{
 
     try {
@@ -104,7 +106,7 @@ router.get('/coursesToOffer', async (req,res) => {
 
 
 router.post('/newCourseSessionsBatch/',
-    hasAllPrivileges([PRIVILEGES.CURRENT_SESSION_UPDATE]),
+    hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
     async (req, res) => {
         try {
             const currentSession = await CurrentSession.findOne({})
@@ -122,7 +124,7 @@ router.post('/newCourseSessionsBatch/',
 
             res.send() 
         } catch (error) {
-            res.status(400).send()
+            res.status(400).send(error.message)
         }
 })
 

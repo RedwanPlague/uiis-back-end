@@ -46,8 +46,8 @@ router.get('/status/:id', async (req,res) => {
 
         let totalCompletedCredits = 0.0
 
-        if(student.results && student.reselts.length !== 0){
-            totalCompletedCredits = student.reselts[student.reselts.length-1].totalCreditHoursCompleted
+        if(student.results && student.results.length !== 0){
+            totalCompletedCredits = student.results[student.results.length-1].totalCreditHoursCompleted
         }
 
         const minCreditDone = totalCompletedCredits >= constants.CLEARANCE.MIN_REQ_CREDITS
@@ -70,7 +70,7 @@ router.get('/status/:id', async (req,res) => {
         })
         
     } catch (error) {
-        res.status(400).send()
+        res.status(400).send(error.message)
     }
 })
 

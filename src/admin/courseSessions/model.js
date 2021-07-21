@@ -20,19 +20,28 @@ const courseSessionSchema = new mongoose.Schema({
         default: constants.RESULT_STATUS.EXAMINER
     },
     perEvalWeight: {
-        type: Number   // percentage
+        type: Number,   // percentage
+        default: 20.0/3
     },
     totalEvalCount: {
-        type: Number
+        type: Number,
+        default: 4
     },
     consideredEvalCount: {
-        type: Number
+        type: Number,
+        default: 3
     },
     attendanceWeight: {
-        type: Number   // percentage
+        type: Number,   // percentage
+        default: 3
     },
     totalMarks: {
-        type: Number
+        type: Number,
+        default : 300
+    },
+    termFinalParts: {
+        type: Number,
+        default: 2
     },
     teachers: [
         {
@@ -85,7 +94,10 @@ const courseSessionSchema = new mongoose.Schema({
         {
             _id: false,
             part: String, // [ Section A / B ] Multiple entries of a single part is allowed [ We might, but we wont ]
-            totalMarks: Number,
+            totalMarks: {
+                type: Number,
+                required: true
+            },
             teacher: {
                 type: String,
                 required: true,

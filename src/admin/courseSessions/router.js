@@ -107,7 +107,10 @@ router.patch('/update/:courseID/:syllabusID/:session',hasAllPrivileges([constant
 /**
  * Privilege : COURSE_SESSION_ASSIGN_TEACHER
  */
-router.patch('/update/:courseID/:syllabusID/:session/teachers',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_TEACHER]),async (req, res) => {
+router.patch('/update/:courseID/:syllabusID/:session/teachers',
+    hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_TEACHER]),
+    async (req, res) => {
+
     try {
         const course = await Course.findOne({
             courseID: req.params.courseID,
@@ -136,8 +139,12 @@ router.patch('/update/:courseID/:syllabusID/:session/teachers',hasAllPrivileges(
  * Privilege : COURSE_SESSION_ASSIGN_EXAMINER
  */
 
-router.patch('/update/:courseID/:syllabusID/:session/examiners',hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_EXAMINER]),async (req, res) => {
+router.patch('/update/:courseID/:syllabusID/:session/examiners',
+    hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_EXAMINER]),
+    async (req, res) => {
+
     try {
+
         const course = await Course.findOne({
             courseID: req.params.courseID,
             syllabusID: req.params.syllabusID,
@@ -145,12 +152,18 @@ router.patch('/update/:courseID/:syllabusID/:session/examiners',hasAllPrivileges
         if(!course){
             throw new Error('This course does not exist')
         }
+
+        const termFinalParts = new Set(req.body.map(x => x.part)).size
+
+        console.log(`# of parts ${termFinalParts}`)
+
         await CourseSession.updateOne({
             course: course._id,
             session: req.params.session
         },{
             $set: {
-                examiners: req.body
+                examiners: req.body,
+                termFinalParts
             }
         })
          
@@ -168,6 +181,7 @@ router.patch('/update/:courseID/:syllabusID/:session/examiners',hasAllPrivileges
 router.patch('/update/:courseID/:syllabusID/:session/scrutinizers',
     hasAllPrivileges([constants.PRIVILEGES.COURSE_SESSION_ASSIGN_SCRUTINIZER]) ,
     async (req, res) => {
+
     try {
         const course = await Course.findOne({
             courseID: req.params.courseID,

@@ -39,7 +39,7 @@ router.patch('/update',
         const currentSession = await CurrentSession.findOne({})
         if(req.body.session){
 
-            if(req.body.session.getTime() === currentSession.session.getTime()){
+            if(new Date(req.body.session).getTime() === currentSession.session.getTime()){
                 throw new Error('update date!')
             }
             currentSession.session = req.body.session
@@ -48,8 +48,6 @@ router.patch('/update',
         await currentSession.save()
 
         await updateLevelTerm()
-
-        await newCourseSessionsBatch()
 
         res.send()
     } catch(e) {
@@ -143,20 +141,29 @@ router.get('/coursesToOfferWithTitle',
     }
 })
 
-const newCourseSessionsBatch = async () => {
-    const currentSession = await CurrentSession.findOne({})
-    const coursesToOffer = currentSession.coursesToOffer
+router.post('/newCourseSessionsBatch',
+    hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
+    async (req, res) => {
+        try {
+            const currentSession = await CurrentSession.findOne({})
+            const coursesToOffer = currentSession.coursesToOffer
 
-    await Promise.all(coursesToOffer.map(async (courseID) => {
-        const courseSession = new CourseSession({
-            course: courseID,
-            session: currentSession.session
-        })
-        await courseSession.save()
-    }))
+            await Promise.all(coursesToOffer.map(async (courseID) => {
+                const courseSession = new CourseSession({
+                    course: courseID,
+                    session: currentSession.session
+                })
+                await courseSession.save()
+            }))
 
-    await newCourseRegistration()    
-}
+           await newCourseRegistration()
+
+            res.send() 
+        } catch (error) {
+            res.status(400).send(error.message)
+        }
+    }
+)
 
 const newCourseRegistration = async () =>{
 

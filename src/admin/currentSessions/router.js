@@ -38,10 +38,19 @@ router.patch('/update',
     try {
         const currentSession = await CurrentSession.findOne({})
         if(req.body.session){
+
+            if(req.body.session.getTime() === currentSession.session.getTime()){
+                throw new Error('update date!')
+            }
             currentSession.session = req.body.session
             currentSession.coursesToOffer = []
         }
         await currentSession.save()
+
+        await updateLevelTerm()
+
+        await newCourseSessionsBatch()
+
         res.send()
     } catch(e) {
         res.status(400).send({
@@ -134,29 +143,20 @@ router.get('/coursesToOfferWithTitle',
     }
 })
 
-router.post('/newCourseSessionsBatch',
-    hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
-    async (req, res) => {
-        try {
-            const currentSession = await CurrentSession.findOne({})
-            const coursesToOffer = currentSession.coursesToOffer
+const newCourseSessionsBatch = async () => {
+    const currentSession = await CurrentSession.findOne({})
+    const coursesToOffer = currentSession.coursesToOffer
 
-            await Promise.all(coursesToOffer.map(async (courseID) => {
-                const courseSession = new CourseSession({
-                    course: courseID,
-                    session: currentSession.session
-                })
-                await courseSession.save()
-            }))
+    await Promise.all(coursesToOffer.map(async (courseID) => {
+        const courseSession = new CourseSession({
+            course: courseID,
+            session: currentSession.session
+        })
+        await courseSession.save()
+    }))
 
-           await newCourseRegistration()
-
-            res.send() 
-        } catch (error) {
-            res.status(400).send(error.message)
-        }
-    }
-)
+    await newCourseRegistration()    
+}
 
 const newCourseRegistration = async () =>{
 
@@ -228,46 +228,38 @@ const newCourseRegistration = async () =>{
 
 
 
-router.post('/updateLevelTerm',
-    hasAllPrivileges([PRIVILEGES.COURSE_SESSION_CREATION]),
-    async (req, res) => {
-    try {
-        const students = await Student.find({})
+const updateLevelTerm = async() => {
+    
+    const students = await Student.find({})
 
-        await Promise.all(students.map(async (student) => {
+    await Promise.all(students.map(async (student) => {
 
-            if(student.isNewStudent){
-                student.isNewStudent = false
-            }
-            else{
-                let level = student.level
-                let term = student.term + 1
+        if(student.isNewStudent){
+            student.isNewStudent = false
+        }
+        else{
+            let level = student.level
+            let term = student.term + 1
 
-                if(term > constants.MAX_TERM){
-                    term = 1
-                    level += 1
-                }
-
-                if(level > constants.MAX_LEVEL){
-                    level = constants.MAX_LEVEL
-                    term = constants.MAX_TERM
-                    student.hasGraduated = true
-                }
-
-                student.level = level
-                student.term = term
+            if(term > constants.MAX_TERM){
+                term = 1
+                level += 1
             }
 
-            await student.save()
+            if(level > constants.MAX_LEVEL){
+                level = constants.MAX_LEVEL
+                term = constants.MAX_TERM
+                student.hasGraduated = true
+            }
 
-        }))
+            student.level = level
+            student.term = term
+        }
 
-        res.send()
+        await student.save()
 
-    } catch (error) {
-        res.status(400).send(error.message)
-    }
-})
+    }))   
+}
  
 
 

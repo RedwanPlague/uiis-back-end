@@ -52,11 +52,17 @@ router.get('/list',
         constants.PRIVILEGES.COURSE_SESSION_ALLOT_SCHEDULE,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_SCRUTINIZER,
         constants.PRIVILEGES.COURSE_SESSION_ASSIGN_INTERNAL
+
     ]),async (req, res) => {
     let match = {}
     try {
         const currentSession = await CurrentSession.findOne()
-        match.session = currentSession.session
+        // match.session = currentSession.session
+
+        if (req.query.session) {
+            match.session = req.query.session
+        }
+
         if(req.query.courseID && req.query.syllabusID){
             const course = await Course.findOne({
                 courseID: req.query.courseID,

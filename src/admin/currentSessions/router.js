@@ -236,8 +236,8 @@ router.post('/updateLevelTerm',
 
         await Promise.all(students.map(async (student) => {
 
-            if(student.isNew){
-                student.isNew = false
+            if(student.isNewStudent){
+                student.isNewStudent = false
             }
             else{
                 let level = student.level

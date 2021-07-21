@@ -62,7 +62,7 @@ const studentSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isNew: {
+    isNewStudent: {
         type: Boolean,
         default: true
     },

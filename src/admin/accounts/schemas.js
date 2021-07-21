@@ -62,6 +62,10 @@ const studentSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isNew: {
+        type: Boolean,
+        default: true
+    },
     results: [{
         totalCreditHoursCompleted: {
             type: Number,

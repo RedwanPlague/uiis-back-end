@@ -236,22 +236,27 @@ router.post('/updateLevelTerm',
 
         await Promise.all(students.map(async (student) => {
 
-            let level = student.level
-            let term = student.term + 1
-
-            if(term > constants.MAX_TERM){
-                term = 1
-                level += 1
+            if(student.isNew){
+                student.isNew = false
             }
+            else{
+                let level = student.level
+                let term = student.term + 1
 
-            if(level > constants.MAX_LEVEL){
-                level = constants.MAX_LEVEL
-                term = constants.MAX_TERM
-                student.hasGraduated = true
+                if(term > constants.MAX_TERM){
+                    term = 1
+                    level += 1
+                }
+
+                if(level > constants.MAX_LEVEL){
+                    level = constants.MAX_LEVEL
+                    term = constants.MAX_TERM
+                    student.hasGraduated = true
+                }
+
+                student.level = level
+                student.term = term
             }
-
-            student.level = level
-            student.term = term
 
             await student.save()
 

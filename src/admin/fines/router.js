@@ -18,6 +18,10 @@ router.post('/assign', hasFinePrivilege, async (req, res) => {
         delete body.ids
 
         await Promise.all(ids.map(async (id)=> {
+            const student  = await Student.findById(id)
+            if (student.hasGraduated){
+                throw new Error(`${id} has already graduated`)
+            }
             const fine = new Fine({
                 issuedTo: id,
                 issueDate: Date.now(),

@@ -17,6 +17,9 @@ router.post('/upsert/', async (req, res) => {
     let cnt = 0, it = 0, totalTime
 
     try {
+
+        match.hasGraduated = false
+
         if (req.body.department){
             match.department = req.body.department
         }
@@ -134,6 +137,8 @@ router.post('/upsert/', async (req, res) => {
 router.post('/batchInfo', async (req, res) => {
 
     let match = {}
+
+    match.hasGraduated = false
 
     if (req.body.department){
         match.department = req.body.department

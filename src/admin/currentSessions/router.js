@@ -213,9 +213,10 @@ const newCourseRegistration = async () =>{
                     }
                 )
                 courseRegistration.status = 'offered'
+                courseRegistration.level = student.level
+                courseRegistration.term = student.term
                 await courseRegistration.save()
                 newRegistrationList.push(courseRegistration)
-
             }
         }
     }
@@ -268,7 +269,6 @@ const updateLevelTerm = async() => {
     }))   
 }
  
-
 
 router.patch('/minimum_credit/update', async (req, res) => {
     try {

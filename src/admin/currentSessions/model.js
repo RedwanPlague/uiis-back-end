@@ -14,6 +14,15 @@ const CurrentSession = mongoose.model('CurrentSession',  new mongoose.Schema({
         type: Boolean,
         default: true,
         required: true
+    },
+    eco: {
+        type: String,
+        required: true,
+        ref: 'User',
+    },
+    resultPublished: {
+        type: Boolean,
+        default: false,
     }
 }))
 

@@ -8,6 +8,27 @@ const { changeResultState, publishResult } = require("../teacher-common/resultSt
 const Department = require("../../admin/departments/model");
 const { get_marked_student_list } = require("../issues/service");
 
+router.put("/publish", async (req, res) => {
+    try {
+        await publishResult();     
+        res.send({ message: "hemlo" });
+    } catch (error) {
+        console.log(error);
+        res.status(404).send(error);
+    }
+});
+
+router.get("/result-published", async (req, res) => {
+    try {
+        const ecoForwarded = (await CurrentSession.findOne()
+            .select("resultPublished")).resultPublished;     
+        res.send({ resultPublished: ecoForwarded });
+    } catch (error) {
+        console.log(error);
+        res.status(404).send(error);
+    }
+});
+
 router.get("/:session", async (req, res) => {
 
     try {
@@ -48,8 +69,8 @@ router.get("/:courseID/:session", async (req, res) => {
 
         const courseSession = await getCorSes(courseID, session);
 
-        const ecoForwarded = await CurrentSession.findOne()
-            .select("resultPublished").resultPublished;
+        const ecoForwarded = (await CurrentSession.findOne()
+            .select("resultPublished")).resultPublished;
 
         let allApproved = true;
 
@@ -98,16 +119,6 @@ router.get("/:courseID/:session", async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(401).send(error);
-    }
-});
-
-router.put("/publish", async (req, res) => {
-    try {
-        await publishResult();     
-        res.send({ message: "hemlo" });
-    } catch (error) {
-        console.log(error);
-        res.status(404).send(error);
     }
 });
 

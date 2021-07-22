@@ -89,7 +89,26 @@ router.get("/:courseID/:session", async (req, res) => {
         (who) => who.teacher === user.id
       );
 
-      // const colored = get_marked_student_list(user.id, courseID, session, )
+      const teacherColored = [];
+      for(const teacher of courseSession.teachers) {
+        const colored = await get_marked_student_list(user.id, courseID, session, "-", teacher.teacher);
+        teacherColored.push({
+          teacher: teacher.teacher,
+          unchangedList: colored.unchanged_list,
+          updatedList: colored.updated_list,
+        });
+      }
+
+      const examinerColored = [];
+      for(const examiner of courseSession.examiners) {
+        const colored = await get_marked_student_list(user.id, courseID, session, examiner.part, examiner.teacher);
+        examinerColored.push({
+          teacher: examiner.teacher,
+          part: examiner.part,
+          unchangedList: colored.unchanged_list,
+          updatedList: colored.updated_list,
+        });
+      }
 
       res.send({
         hasForwarded: section.hasForwarded,
@@ -104,6 +123,8 @@ router.get("/:courseID/:session", async (req, res) => {
         attendanceWeight: courseSession.attendanceWeight,
         termFinalParts: courseSession.termFinalParts,
         totalMarks: courseSession.totalMarks,
+        teacherColored,
+        examinerColored,
       });
     } else {
       res.status(401).send({ message: "Not everyone submitted" });

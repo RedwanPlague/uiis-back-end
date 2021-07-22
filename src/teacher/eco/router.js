@@ -23,8 +23,8 @@ router.get("/:session", async (req, res) => {
                 select: "courseID title",
             });
 
-        const ecoForwarded = await CurrentSession.findOne()
-            .select("resultPublished").resultPublished;
+        const ecoForwarded = (await CurrentSession.findOne()
+            .select("resultPublished")).resultPublished;
 
         const toRet = courseSessions.map((cs) => ({
             courseID: cs.course.courseID,
@@ -101,9 +101,9 @@ router.get("/:courseID/:session", async (req, res) => {
     }
 });
 
-router.put("/:courseID/:session/publish", async (req, res) => {
+router.put("/publish", async (req, res) => {
     try {
-        await publishResult();        
+        await publishResult();     
         res.send({ message: "hemlo" });
     } catch (error) {
         console.log(error);

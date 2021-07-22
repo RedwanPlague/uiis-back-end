@@ -101,7 +101,8 @@ router.put("/:courseID/:session/save", saveMarks, async (req, res) => {
           req.modStuList,
           user.id,
           constants.ISSUE_EVAL_TYPE.TF_EVAL,
-          part
+          part,
+          courseSession
         );
       }
     }
@@ -139,7 +140,7 @@ router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
       regi.save();
     });
 
-    courseSession.save();
+    await courseSession.save();
 
     await changeResultState(
       courseID,

@@ -2,9 +2,9 @@ const {Issues} = require('./model');
 const constants = require('../../utils/constants');
 const {CourseRegistration} = require("../../admin/courseRegistrations/model");
 
-async function addMarkUpdateActivity(studentList, evalOwnerID, evalType, part) {
+async function addMarkUpdateActivity(studentList, evalOwnerID, evalType, part, courseSession) {
 	const issues = await Issues
-		.find({ evalOwner: evalOwnerID, students: {  $in: studentList}, evalType, part } );
+		.find({ evalOwner: evalOwnerID, courseSession: courseSession._id, students: {  $in: studentList}, evalType, part } );
 
 	for(let i = 0 ; i < issues.length ; i++ ) {
 		const entry = issues[i];

@@ -8,15 +8,14 @@ async function changeResultState(courseID, session, present_status) {
 	const courseSession = await getCourseSession(courseID, session);
 
 	if(courseSession.status !== present_status) return;
-
 	let allApproved = true;
-
 	if(present_status === constants.RESULT_STATUS.EXAMINER) {
 		allApproved &= checkApprovals(courseSession, 'teachers');
 	}
-
-	allApproved &= checkApprovals(courseSession, present_status);
-
+	if(present_status === constants.RESULT_STATUS.DEPARTMENT_HEAD) {
+		allApproved &= courseSession.headForwarded;
+	}
+	else allApproved &= checkApprovals(courseSession, present_status);
 	if(allApproved) {
 
 		const values = Object.values(constants.RESULT_STATUS);
@@ -52,7 +51,7 @@ async function getCourseSession(courseID, session) {
 			})
 			.populate({
 				path: 'course',
-				select: 'courseID title',
+				select: 'courseID title offeredToDepartment',
 				match: {
 					courseID: courseID
 				}
@@ -114,7 +113,7 @@ async function calculateResult(courseReg) {
 async function publishResult() {
 	try {
 		const registrations = [];
-		const students = await CourseRegistration.find({status: constants.COURSE_REGISTRATION_STATUS.REGISTERED} );
+		const students = await CourseRegistration.find({status: constants.COURSE_REGISTRATION_STATUS.REGISTERED} ).cursor();
 
 		await students.eachAsync(courseReg => {
 

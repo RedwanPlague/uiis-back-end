@@ -165,7 +165,7 @@ router.patch('/:courseID/:session', async (req, res) => {
 
 		if(issueActivity && issuePosts) {
 			issuePosts = [ ...new Set(issuePosts)];
-			await addMarkUpdateActivity(issuePosts, req.user._id, constants.ISSUE_EVAL_TYPE.COURSE_EVAL, constants.TF_PARTS.NONE);
+			await addMarkUpdateActivity(issuePosts, req.user._id, constants.ISSUE_EVAL_TYPE.COURSE_EVAL, constants.TF_PARTS.NONE, courseSession);
 		}
 		await changeResultState(req.params.courseID, req.params.session, constants.RESULT_STATUS.EXAMINER);
 
@@ -199,6 +199,7 @@ router.put('/:courseID/:session/reset', async (req, res) => {
 			}
 		});
 		courseSession.status = constants.RESULT_STATUS.EXAMINER;
+		courseSession.headForwarded = false;
 
 		for(let i = 0 ; i < courseSession.registrationList.length ; i++) {
 			const courseRegistration = await CourseRegistration.findOne(courseSession.registrationList[i]);

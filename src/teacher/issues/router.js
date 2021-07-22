@@ -6,6 +6,8 @@ const {CourseRegistration} = require('../../admin/courseRegistrations/model');
 const {setEditStatus, removeEditAccess} = require('./service');
 const constants = require('../../utils/constants');
 const {CourseSession} = require("../../admin/courseSessions/model");
+const Department = require("../../admin/departments/model");
+const CurrentSession = require("../../admin/currentSessions/model");
 
 router.get('/', async (req, res) => {
 	try {
@@ -112,7 +114,8 @@ router.get('/:id', async (req, res) => {
 
 router.post('/create', async (req, res) => {
 	try {
-		const courseSession = await getCourseSession(req.body.courseID, '2021');
+		const currenSession = await CurrentSession.findOne();
+		const courseSession = await getCourseSession(req.body.courseID, currenSession.session);
 		const issue = new Issues({
 			evalType: req.body.evalType,
 			part: req.body.part,
@@ -230,7 +233,8 @@ router.get('/:courseID/:session/eligibleList', async (req, res) => {
 		const till = statuses.indexOf(courseSession.status);
 		let list = [];
 
-		for(let i = 1 ; i <= till ; i++) {
+
+		for(let i = 1 ; i <= Math.min(till, 2) ; i++) {
 			await courseSession.populate({path: `${statuses[i]}.teacher`, select:'name'}).execPopulate();
 
 			if(statuses[i] === constants.RESULT_STATUS.DEPARTMENT_HEAD) {
@@ -248,6 +252,29 @@ router.get('/:courseID/:session/eligibleList', async (req, res) => {
 			else {
 				list.push(courseSession[statuses[i]].toObject());
 			}
+		}
+
+		// console.log(courseSession);
+
+		if(till >= 3) {
+			const dept_head = await Department
+				.findOne({id: courseSession.course.offeredByDepartment})
+				.select("-_id head")
+				.populate({
+					path: 'head',
+					select: 'name'
+				});
+			list.push(dept_head.head.toObject());
+		}
+		if(till >= 4) {
+			const eco = await CurrentSession
+				.findOne()
+				.select('eco -_id')
+				.populate({
+					path: 'eco',
+					select: 'name'
+				})
+			list.push(eco.eco.toObject());
 		}
 
 		let teacher_ids = [], return_list = [];

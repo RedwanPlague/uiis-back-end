@@ -22,8 +22,7 @@ router.get("/:session", async (req, res) => {
         path: "course",
         select: "courseID title",
       });
-
-    console.log(courseSessions);
+      
     const toRet = [];
 
     for (const courseSession of courseSessions) {

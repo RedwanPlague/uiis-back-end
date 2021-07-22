@@ -12,7 +12,7 @@ router.get("/:session", async (req, res) => {
 
   try {
     const user = req.user;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
 
     const dept = await Department.findOne({
       head: user.id,
@@ -51,7 +51,7 @@ router.get("/:session", async (req, res) => {
 router.get("/:courseID/:session", async (req, res) => {
   try {
     const courseID = req.params.courseID;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
     const user = req.user;
 
     const courseSession = await getCorSes(courseID, session);
@@ -109,7 +109,7 @@ router.get("/:courseID/:session", async (req, res) => {
 router.put("/:courseID/:session/approve", async (req, res) => {
   try {
     const courseID = req.params.courseID;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
 
     const courseSession = await getCorSes2(courseID, session);
 
@@ -119,7 +119,7 @@ router.put("/:courseID/:session/approve", async (req, res) => {
 
     await changeResultState(
       courseID,
-      req.params.session,
+      session,
       constants.RESULT_STATUS.DEPARTMENT_HEAD
     );
 
@@ -133,7 +133,7 @@ router.put("/:courseID/:session/approve", async (req, res) => {
 router.put("/:courseID/:session/restore", async (req, res) => {
   try {
     const courseID = req.params.courseID;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
 
     const courseSession = await getCorSes2(courseID, session);
 
@@ -151,7 +151,7 @@ router.put("/:courseID/:session/restore", async (req, res) => {
 router.put("/:courseID/:session/setmarks", async (req, res) => {
   try {
     const courseID = req.params.courseID;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
 
     const courseSessions = await CourseSession.find({
       session,

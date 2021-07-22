@@ -6,6 +6,7 @@ const examinerRouter = require('./examiner/router');
 const headRouter = require('./head/router');
 const issueRouter = require('./issues/router');
 const scrutinizerRouter = require('./scrutinizer/router');
+const ecoRouter = require('./eco/router');
 const profileRouter = require('./teacher-common/profile/router');
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router.use('/head', headRouter);
 router.use('/internal', scrutinizerRouter);
 router.use('/issues', issueRouter);
 router.use('/scrutinizer', scrutinizerRouter);
+router.use('/eco', ecoRouter);
 router.use('/', profileRouter);
 
 module.exports = router

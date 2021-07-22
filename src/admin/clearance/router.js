@@ -3,14 +3,15 @@ const express = require('express')
 const {Student} = require('../accounts/model')
 const {Due} = require('../dues/model')
 const {PRIVILEGES} = require('../../utils/constants')
-const {adminRequired,hasAllPrivileges,hasAnyPrivileges} = require('../../utils/middlewares')
-const {addMergePrivileges} = require('../../utils/helpers')
+const {hasAllPrivileges} = require('../../utils/middlewares')
 const constants = require('../../utils/constants')
  
 
 const router = new express.Router()
 
-router.post('/thesis/clear', async (req, res) => {
+router.post('/thesis/clear',
+    hasAllPrivileges([PRIVILEGES.THESIS_CLEARANCE]),
+    async (req, res) => {
     try {
         const ids = req.body.ids
         if(!ids){
@@ -28,7 +29,7 @@ router.post('/thesis/clear', async (req, res) => {
         res.send()
 
     } catch (error) {
-        res.status(400).send()
+        res.status(400).send(error.message)
     }
 })
 
@@ -46,8 +47,8 @@ router.get('/status/:id', async (req,res) => {
 
         let totalCompletedCredits = 0.0
 
-        if(student.results && student.reselts.length !== 0){
-            totalCompletedCredits = student.reselts[student.reselts.length-1].totalCreditHoursCompleted
+        if(student.results && student.results.length !== 0){
+            totalCompletedCredits = student.results[student.results.length-1].totalCreditHoursCompleted
         }
 
         const minCreditDone = totalCompletedCredits >= constants.CLEARANCE.MIN_REQ_CREDITS
@@ -61,16 +62,18 @@ router.get('/status/:id', async (req,res) => {
 
         const thesisSubmitted = student.isThesisCleared
         const hasApplied = student.hasAppliedForClearance
+        const hasGraduated = student.hasGraduated
 
         res.send({
             minCreditDone,
             duesCleared,
             thesisSubmitted,
-            hasApplied
+            hasApplied,
+            hasGraduated
         })
         
     } catch (error) {
-        res.status(400).send()
+        res.status(400).send(error.message)
     }
 })
 
@@ -92,7 +95,7 @@ router.post('/apply/:id', async (req, res) => {
         res.send()
         
     } catch (error) {
-        res.status(400).send()
+        res.status(400).send(error.message)
     }
 })
 

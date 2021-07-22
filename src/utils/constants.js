@@ -36,7 +36,9 @@ const PRIVILEGES = Object.freeze({
 
     LIBRARY_FINE_MANAGEMENT: 'library-fine-management',
     LAB_FINE_MANAGEMENT: 'laboratory-fine-management',
-    DISCIPLINARY_FINE_MANAGEMENT: 'disciplinary-fine-management'
+    DISCIPLINARY_FINE_MANAGEMENT: 'disciplinary-fine-management',
+
+    THESIS_CLEARANCE: 'thesis-clearance'
 })
 
 const USER_TYPES = Object.freeze({
@@ -100,12 +102,12 @@ const COURSE_REGISTRATION_STATUS = Object.freeze({
 })
 
 const CLEARANCE = Object.freeze({
-    MIN_REQ_CREDITS: 100.0
+    MIN_REQ_CREDITS: 0.0
 })
 
 module.exports = Object.freeze({
     MIN_TERM: 1,
-    MAX_TERM: 5,
+    MAX_TERM: 2,
     MIN_LEVEL: 1,
     MAX_LEVEL: 2,
     USER_TYPES,

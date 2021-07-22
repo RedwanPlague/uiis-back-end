@@ -57,7 +57,7 @@ router.post('/dummy', async (req, res)=> {
     }
 })
 
-router.post('/newSessionBatch', async (req, res)=> {
+router.post('/newCourseRegistrationBatch', async (req, res)=> {
     try {
         const currentSession = await CurrentSession.findOne()
         const courseSessions = await CourseSession.
@@ -77,16 +77,6 @@ router.post('/newSessionBatch', async (req, res)=> {
             }
         })
 
-        // students.forEach(value => {
-        //     console.log(value.name)
-        //     console.log(value)
-        // })
-
-        // courseSessions.forEach(value => {
-        //     console.log(value._id)
-        //     console.log(value.course)
-        // })
-
         let newRegistrationList = []
 
         for (const student of students){
@@ -99,11 +89,6 @@ router.post('/newSessionBatch', async (req, res)=> {
                     let passed = false
 
                     for (const regEl of student.registrationList) {
-                        
-                        // if(!regEl.courseSession.course){
-                        //     console.log(student._id,courseSession.course._id)
-                        //     continue
-                        // }
 
                         if (regEl.courseSession.course.equals(pre._id)){
                             passed |= (regEl.status === 'passed')
@@ -121,10 +106,6 @@ router.post('/newSessionBatch', async (req, res)=> {
                     )
                     courseRegistration.status = 'offered'
                     await courseRegistration.save()
-
-                    // courseSession.registrationList.push(courseRegistration)
-                    // student.registrationList.push(courseRegistration)
-
                     newRegistrationList.push(courseRegistration)
 
                 }
@@ -142,8 +123,6 @@ router.post('/newSessionBatch', async (req, res)=> {
             await student.save()
             await courseSession.save()
         }
-
-        
 
         res.send()
     } catch (error){

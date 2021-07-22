@@ -41,7 +41,8 @@ const studentSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['unregistered', 'applied', 'waiting', 'registered']
+        enum: ['unregistered', 'applied', 'waiting', 'registered'],
+        default: 'unregistered'
     },
     registrationList: [
         {
@@ -56,6 +57,14 @@ const studentSchema = new mongoose.Schema({
     hasAppliedForClearance: {
         type: Boolean,
         default: false
+    },
+    hasGraduated: {
+        type: Boolean,
+        default: false
+    },
+    isNewStudent: {
+        type: Boolean,
+        default: true
     },
     results: [{
         totalCreditHoursCompleted: {

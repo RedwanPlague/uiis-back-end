@@ -23,7 +23,12 @@ const CurrentSession = mongoose.model('CurrentSession',  new mongoose.Schema({
     resultPublished: {
         type: Boolean,
         default: false,
-    }
+    },
+    coursesToOffer: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+        required: true
+    }]
 }))
 
 module.exports = CurrentSession

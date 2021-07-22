@@ -17,6 +17,7 @@ const courseRegistrationSchema = new mongoose.Schema({
         // required: true,
         min: constants.MIN_LEVEL,
         max: constants.MAX_LEVEL,
+        required: true
         // validate (value) {
         //     console.log(value)
         //     console.log(typeof(value))
@@ -29,6 +30,7 @@ const courseRegistrationSchema = new mongoose.Schema({
         // required: true,
         min: constants.MIN_TERM,
         max: constants.MAX_TERM,
+        required: true
         // validate (value) {
         //     if (!value.isInteger)
         //         throw new Error('Term must be Integer')

@@ -1,5 +1,6 @@
 const express = require('express');
 
+const { Student } = require('../../admin/accounts/model');
 const { CourseRegistration } = require('../../admin/courseRegistrations/model');
 
 const router =  express.Router();
@@ -41,6 +42,22 @@ router.get('/:id', async (req, res) => {
                 });
         }
         res.status(200).send(grades);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.get('/results/:id', async (req, res) => {
+    try {
+        const results = await Student
+            .findById({
+                _id: req.params.id
+            })
+            .select('results');
+
+        res.status(200).send(results);
     } catch(error) {
         res.status(400).send({
             error: error.message

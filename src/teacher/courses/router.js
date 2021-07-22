@@ -5,6 +5,7 @@ const {CourseRegistration} = require('../../admin/courseRegistrations/model');
 const {changeResultState, getCourseSession} = require('../teacher-common/resultStatusUtil');
 const constants = require('../../utils/constants');
 const {addMarkUpdateActivity} = require("../issues/service");
+const CurrentSession = require("../../admin/currentSessions/model");
 
 router.get('/', async (req, res)=> {
 
@@ -18,17 +19,17 @@ router.get('/', async (req, res)=> {
 				select: 'courseID title -_id',
 			});
 
-
 		ret.forEach(courseSession => {
 			courseSession.courseID = courseSession.course.courseID;
 			courseSession.title = courseSession.course.title;
-			courseSession.session = courseSession.session.getFullYear();
 			delete courseSession.course;
 		});
+		const currentSession = await CurrentSession
+			.findOne()
+			.select("session -_id");
 
-		const currentCourseSessions = ret.filter(courseSession => courseSession.session === 2021);
-		const previousCourseSessions = ret.filter(courseSession => courseSession.session !== 2021);
-
+		const currentCourseSessions = ret.filter(courseSession => Number(courseSession.session) === Number(currentSession.session) );
+		const previousCourseSessions = ret.filter(courseSession => Number(courseSession.session) !== Number(currentSession.session) );
 
 		res.status(200).json({currentCourseSessions, previousCourseSessions});
 	} catch (error) {
@@ -42,6 +43,7 @@ router.get('/', async (req, res)=> {
 router.get('/:courseID/:session', async (req, res) => {
 
 	try {
+		req.params.session =  new Date(`${req.params.session} UTC`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 
 		if(!courseSession) {
@@ -93,6 +95,7 @@ router.get('/:courseID/:session', async (req, res) => {
 
 router.patch('/:courseID/:session', async (req, res) => {
 	try {
+		req.params.session =  new Date(`${req.params.session} UTC`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if(!courseSession) {
 			res.status(400).json("");
@@ -178,6 +181,7 @@ router.patch('/:courseID/:session', async (req, res) => {
 router.put('/:courseID/:session/reset', async (req, res) => {
 
 	try {
+		req.params.session =  new Date(`${req.params.session} UTC`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if (!courseSession) {
 			res.status(400).json("");
@@ -224,8 +228,8 @@ router.put('/:courseID/:session/reset', async (req, res) => {
 
 router.put('/:courseID/:session/:role/set', async (req, res) => {
 
-
 	try {
+		req.params.session =  new Date(`${req.params.session} UTC`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if (!courseSession || !courseSession[req.params.role]) {
 			res.status(400).json("");

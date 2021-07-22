@@ -5,9 +5,6 @@ const {runInTransaction} = require("../../utils/helpers");
 
 async function changeResultState(courseID, session, present_status) {
 
-
-	console.log(present_status);
-	console.log(courseID, session);
 	const courseSession = await getCourseSession(courseID, session);
 
 	if(courseSession.status !== present_status) return;
@@ -33,19 +30,14 @@ async function changeResultState(courseID, session, present_status) {
 }
 
 function checkApprovals(courseSession, role) {
-	console.log("-=========================");
-	console.log(role);
 	let ret = true;
 
 	if(Array.isArray(courseSession[role]) ) {
 		courseSession[role].forEach(participant => {
-
-			console.log(participant);
 			ret &= participant.hasForwarded;
 		});
 	}
 	else {
-		console.log(courseSession[role]);
 		ret &= courseSession[role].hasForwarded;
 	}
 

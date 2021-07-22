@@ -13,7 +13,7 @@ router.use(setKe);
 router.get("/:session", async (req, res) => {
   try {
     const user = req.user;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
 
     const courseSessions = await CourseSession.find({
       session: session,
@@ -39,12 +39,9 @@ router.get("/:session", async (req, res) => {
         hasForwarded: section.hasForwarded,
         prevDone,
       }
-      //console.log(cs);
 
       return cr;
     });
-
-    //console.log(toRet);
 
     res.send({ toRet });
   } catch (error) {
@@ -56,35 +53,13 @@ router.get("/:session", async (req, res) => {
 router.get("/:courseID/:session", async (req, res) => {
   try {
     const courseID = req.params.courseID;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
     const user = req.user;
 
     const courseSession = await getCorSes(courseID, session);
 
     let allApproved = true;
-    // courseSession.teachers.forEach(teacher => {
-    //   allApproved = (allApproved && !teacher.editAccess);
-    // });
-    // courseSession.examiners.forEach(examiner => {
-    //   allApproved = (allApproved && !examiner.resultEditAccess);
-    // });
-
     if (allApproved) {
-      // let attendanceCount = 0;
-      // let evalTotalMarks = [];
-      // let tfTotalMarks = courseSession.examiners;
-
-      // courseSession.teachers.forEach(teacher => {
-      //   attendanceCount += teacher.classCount;
-      //   evalTotalMarks.push(...teacher.evalDescriptions);
-      // });
-
-      // const totalMarks = {
-      //   attendanceCount,
-      //   evalTotalMarks,
-      //   tfTotalMarks,
-      // };
-
       const section = courseSession[`${req.ke}s`].find(
         (who) => who.teacher === user.id
       );
@@ -139,7 +114,7 @@ router.put("/:courseID/:session/approve", async (req, res) => {
   try {
     const user = req.user;
     const courseID = req.params.courseID;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
 
     const courseSession = await getCorSes2(courseID, session);
 
@@ -155,7 +130,7 @@ router.put("/:courseID/:session/approve", async (req, res) => {
 
     await changeResultState(
       courseID,
-      req.params.session,
+      session,
       constants.RESULT_STATUS[req.ke.toUpperCase()]
     );
 
@@ -170,7 +145,7 @@ router.put("/:courseID/:session/restore", async (req, res) => {
   try {
     const user = req.user;
     const courseID = req.params.courseID;
-    const session = new Date(req.params.session);
+    const session = new Date(`${req.params.session} UTC`);
 
     const courseSession = await getCorSes2(courseID, session);
 

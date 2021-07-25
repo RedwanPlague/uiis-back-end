@@ -43,7 +43,7 @@ router.get('/', async (req, res)=> {
 router.get('/:courseID/:session', async (req, res) => {
 
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session}`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 
 		if(!courseSession) {
@@ -95,7 +95,7 @@ router.get('/:courseID/:session', async (req, res) => {
 
 router.patch('/:courseID/:session', async (req, res) => {
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session}`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if(!courseSession) {
 			res.status(400).json("");
@@ -181,7 +181,7 @@ router.patch('/:courseID/:session', async (req, res) => {
 router.put('/:courseID/:session/reset', async (req, res) => {
 
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session}`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if (!courseSession) {
 			res.status(400).json("");
@@ -230,7 +230,7 @@ router.put('/:courseID/:session/reset', async (req, res) => {
 router.put('/:courseID/:session/:role/set', async (req, res) => {
 
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session}`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if (!courseSession || !courseSession[req.params.role]) {
 			res.status(400).json("");

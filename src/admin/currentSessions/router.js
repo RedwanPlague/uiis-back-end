@@ -242,33 +242,36 @@ const updateLevelTerm = async() => {
 
     await Promise.all(students.map(async (student) => {
 
-        if(student.isNewStudent){
-            student.isNewStudent = false
+        // if(student.isNewStudent){
+        //     student.isNewStudent = false
+        // }
+        // else{
+        let level = student.level
+        let term = student.term + 1
+
+        if(term > constants.MAX_TERM){
+            term = 1
+            level += 1
         }
-        else{
-            let level = student.level
-            let term = student.term + 1
 
-            if(term > constants.MAX_TERM){
-                term = 1
-                level += 1
-            }
-
-            if(level > constants.MAX_LEVEL){
-                level = constants.MAX_LEVEL
-                term = constants.MAX_TERM
-                student.hasGraduated = true
-            }
-
-            student.level = level
-            student.term = term
+        if(level > constants.MAX_LEVEL) {
+            level = constants.MAX_LEVEL
+            term = constants.MAX_TERM
+            student.hasGraduated = true
         }
+        else {
+            student.status = 'unregistered'
+        }
+
+        student.level = level
+        student.term = term
+        // }
 
         await student.save()
 
     }))   
 }
- 
+
 
 router.patch('/minimum_credit/update', async (req, res) => {
     try {

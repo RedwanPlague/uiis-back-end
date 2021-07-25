@@ -13,7 +13,7 @@ router.get("/:session", async (req, res) => {
     const user = req.user;
     const session = new Date(`${req.params.session} UTC`);
 
-    courseSessions = await CourseSession.find({
+    const courseSessions = await CourseSession.find({
       session,
       "examiners.teacher": user.id,
     })

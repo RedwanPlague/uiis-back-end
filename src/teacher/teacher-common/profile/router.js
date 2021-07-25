@@ -64,4 +64,20 @@ router.get('/routine', async (req, res) => {
     }
 });
 
+router.get('/profile/picture', async (req, res) => {
+    try {
+        const profilePicture = await Teacher
+            .findById({
+                _id: req.user._id
+            })
+            .select('display_image_link');
+
+        res.status(200).send(profilePicture);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;

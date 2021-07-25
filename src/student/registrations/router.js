@@ -168,4 +168,45 @@ router.patch('/course_failed', async (req, res) => {
     }
 });
 
+router.patch('/batch_status', async (req, res) => {
+    try {
+        /* batch process to change student status */
+        const updatedStudents = await Student
+            .updateMany({},
+                {
+                    $set: {
+                        status: req.body.status
+                    }
+                });
+
+        res.status(201).send(updatedStudents);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.patch('/batch_course', async (req, res) => {
+    try {
+        /* batch process to change courseRegistration status */
+        const updatedCourseRegistrations = await CourseRegistration
+            .updateMany({
+                    level: req.body.level,
+                    term: req.body.term
+                },
+                {
+                    $set: {
+                        status: req.body.status
+                    }
+                });
+
+        res.status(201).send(updatedCourseRegistrations);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;

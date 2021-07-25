@@ -101,7 +101,11 @@ router.get('/:id', async (req, res) => {
 		else if(issue.courseSession.internals.filter(internal => internal.teacher === req.user._id).length > 0) {
 			issue.role = 'internal';
 		}
-		else issue.role = 'none';
+		else {
+			const currentSession = await CurrentSession.findOne();
+			if(currentSession.eco === req.user._id) issue.role = 'eco';
+			else issue.role = 'head';
+		}
 
 		res.status(200).json(issue);
 	} catch (error) {

@@ -2,6 +2,7 @@ const constants = require('../../utils/constants');
 const {CourseSession} = require("../../admin/courseSessions/model");
 const {CourseRegistration} = require("../../admin/courseRegistrations/model");
 const {runInTransaction} = require("../../utils/helpers");
+const CurrentSession = require("../../admin/currentSessions/model");
 
 async function changeResultState(courseID, session, present_status) {
 
@@ -113,14 +114,13 @@ async function calculateResult(courseReg) {
 async function publishResult() {
 	try {
 		const registrations = [];
-		const students = await CourseRegistration.find({status: constants.COURSE_REGISTRATION_STATUS.REGISTERED} ).cursor();
+		const courseRegs = await CourseRegistration.find({status: constants.COURSE_REGISTRATION_STATUS.REGISTERED} );
 
-		await students.eachAsync(courseReg => {
-
-			const result = calculateResult(courseReg);
+		for(const entry of courseRegs) {
+			const result = await calculateResult(entry);
 			const courseRegistration = {
 				updateOne: {
-					filter: { _id: courseReg._id },
+					filter: { _id: entry._id },
 					update: {
 						result,
 						status: (result.gradeLetter === 'F' ? constants.COURSE_REGISTRATION_STATUS.FAILED: constants.COURSE_REGISTRATION_STATUS.PASSED),
@@ -129,9 +129,13 @@ async function publishResult() {
 				}
 			}
 			registrations.push(courseRegistration);
-		});
+		}
 		const res = await runInTransaction(registrations, CourseRegistration);
 		console.log("modified Count: " + res.modifiedCount);
+
+		const currentSession = await CurrentSession.findOne();
+		currentSession.resultPublished = true;
+		await currentSession.save();
 		return res;
 
 	} catch(error) {

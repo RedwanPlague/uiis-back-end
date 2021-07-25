@@ -55,6 +55,7 @@ const userSchema = new mongoose.Schema({
             ref: 'Role'
         }
     ],
+    display_image_link: String,
     tokens: [{
         token: {
             type: String,

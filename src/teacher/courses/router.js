@@ -2,7 +2,7 @@ const express = require('express');
 const router =  express.Router();
 const {CourseSession} = require('../../admin/courseSessions/model');
 const {CourseRegistration} = require('../../admin/courseRegistrations/model');
-const {changeResultState, getCourseSession} = require('../teacher-common/resultStatusUtil');
+const {changeResultState, getCourseSession, publishResult} = require('../teacher-common/resultStatusUtil');
 const constants = require('../../utils/constants');
 const {addMarkUpdateActivity} = require("../issues/service");
 const CurrentSession = require("../../admin/currentSessions/model");
@@ -280,6 +280,43 @@ router.put('/:courseID/:session/:role/set', async (req, res) => {
 			error: error.message
 		});
 	}
+});
+
+router.put('/revertResult', async (req, res) => {
+
+	try {
+		const courseRegs = await CourseRegistration.find();
+
+		for(const entry of courseRegs) {
+			entry.result = null;
+			entry.status = constants.COURSE_REGISTRATION_STATUS.REGISTERED;
+			await entry.save();
+		}
+		const currentSession = await CurrentSession.findOne();
+		currentSession.resultPublished = false;
+		await currentSession.save();
+
+		res.status(200).json(courseRegs);
+
+	} catch (error) {
+		console.log(error.message);
+		res.status(400).send({
+			error: error.message
+		});
+	}
+});
+
+router.put('/publishResult', async(req, res) => {
+	try {
+		await publishResult();
+		res.status(200).json({msg:"ok"});
+	} catch(error) {
+		console.log(error.message);
+		res.status(400).send({
+			error: error.message
+		});
+	}
+
 });
 
 

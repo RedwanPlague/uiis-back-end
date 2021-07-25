@@ -74,7 +74,7 @@ router.get('/:id', async (req, res) => {
 			})
 			.populate({
 				path: 'courseSession',
-				select: 'teachers examiners scrutinizers internals -_id',
+				select: 'teachers examiners scrutinizers internals -_id session',
 				populate: {
 					path: 'course',
 					select: 'courseID title -_id'
@@ -82,7 +82,7 @@ router.get('/:id', async (req, res) => {
 			})
 			.populate({
 				path:'posts.author',
-				select: 'name'
+				select: 'name display_image_link'
 			});
 
 		if(!issue) {
@@ -170,7 +170,7 @@ router.post('/:id/posts/create/', async(req, res) => {
 		});
 		await issue.save();
 
-		await issue.populate( { path: 'posts.author', select: 'name'}).execPopulate();
+		await issue.populate( { path: 'posts.author', select: 'name display_image_link'}).execPopulate();
 
 		res.status(201).json(issue.posts);
 	} catch (error) {
@@ -198,7 +198,7 @@ router.put('/:issueID/changeStatus', async (req, res) => {
 
 		})
 		await issue.save();
-		await issue.populate( { path: 'posts.author', select: 'name'}).execPopulate();
+		await issue.populate( { path: 'posts.author', select: 'name display_image_link'}).execPopulate();
 
 		const courseSession = await CourseSession
 			.findOne({_id: issue.courseSession})
@@ -312,42 +312,5 @@ router.put('/empty', async (req, res) => {
 	}
 });
 
-
-// router.post('/',async (req, res) => {
-//
-// 	try {
-// 		const courseSession = await getCourseSession('CSE203', '2021');
-// 		if(!courseSession) throw new Error('No course found');
-// 		const issue = new Issues({
-// 			_id: 4,
-// 			evalType: 'Course',
-//
-// 			evalOwner: 't2',
-// 			title: 'Marks Discrepancy',
-// 			courseSession: courseSession._id,
-// 			status: constants.ISSUE_STATUS.RESOLVED,
-// 			students: ['1605007' , '1605008'],
-// 			teachers: ['t2', 't3'],
-// 			creator: 't3',
-// 			posts: [
-// 				{
-// 					postType: 'Comment',
-// 					author: 't3',
-// 					description: 'Marks empty',
-// 					imageLink: 'https://avatars.githubusercontent.com/u/32516061?s=80&amp;v=4'
-// 				}
-// 			]
-// 		});
-// 		await issue.save();
-// 		res.status(201).json(
-// 			issue
-// 		);
-// 	} catch (error) {
-// 		console.log(error);
-// 		res.status(400).json({
-// 			msg: error
-// 		});
-// 	}
-// });
 
 module.exports = router;

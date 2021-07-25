@@ -3,6 +3,7 @@ const {CourseSession} = require("../../admin/courseSessions/model");
 const {CourseRegistration} = require("../../admin/courseRegistrations/model");
 const {runInTransaction} = require("../../utils/helpers");
 const CurrentSession = require("../../admin/currentSessions/model");
+const {Student} = require("../../admin/accounts/model");
 
 async function changeResultState(courseID, session, present_status) {
 
@@ -142,11 +143,63 @@ async function publishResult() {
 		throw new Error(error);
 	}
 }
+// needs testing
+async function fillResultArray() {
+	try {
+		const students = await Student
+			.find()
+			.populate({
+				path: 'registrationList'
+			});
+
+		const currentSession = await CurrentSession
+			.findOne();
+
+		for(const student of students) {
+
+			let totalCreditHoursCompleted = student.results[student.results.length - 1].totalCreditHoursCompleted;
+			let totalCreditHourThisTerm = 0;
+			let gpa = 0;
+			for(let courseReg of student.registrationList) {
+				courseReg = await courseReg
+					.populate({
+						path: 'courseSession',
+						select: 'session course -_id'
+					}).execPopulate();
+				if(courseReg.courseSession.session.getTime() !== currentSession.session.getTime()) continue;
+				if(courseReg.result.gradeLetter === 'F') continue;
+
+				const courseSession = await courseReg.courseSession
+					.populate({
+						path: 'course',
+						select: 'credit -_id'
+					})
+					.execPopulate();
+
+				totalCreditHoursCompleted += courseSession.course.credit;
+				totalCreditHourThisTerm += courseSession.course.credit;
+				gpa += courseSession.course.credit * courseReg.result.gradePoint;
+			}
+			gpa /= totalCreditHourThisTerm;
+			let cgpa = student.results[student.results.length - 1].cgpa;
+			cgpa = (gpa * totalCreditHourThisTerm + cgpa * (totalCreditHoursCompleted - totalCreditHourThisTerm) ) / totalCreditHoursCompleted;
+
+			// student.results.push({
+			// 	totalCreditHoursCompleted,
+			// 	cgpa
+			// });
+			// await student.save();
+		}
+	} catch (error) {
+		throw new Error(error);
+	}
+}
 
 
 
 module.exports = {
 	changeResultState,
 	getCourseSession,
-	publishResult
+	publishResult,
+	fillResultArray
 }

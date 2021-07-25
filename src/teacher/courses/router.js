@@ -2,7 +2,7 @@ const express = require('express');
 const router =  express.Router();
 const {CourseSession} = require('../../admin/courseSessions/model');
 const {CourseRegistration} = require('../../admin/courseRegistrations/model');
-const {changeResultState, getCourseSession, publishResult} = require('../teacher-common/resultStatusUtil');
+const {changeResultState, getCourseSession, publishResult, fillResultArray} = require('../teacher-common/resultStatusUtil');
 const constants = require('../../utils/constants');
 const {addMarkUpdateActivity} = require("../issues/service");
 const CurrentSession = require("../../admin/currentSessions/model");
@@ -316,7 +316,18 @@ router.put('/publishResult', async(req, res) => {
 			error: error.message
 		});
 	}
+});
 
+router.put('/fillResultArray', async(req, res) => {
+	try {
+		await fillResultArray();
+		res.status(200).json({msg:"ok"});
+	} catch (error) {
+		console.log(error.message);
+		res.status(400).send({
+			error: error.message
+		});
+	}
 });
 
 

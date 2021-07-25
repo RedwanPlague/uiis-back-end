@@ -6,6 +6,8 @@ const {CourseRegistration} = require('../../admin/courseRegistrations/model');
 const {setEditStatus, removeEditAccess} = require('./service');
 const constants = require('../../utils/constants');
 const {CourseSession} = require("../../admin/courseSessions/model");
+const Department = require("../../admin/departments/model");
+const CurrentSession = require("../../admin/currentSessions/model");
 
 router.get('/', async (req, res) => {
 	try {
@@ -72,7 +74,7 @@ router.get('/:id', async (req, res) => {
 			})
 			.populate({
 				path: 'courseSession',
-				select: 'teachers examiners scrutinizers internals -_id',
+				select: 'teachers examiners scrutinizers internals -_id session',
 				populate: {
 					path: 'course',
 					select: 'courseID title -_id'
@@ -80,7 +82,7 @@ router.get('/:id', async (req, res) => {
 			})
 			.populate({
 				path:'posts.author',
-				select: 'name'
+				select: 'name display_image_link'
 			});
 
 		if(!issue) {
@@ -99,7 +101,11 @@ router.get('/:id', async (req, res) => {
 		else if(issue.courseSession.internals.filter(internal => internal.teacher === req.user._id).length > 0) {
 			issue.role = 'internal';
 		}
-		else issue.role = 'none';
+		else {
+			const currentSession = await CurrentSession.findOne();
+			if(currentSession.eco === req.user._id) issue.role = 'eco';
+			else issue.role = 'head';
+		}
 
 		res.status(200).json(issue);
 	} catch (error) {
@@ -112,7 +118,8 @@ router.get('/:id', async (req, res) => {
 
 router.post('/create', async (req, res) => {
 	try {
-		const courseSession = await getCourseSession(req.body.courseID, '2021');
+		const currenSession = await CurrentSession.findOne();
+		const courseSession = await getCourseSession(req.body.courseID, currenSession.session);
 		const issue = new Issues({
 			evalType: req.body.evalType,
 			part: req.body.part,
@@ -167,7 +174,7 @@ router.post('/:id/posts/create/', async(req, res) => {
 		});
 		await issue.save();
 
-		await issue.populate( { path: 'posts.author', select: 'name'}).execPopulate();
+		await issue.populate( { path: 'posts.author', select: 'name display_image_link'}).execPopulate();
 
 		res.status(201).json(issue.posts);
 	} catch (error) {
@@ -195,7 +202,7 @@ router.put('/:issueID/changeStatus', async (req, res) => {
 
 		})
 		await issue.save();
-		await issue.populate( { path: 'posts.author', select: 'name'}).execPopulate();
+		await issue.populate( { path: 'posts.author', select: 'name display_image_link'}).execPopulate();
 
 		const courseSession = await CourseSession
 			.findOne({_id: issue.courseSession})
@@ -230,7 +237,8 @@ router.get('/:courseID/:session/eligibleList', async (req, res) => {
 		const till = statuses.indexOf(courseSession.status);
 		let list = [];
 
-		for(let i = 1 ; i <= till ; i++) {
+
+		for(let i = 1 ; i <= Math.min(till, 2) ; i++) {
 			await courseSession.populate({path: `${statuses[i]}.teacher`, select:'name'}).execPopulate();
 
 			if(statuses[i] === constants.RESULT_STATUS.DEPARTMENT_HEAD) {
@@ -248,6 +256,29 @@ router.get('/:courseID/:session/eligibleList', async (req, res) => {
 			else {
 				list.push(courseSession[statuses[i]].toObject());
 			}
+		}
+
+		// console.log(courseSession);
+
+		if(till >= 3) {
+			const dept_head = await Department
+				.findOne({id: courseSession.course.offeredByDepartment})
+				.select("-_id head")
+				.populate({
+					path: 'head',
+					select: 'name'
+				});
+			list.push(dept_head.head.toObject());
+		}
+		if(till >= 4) {
+			const eco = await CurrentSession
+				.findOne()
+				.select('eco -_id')
+				.populate({
+					path: 'eco',
+					select: 'name'
+				})
+			list.push(eco.eco.toObject());
 		}
 
 		let teacher_ids = [], return_list = [];
@@ -285,42 +316,5 @@ router.put('/empty', async (req, res) => {
 	}
 });
 
-
-// router.post('/',async (req, res) => {
-//
-// 	try {
-// 		const courseSession = await getCourseSession('CSE203', '2021');
-// 		if(!courseSession) throw new Error('No course found');
-// 		const issue = new Issues({
-// 			_id: 4,
-// 			evalType: 'Course',
-//
-// 			evalOwner: 't2',
-// 			title: 'Marks Discrepancy',
-// 			courseSession: courseSession._id,
-// 			status: constants.ISSUE_STATUS.RESOLVED,
-// 			students: ['1605007' , '1605008'],
-// 			teachers: ['t2', 't3'],
-// 			creator: 't3',
-// 			posts: [
-// 				{
-// 					postType: 'Comment',
-// 					author: 't3',
-// 					description: 'Marks empty',
-// 					imageLink: 'https://avatars.githubusercontent.com/u/32516061?s=80&amp;v=4'
-// 				}
-// 			]
-// 		});
-// 		await issue.save();
-// 		res.status(201).json(
-// 			issue
-// 		);
-// 	} catch (error) {
-// 		console.log(error);
-// 		res.status(400).json({
-// 			msg: error
-// 		});
-// 	}
-// });
 
 module.exports = router;

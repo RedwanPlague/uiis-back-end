@@ -2,21 +2,21 @@ const constants = require('../../utils/constants');
 const {CourseSession} = require("../../admin/courseSessions/model");
 const {CourseRegistration} = require("../../admin/courseRegistrations/model");
 const {runInTransaction} = require("../../utils/helpers");
+const CurrentSession = require("../../admin/currentSessions/model");
 
 async function changeResultState(courseID, session, present_status) {
 
 	const courseSession = await getCourseSession(courseID, session);
 
 	if(courseSession.status !== present_status) return;
-
 	let allApproved = true;
-
 	if(present_status === constants.RESULT_STATUS.EXAMINER) {
 		allApproved &= checkApprovals(courseSession, 'teachers');
 	}
-
-	allApproved &= checkApprovals(courseSession, present_status);
-
+	if(present_status === constants.RESULT_STATUS.DEPARTMENT_HEAD) {
+		allApproved &= courseSession.headForwarded;
+	}
+	else allApproved &= checkApprovals(courseSession, present_status);
 	if(allApproved) {
 
 		const values = Object.values(constants.RESULT_STATUS);
@@ -52,7 +52,7 @@ async function getCourseSession(courseID, session) {
 			})
 			.populate({
 				path: 'course',
-				select: 'courseID title',
+				select: 'courseID title offeredToDepartment',
 				match: {
 					courseID: courseID
 				}
@@ -114,14 +114,13 @@ async function calculateResult(courseReg) {
 async function publishResult() {
 	try {
 		const registrations = [];
-		const students = await CourseRegistration.find({status: constants.COURSE_REGISTRATION_STATUS.REGISTERED} );
+		const courseRegs = await CourseRegistration.find({status: constants.COURSE_REGISTRATION_STATUS.REGISTERED} );
 
-		await students.eachAsync(courseReg => {
-
-			const result = calculateResult(courseReg);
+		for(const entry of courseRegs) {
+			const result = await calculateResult(entry);
 			const courseRegistration = {
 				updateOne: {
-					filter: { _id: courseReg._id },
+					filter: { _id: entry._id },
 					update: {
 						result,
 						status: (result.gradeLetter === 'F' ? constants.COURSE_REGISTRATION_STATUS.FAILED: constants.COURSE_REGISTRATION_STATUS.PASSED),
@@ -130,9 +129,13 @@ async function publishResult() {
 				}
 			}
 			registrations.push(courseRegistration);
-		});
+		}
 		const res = await runInTransaction(registrations, CourseRegistration);
 		console.log("modified Count: " + res.modifiedCount);
+
+		const currentSession = await CurrentSession.findOne();
+		currentSession.resultPublished = true;
+		await currentSession.save();
 		return res;
 
 	} catch(error) {

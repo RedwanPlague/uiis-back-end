@@ -94,4 +94,40 @@ router.get('/routine', async (req, res) => {
     }
 });
 
+router.get('/profile/picture/:id', async (req, res) => {
+    try {
+        const profilePicture = await Student
+            .findById({
+                _id: req.params.id
+            })
+            .select('display_image_link');
+
+        res.status(200).send(profilePicture);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
+router.get('/advisor/picture', async (req, res) => {
+    try {
+        const profilePicture = await Student
+            .findById({
+                _id: req.user._id
+            })
+            .select('advisor')
+            .populate({
+                path: 'advisor',
+                select: 'display_image_link'
+            });
+
+        res.status(200).send(profilePicture);
+    } catch(error) {
+        res.status(400).send({
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;

@@ -34,10 +34,6 @@ const courseSessionSchema = new mongoose.Schema({
         type: Number,   // percentage
         default: 10
     },
-    termFinalParts: {
-        type: Number,
-        default: 2
-    },
     totalMarks: {
         type: Number,
         default : 300

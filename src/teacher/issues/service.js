@@ -41,7 +41,6 @@ async function removeEditAccess(courseSession, studentList, evalType, part, eval
 			issues.forEach(issue => issueExist |= issue.students.includes(student));
 			if (!issueExist) accessRemovalList.push(student);
 		});
-		console.log(accessRemovalList);
 
 		await setEditStatus(courseSession, accessRemovalList, evalType, part, evalOwnerID, false);
 	} catch (error) {
@@ -93,7 +92,7 @@ async function setEditStatus(courseSession, studentList, evalType, part, evalOwn
 async function get_marked_student_list(teacherID, courseID, session, part, evalOwner) {
 
 	try {
-		const issues = await Issues
+		let issues = await Issues
 			.find({teachers: teacherID, status: constants.ISSUE_STATUS.UNRESOLVED, part: part, evalOwner: evalOwner})
 			.lean()
 			.select('students posts')
@@ -105,7 +104,7 @@ async function get_marked_student_list(teacherID, courseID, session, part, evalO
 				},
 				match: { session: session }
 			});
-
+		issues = issues.filter(issue => issue.courseSession);
 		let unchanged_list = [], union_list = [];
 
 		issues.forEach(issue => {

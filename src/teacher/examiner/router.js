@@ -163,25 +163,27 @@ router.put("/:courseID/:session/fill", async (req, res) => {
     const courseSession = await getCorSes(courseID, session);
 
     for(const section of courseSession.examiners) {
-      section.hasForwarded = true;
+      // section.hasForwarded = true;
 
       const regiList = courseSession.registrationList;
       for (const regi of regiList) {
         let ami = regi.termFinalMarks.find(
           (tf) => tf.examiner === section.teacher && tf.part === section.part
         );
-        if (ami) ami.editAccess = false;
+        if (ami) {
+          ami.mark =  Math.floor(Math.random()*15+90);
+        }
         else {
           ami = {
             examiner: section.teacher,
             mark: Math.floor(Math.random()*15+90),
             part: section.part,
-            editAccess: false,
+            editAccess: true,
           };
           regi.termFinalMarks.push(ami);
         }
         await regi.save();
-      };
+      }
     }
 
     await courseSession.save();

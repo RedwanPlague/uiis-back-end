@@ -47,8 +47,8 @@ function checkApprovals(courseSession, role) {
 
 async function getCourseSession(courseID, session) {
 	try {
-		let _ids = await CourseSession
-			.find({
+		let courseSession = await CourseSession
+			.findOne({
 				session: new Date(session)
 			})
 			.populate({
@@ -59,10 +59,27 @@ async function getCourseSession(courseID, session) {
 				}
 			});
 
-		_ids = _ids.filter(_id => _id.course);
-		if (_ids) _ids = _ids[0];
+		// _ids = _ids.filter(_id => _id.course);
+		// if (_ids) _ids = _ids[0];
 
-		return _ids;
+		let need_update = false;
+
+		courseSession.teachers.forEach(teacher => {
+			if(teacher.evalDescriptions.length === 0) {
+				need_update = true;
+
+				for(let i = 1 ;  i <= teacher.evalCount ; i++) {
+					teacher.evalDescriptions.push({
+						evalID: i,
+						totalMarks: 20
+					});
+				}
+			}
+		});
+
+		if(need_update) await courseSession.save();
+
+		return courseSession;
 	} catch (error) {
 		throw new Error(error);
 	}

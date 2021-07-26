@@ -4,7 +4,7 @@ const saveMarks = async (req, res, next) => {
   try {
     const user = req.user;
     const courseID = req.params.courseID;
-    const session = new Date(`${req.params.session} UTC`);
+    const session = new Date(`${req.params.session}`);
     const part = req.body.part,
       students = req.body.students;
 
@@ -13,7 +13,7 @@ const saveMarks = async (req, res, next) => {
     const regiList = courseSession.registrationList;
     const modStuList = [];
 
-    students.forEach((student) => {
+    for(const student of students) {
       const stuID = student.studentID,
         mark = student.mark;
 
@@ -38,9 +38,9 @@ const saveMarks = async (req, res, next) => {
           section.mark = Number(mark);
         }
 
-        stuRegi.save();
+        await stuRegi.save();
       }
-    });
+    };
 
     req.modStuList = modStuList;
     next();

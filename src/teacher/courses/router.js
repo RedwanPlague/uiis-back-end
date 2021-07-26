@@ -2,7 +2,7 @@ const express = require('express');
 const router =  express.Router();
 const {CourseSession} = require('../../admin/courseSessions/model');
 const {CourseRegistration} = require('../../admin/courseRegistrations/model');
-const {changeResultState, getCourseSession, publishResult} = require('../teacher-common/resultStatusUtil');
+const {changeResultState, getCourseSession, publishResult, fillResultArray} = require('../teacher-common/resultStatusUtil');
 const constants = require('../../utils/constants');
 const {addMarkUpdateActivity} = require("../issues/service");
 const CurrentSession = require("../../admin/currentSessions/model");
@@ -43,7 +43,8 @@ router.get('/', async (req, res)=> {
 router.get('/:courseID/:session', async (req, res) => {
 
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session} `);
+		// req.params.session =  new Date(`${req.params.session} UTC`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 
 		if(!courseSession) {
@@ -61,7 +62,7 @@ router.get('/:courseID/:session', async (req, res) => {
 		teacher_details = teacher_details.toObject();
 
 		const student_details = await CourseRegistration
-			.find(  {'_id': { $in: courseSession.registrationList}} )
+			.find(  {'_id': { $in: courseSession.registrationList}, status: constants.COURSE_REGISTRATION_STATUS.REGISTERED} )
 			.lean()
 			.populate({
 				path: 'student',
@@ -95,7 +96,8 @@ router.get('/:courseID/:session', async (req, res) => {
 
 router.patch('/:courseID/:session', async (req, res) => {
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		// req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session} `);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if(!courseSession) {
 			res.status(400).json("");
@@ -181,7 +183,8 @@ router.patch('/:courseID/:session', async (req, res) => {
 router.put('/:courseID/:session/reset', async (req, res) => {
 
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		// req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session}`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if (!courseSession) {
 			res.status(400).json("");
@@ -230,7 +233,8 @@ router.put('/:courseID/:session/reset', async (req, res) => {
 router.put('/:courseID/:session/:role/set', async (req, res) => {
 
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session}`);
+		// req.params.session =  new Date(`${req.params.session} UTC`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		if (!courseSession || !courseSession[req.params.role]) {
 			res.status(400).json("");
@@ -316,7 +320,18 @@ router.put('/publishResult', async(req, res) => {
 			error: error.message
 		});
 	}
+});
 
+router.put('/fillResultArray', async(req, res) => {
+	try {
+		await fillResultArray();
+		res.status(200).json({msg:"ok"});
+	} catch (error) {
+		console.log(error.message);
+		res.status(400).send({
+			error: error.message
+		});
+	}
 });
 
 

@@ -85,6 +85,17 @@ async function getCourseSession(courseID, session) {
 	}
 }
 
+function getAttendanceVal(ongsho) {
+	if(ongsho >= .9) return 10;
+	else if(ongsho >= 0.85) return 9;
+	else if(ongsho >= 0.80) return 8;
+	else if(ongsho >= 0.75) return 7;
+	else if(ongsho >= 0.70) return 6;
+	else if(ongsho >= 0.65) return 5;
+	else if(ongsho >= 0.60) return 4;
+	else return 0;
+}
+
 async function calculateResult(courseReg) {
 	const courseSession = await CourseSession.findOne({_id: courseReg.courseSession});
 	if(!courseSession) throw new Error("Course Session not found");
@@ -105,7 +116,8 @@ async function calculateResult(courseReg) {
 	courseReg.termFinalMarks.forEach(entry => tfObtainedMark += entry.mark);
 
 	let percentage = 0;
-	percentage += (attendedClassCount / totalClassCount) * 10.0;
+
+	percentage += getAttendanceVal( attendedClassCount / totalClassCount);
 	percentage += (obtainedEvalMark / totalEvalMark ) * 20.0;
 	percentage += (tfObtainedMark / tfTotalMark) * 70.0;
 
@@ -154,6 +166,8 @@ async function publishResult() {
 		const currentSession = await CurrentSession.findOne();
 		currentSession.resultPublished = true;
 		await currentSession.save();
+
+		await fillResultArray();
 		return res;
 
 	} catch(error) {
@@ -201,11 +215,11 @@ async function fillResultArray() {
 			let cgpa = student.results[student.results.length - 1].cgpa;
 			cgpa = (gpa * totalCreditHourThisTerm + cgpa * (totalCreditHoursCompleted - totalCreditHourThisTerm) ) / totalCreditHoursCompleted;
 
-			// student.results.push({
-			// 	totalCreditHoursCompleted,
-			// 	cgpa
-			// });
-			// await student.save();
+			student.results.push({
+				totalCreditHoursCompleted,
+				cgpa
+			});
+			await student.save();
 		}
 	} catch (error) {
 		throw new Error(error);

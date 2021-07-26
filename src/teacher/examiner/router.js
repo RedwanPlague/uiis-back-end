@@ -132,13 +132,13 @@ router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
     }
 
     const regiList = courseSession.registrationList;
-    regiList.forEach((regi) => {
+    for (const regi of regiList) {
       const ami = regi.termFinalMarks.find(
         (tf) => tf.examiner === user.id && tf.part === part
       );
       if (ami) ami.editAccess = false;
-      regi.save();
-    });
+      await regi.save();
+    };
 
     await courseSession.save();
 
@@ -147,6 +147,44 @@ router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
       session,
       constants.RESULT_STATUS.EXAMINER
     );
+
+    res.send(req.body);
+  } catch (error) {
+    console.log(error);
+    res.status(404).send(error);
+  }
+});
+
+router.put("/:courseID/:session/fill", async (req, res) => {
+  try {
+    const courseID = req.params.courseID;
+    const session = new Date(`${req.params.session}`);
+
+    const courseSession = await getCorSes(courseID, session);
+
+    for(const section of courseSession.examiners) {
+      section.hasForwarded = true;
+
+      const regiList = courseSession.registrationList;
+      for (const regi of regiList) {
+        let ami = regi.termFinalMarks.find(
+          (tf) => tf.examiner === section.teacher && tf.part === section.part
+        );
+        if (ami) ami.editAccess = false;
+        else {
+          ami = {
+            examiner: section.teacher,
+            mark: Math.floor(Math.random()*15+90),
+            part: section.part,
+            editAccess: false,
+          };
+          regi.termFinalMarks.push(ami);
+        }
+        await regi.save();
+      };
+    }
+
+    await courseSession.save();
 
     res.send(req.body);
   } catch (error) {

@@ -13,7 +13,7 @@ const saveMarks = async (req, res, next) => {
     const regiList = courseSession.registrationList;
     const modStuList = [];
 
-    students.forEach((student) => {
+    for(const student of students) {
       const stuID = student.studentID,
         mark = student.mark;
 
@@ -38,9 +38,9 @@ const saveMarks = async (req, res, next) => {
           section.mark = Number(mark);
         }
 
-        stuRegi.save();
+        await stuRegi.save();
       }
-    });
+    };
 
     req.modStuList = modStuList;
     next();

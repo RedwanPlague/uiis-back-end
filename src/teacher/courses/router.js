@@ -62,7 +62,7 @@ router.get('/:courseID/:session', async (req, res) => {
 		teacher_details = teacher_details.toObject();
 
 		const student_details = await CourseRegistration
-			.find(  {'_id': { $in: courseSession.registrationList}, status: constants.COURSE_REGISTRATION_STATUS.REGISTERED} )
+			.find(  {'_id': { $in: courseSession.registrationList}} )
 			.lean()
 			.populate({
 				path: 'student',

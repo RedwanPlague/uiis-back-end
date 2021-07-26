@@ -44,6 +44,7 @@ router.patch('/update',
             }
             currentSession.session = req.body.session
             currentSession.coursesToOffer = []
+            currentSession.resultPublished = false
         }
         await currentSession.save()
 

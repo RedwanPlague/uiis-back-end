@@ -48,7 +48,7 @@ function checkApprovals(courseSession, role) {
 async function getCourseSession(courseID, session) {
 	try {
 		let courseSession = await CourseSession
-			.findOne({
+			.find({
 				session: new Date(session)
 			})
 			.populate({
@@ -59,8 +59,8 @@ async function getCourseSession(courseID, session) {
 				}
 			});
 
-		// _ids = _ids.filter(_id => _id.course);
-		// if (_ids) _ids = _ids[0];
+		courseSession = courseSession.filter(_id => _id.course);
+		if (courseSession) courseSession = courseSession[0];
 
 		let need_update = false;
 

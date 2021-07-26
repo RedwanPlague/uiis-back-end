@@ -11,13 +11,13 @@ const CurrentSession = require("../../admin/currentSessions/model");
 
 router.get('/', async (req, res) => {
 	try {
-		const issues = await Issues
+		let issues = await Issues
 			.find({teachers: req.user._id})
 			.lean()
 			.select('issueCreator title evalType part status')
 			.populate({
 				path: 'courseSession',
-				select: 'course -_id',
+				select: 'course -_id session',
 				populate: {
 					path: 'course',
 					select: 'courseID title -_id'
@@ -31,6 +31,10 @@ router.get('/', async (req, res) => {
 				path:'teachers',
 				select:'name'
 			});
+		const currentSession = await CurrentSession.findOne();
+
+		issues = issues.filter(issue => issue.courseSession.session.getTime() === currentSession.session.getTime() )
+
 		issues.forEach(issue => {
 			issue.courseID = issue.courseSession.course.courseID;
 			issue.courseTitle = issue.courseSession.course.title;

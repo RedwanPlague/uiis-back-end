@@ -4,7 +4,7 @@ const saveMarks = async (req, res, next) => {
   try {
     const user = req.user;
     const courseID = req.params.courseID;
-    const session = new Date(`${req.params.session} UTC`);
+    const session = new Date(`${req.params.session}`);
     const part = req.body.part,
       students = req.body.students;
 

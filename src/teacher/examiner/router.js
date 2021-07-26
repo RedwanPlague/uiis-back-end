@@ -11,7 +11,7 @@ const { changeResultState } = require("../teacher-common/resultStatusUtil");
 router.get("/:session", async (req, res) => {
   try {
     const user = req.user;
-    const session = new Date(`${req.params.session} UTC`);
+    const session = new Date(`${req.params.session}`);
 
     const courseSessions = await CourseSession.find({
       session,
@@ -50,7 +50,7 @@ router.get("/:courseID/:session", async (req, res) => {
   try {
     const user = req.user;
     const courseID = req.params.courseID;
-    const session = new Date(`${req.params.session} UTC`);
+    const session = new Date(`${req.params.session}`);
     const part = req.query.part;
 
     const courseSession = await getCorSes(courseID, session);
@@ -86,7 +86,7 @@ router.put("/:courseID/:session/save", saveMarks, async (req, res) => {
   try {
     const user = req.user;
     const courseID = req.params.courseID;
-    const session = new Date(`${req.params.session} UTC`);
+    const session = new Date(`${req.params.session}`);
     const part = req.body.part;
 
     const courseSession = await getCorSes2(courseID, session);
@@ -118,7 +118,7 @@ router.put("/:courseID/:session/forward", saveMarks, async (req, res) => {
   try {
     const user = req.user;
     const courseID = req.params.courseID;
-    const session = new Date(`${req.params.session} UTC`);
+    const session = new Date(`${req.params.session}`);
     const part = req.body.part;
 
     const courseSession = await getCorSes2(courseID, session);
@@ -159,7 +159,7 @@ router.put("/:courseID/:session/restore", async (req, res) => {
   try {
     const user = req.user;
     const courseID = req.params.courseID;
-    const session = new Date(`${req.params.session} UTC`);
+    const session = new Date(`${req.params.session}`);
     const part = req.body.part;
 
     const courseSession = await getCorSes2(courseID, session);

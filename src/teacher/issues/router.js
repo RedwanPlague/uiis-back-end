@@ -235,7 +235,7 @@ router.put('/:issueID/changeStatus', async (req, res) => {
 router.get('/:courseID/:session/eligibleList', async (req, res) => {
 
 	try {
-		req.params.session =  new Date(`${req.params.session} UTC`);
+		req.params.session =  new Date(`${req.params.session}`);
 		const courseSession = await getCourseSession(req.params.courseID, req.params.session);
 		const statuses = Object.values(constants.RESULT_STATUS);
 		const till = statuses.indexOf(courseSession.status);

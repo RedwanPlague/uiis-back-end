@@ -70,6 +70,10 @@ router.get('/:courseID/:session', async (req, res) => {
 			})
 			.select('student attendanceMarks evalMarks -_id');
 
+		for(let courseReg of student_details) {
+			console.log(courseReg.evalMarks.length);
+		}
+
 		student_details.forEach( entry => {
 			if(entry.evalMarks) entry.evalMarks = entry.evalMarks.filter(teachers => teachers.teacher === req.user._id);
 			if(entry.attendanceMarks) entry.attendanceMarks = entry.attendanceMarks.filter(teachers => teachers.teacher === req.user._id);
@@ -77,6 +81,8 @@ router.get('/:courseID/:session', async (req, res) => {
 			entry.student_id = entry.student._id;
 			delete entry.student;
 		});
+
+		// console.log(student_details);
 		teacher_details.session = req.params.session;
 		teacher_details.courseID = req.params.courseID;
 		teacher_details.courseName = courseSession.course.title;
